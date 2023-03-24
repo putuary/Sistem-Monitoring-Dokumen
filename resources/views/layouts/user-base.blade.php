@@ -77,7 +77,7 @@
           <!-- Extra -->
           <div>
             <div class="dropdown d-inline-block ms-1">
-              <span class="smini-hide fs-sm tracking-wider">Sistem Informasi Dokumen Pengajaran</span>
+              <span class="smini-hide fs-sm tracking-wider">Sistem Monitoring Dokumen Perkuliahan</span>
             </div>
             <!-- END Options -->
 
@@ -104,53 +104,11 @@
                 </a>
               </li>
 
-              <li class="nav-main-heading">Data</li>
-
-              <li class="nav-main-item">
-                <a class="nav-main-link" href="/manajemen-pengguna">
-                  <i class="nav-main-link-icon si si-user"></i>
-                  <span class="nav-main-link-name">Manajemen Pengguna</span>
-                </a>
-              </li>
-
-              <li class="nav-main-item">
-                <a class="nav-main-link" href="/manajemen-data">
-                  <i class="nav-main-link-icon si si-user"></i>
-                  <span class="nav-main-link-name">Manajemen Data</span>
-                </a>
-              </li>
-
-              <li class="nav-main-heading">DOKUMEN PENGAJARAN</li>
-
-              <li class="nav-main-item">
-                <a class="nav-main-link" href="/progres-pengumpulan">
-                  <i class="nav-main-link-icon si si-wrench"></i>
-                  <span class="nav-main-link-name">Progres Pengumpulan</span>
-                </a>
-              </li>
-
-              <li class="nav-main-item">
-                <a class="nav-main-link" href="/dokumen-sebelumnya">
-                  <i class="nav-main-link-icon si si-wrench"></i>
-                  <span class="nav-main-link-name">Dokumen Semester Sebelumnya</span>
-                </a>
-              </li>
-
-              <li class="nav-main-heading">PENGINGAT</li>
-
-              <li class="nav-main-item">
-                <a class="nav-main-link" href="/atur-pengingat-pengumpulan">
-                  <i class="nav-main-link-icon si si-wrench"></i>
-                  <span class="nav-main-link-name">Atur Pengingat dan Pengumpulan</span>
-                </a>
-              </li>
-
-              <li class="nav-main-item">
-                <a class="nav-main-link" href="/atur-pengingat-pengumpulan-sebelumnya">
-                  <i class="nav-main-link-icon si si-wrench"></i>
-                  <span class="nav-main-link-name">Atur Pengingat dan Pengumpulan Sebelumnya</span>
-                </a>
-              </li>
+              @if (Auth()->user()->role == 'dosen' || Auth()->user()->aktif_role->is_dosen == 1)
+                  @include('layouts.sidebar-dosen')
+              @else
+                  @include('layouts.sidebar-admin')
+              @endif
 
             </ul>
           </div>
@@ -222,16 +180,26 @@
                   </a>
                 </div>
                 <div role="separator" class="dropdown-divider m-0"></div>
+                @if (in_array(Auth()->user()->role, nameRoles('superRole')))
+                <div class="p-2">
+                  <form action="/change-dashboard" method="post">
+                    @csrf
+                    <button type="submit" class="dropdown-item d-flex align-items-center justify-content-between"><span class="fs-sm fw-medium">Login Sebagai {{ Auth()->user()->aktif_role->is_dosen == 0 ? "Dosen" : ucfirst(Auth()->user()->role)  }}</span></button>
+                  </form>
+                </div>
+                <div role="separator" class="dropdown-divider m-0"></div>
+                @endif
                 <div class="p-2">
                   <form action="/user-logout" method="post">
                     @csrf
-                    <button type="submit" class="dropdown-item d-flex align-items-center justify-content-between""><span class="fs-sm fw-medium">Log Out</span></button>
+                    <button type="submit" class="dropdown-item d-flex align-items-center justify-content-between"><span class="fs-sm fw-medium">Log Out</span></button>
                   </form>
                 </div>
               </div>
             </div>
             <!-- END User Dropdown -->
 
+           
           </div>
           <!-- END Right Section -->
         </div>

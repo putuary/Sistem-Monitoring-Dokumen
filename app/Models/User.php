@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models;
+use App\Models\AktifRole;
+use App\Models\Kelas;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -43,4 +45,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function dosen_kelas()
+    {
+        return $this->belongsToMany(Kelas::class, 'dosen_kelas', 'id_dosen', 'kode_kelas');
+    }
+
+    public function aktif_role()
+    {
+        return $this->hasOne(AktifRole::class, 'id_user');
+    }
 }

@@ -16,9 +16,9 @@
       <!-- Overview -->
       <div class="row items-push">
         
-        <!-- Mata Kuliah -->
+        <!-- Buat Penugasan Baru -->
         <div class="col-md-6 col-lg-4 col-xl-3">
-          <a class="block block-rounded block-link-pop h-100 mb-0" href="be_pages_elearning_course.html">
+          <a class="block block-rounded block-link-pop h-100 mb-0" href="/penugasan/buat-penugasan-baru/form-pertama">
             <div class="block-content block-content-full text-center bg-smooth">
               <div class="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
                 <i class="fab fa-html5 fa-2x text-white-75"></i>
@@ -26,16 +26,16 @@
             </div>
             <div class="bg-body-light rounded-bottom">
               <div class="block-content block-content-full block-content-sm text-center fs-sm fw-medium">
-                <span>Mata Kuliah</span>
+                <span>Buat Penugasan Baru</span>
               </div>
             </div>
           </a>
         </div>
-        <!-- END Mata Kuliah -->
+        <!-- END Buat Penugasan Baru -->
 
-        <!-- Dokumen Pengajaran -->
+        <!-- Daftar Jumlah Kelas -->
         <div class="col-md-6 col-lg-4 col-xl-3">
-          <a class="block block-rounded block-link-pop h-100 mb-0" href="be_pages_elearning_course.html">
+          <a class="block block-rounded block-link-pop h-100 mb-0" href="/penugasan/daftar-jumlah-kelas">
             <div class="block-content block-content-full text-center bg-smooth">
               <div class="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
                 <i class="fab fa-html5 fa-2x text-white-75"></i>
@@ -43,12 +43,30 @@
             </div>
             <div class="bg-body-light rounded-bottom">
               <div class="block-content block-content-full block-content-sm text-center fs-sm fw-medium">
-                <span>Dokumen Pengajaran</span>
+                <span>Daftar Jumlah Kelas</span>
               </div>
             </div>
           </a>
         </div>
-        <!-- END Dokumen Pengajaran -->
+        <!-- End Daftar Jumlah Kelas -->
+
+        <!-- Daftar Kelas -->
+        <div class="col-md-6 col-lg-4 col-xl-3">
+          <a class="block block-rounded block-link-pop h-100 mb-0" href="/penugasan/daftar-kelas">
+            <div class="block-content block-content-full text-center bg-smooth">
+              <div class="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
+                <i class="fab fa-html5 fa-2x text-white-75"></i>
+              </div>
+            </div>
+            <div class="bg-body-light rounded-bottom">
+              <div class="block-content block-content-full block-content-sm text-center fs-sm fw-medium">
+                <span>Daftar Kelas</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <!-- End Daftar Kelas -->
+
 
       </div>
       <!-- END Overview -->

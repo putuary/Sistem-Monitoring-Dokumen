@@ -56,7 +56,7 @@
                   </div>
                   <div class="col-lg-8 col-xl-5">
                     <div class="mb-4">
-                      <input type="text" class="js-flatpickr form-control" id="example-flatpickr-custom" name="example-flatpickr-custom" placeholder="Masukkan tanggal mulai perkuliahan" data-date-format="d F Y">
+                      <input type="text" class="js-flatpickr form-control" id="example-flatpickr-custom" name="example-flatpickr-custom" placeholder="Masukkan tanggal mulai perkuliahan" data-date-format="j F Y" datetime-local="id">
                     </div>
                   </div>
                 </div>

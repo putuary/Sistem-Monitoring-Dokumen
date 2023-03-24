@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
     {
         User::create([
             'nama'      => 'Kaprodi',
-            'email'     => 'kaprodi@itera.ac.id',
+            'email'     => 'kaprodi@if.itera.ac.id',
             'password'  => Hash::make('password'),
             'avatar'    => 'default.png',
             'role'      => 'kaprodi',

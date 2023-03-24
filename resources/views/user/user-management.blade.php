@@ -274,6 +274,7 @@
       console.log(jsfiles);
       //modal
       function edit_pengguna(id) {
+        $('.modal-edit').modal({backdrop: 'static', keyboard: false});
         $('.modal-edit').modal("show");
         $('#id_pengguna').val(jsfiles[id].id);
         $('#nama').val(jsfiles[id].nama);
@@ -291,6 +292,7 @@
       }
 
       $(document).ready(function () {
+        $('#modal-tambah-pengguna').modal({backdrop: 'static', keyboard: false});
         $(".button-tambah-pengguna").on("click", function () {
           $("#modal-tambah-pengguna").modal("show");
         });

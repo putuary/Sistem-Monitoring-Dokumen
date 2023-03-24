@@ -93,7 +93,7 @@
               <div class="p-4 p-xl-5 flex-grow-1 d-flex align-items-center">
                 <div class="w-100">
                   <p class="link-fx fw-semibold fs-2 text-white" >
-                    Sistem Informasi Monitoring Dokumen Pengajaran
+                    Sistem Monitoring <br> Dokumen Perkuliahan
                   </p>
                   <p class="text-white-75 me-xl-8 mt-2">
                    "Teknik Informatika ITERA"
@@ -110,11 +110,6 @@
 
             <!-- Main Section -->
             <div class="hero-static col-lg-8 d-flex flex-column align-items-center bg-body-extra-light">
-              <div class="p-3 w-100 d-lg-none text-center">
-                <a class="link-fx fw-semibold fs-3 text-dark" href="index.html">
-                  One<span class="fw-normal">UI</span>
-                </a>
-              </div>
               <div class="p-4 w-100 flex-grow-1 d-flex align-items-center">
                 <div class="w-100">
                   <!-- Header -->
@@ -181,19 +176,8 @@
               </div>
               <div class="px-4 py-3 w-100 d-lg-none d-flex flex-column flex-sm-row justify-content-between fs-sm text-center text-sm-start">
                 <p class="fw-medium text-black-50 py-2 mb-0">
-                  <strong>OneUI 5.3</strong> &copy; <span data-toggle="year-copy"></span>
+                  <strong>Program Studi Teknik Informatika ITERA</strong> &copy; <span data-toggle="year-copy"></span>
                 </p>
-                <ul class="list list-inline py-2 mb-0">
-                  <li class="list-inline-item">
-                    <a class="text-muted fw-medium" href="javascript:void(0)">Legal</a>
-                  </li>
-                  <li class="list-inline-item">
-                    <a class="text-muted fw-medium" href="javascript:void(0)">Contact</a>
-                  </li>
-                  <li class="list-inline-item">
-                    <a class="text-muted fw-medium" href="javascript:void(0)">Terms</a>
-                  </li>
-                </ul>
               </div>
             </div>
             <!-- END Main Section -->

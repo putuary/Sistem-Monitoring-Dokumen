@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\AktifRole;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,7 +50,31 @@ class UserAuthController extends Controller
 
     public function dashboard()
     {
-        return view('user.dashboard');
+        if(in_array(Auth::user()->role, nameRoles('superRole') )) {
+            if(Auth::user()->aktif_role->is_dosen == 0) {
+                return view('user.dashboard');
+            }
+            return view('dosen.dashboard-dosen');
+        } else if(Auth::user()->role == "admin") {
+            return view('user.dashboard');
+        }
+        return view('dosen.dashboard-dosen');
+    }
+
+    public function changeDashboard()
+    {
+        if(in_array(Auth::user()->role, nameRoles('superRole') )) {
+            if(Auth::user()->aktif_role->is_dosen == 0) {
+                AktifRole::where('id_user', Auth::user()->id)->update([
+                    'is_dosen' => 1
+                ]);
+            } else {
+                AktifRole::where('id_user', Auth::user()->id)->update([
+                    'is_dosen' => 0
+                ]);
+            }
+            return redirect()->intended('/')->with('success', 'Login Berhasil!');
+        }
     }
 
     public function user_management()
@@ -91,9 +116,9 @@ class UserAuthController extends Controller
     {
         // dd($request->all());
         if(in_array(Auth::user()->role, ["kaprodi", "gkmp", "admin"])) {
-            Validator::make($request->all(), [
+            $request->validate([
                 'nama'      => 'required|max:255',
-                'email'     => ['required', 'email', 'unique:users', 'domain:itera.ac.id'],
+                'email'     => ['required|email:dns', 'unique:users', 'domain:itera.ac.id'],
                 'role'      => 'required',
             ]);
 
