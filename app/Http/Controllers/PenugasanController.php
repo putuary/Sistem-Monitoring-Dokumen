@@ -49,7 +49,6 @@ class PenugasanController extends Controller
 
     public function storePenugasan(Request $request)
     {
-        if(in_array(Auth::user()->role, nameRoles('superRole'))) {
             $request->validate([
                 'kode_matkul' => 'required',
                 'nama_kelas' => 'required',
@@ -127,16 +126,11 @@ class PenugasanController extends Controller
                 }
             }
                         
-            return redirect('/penugasan')->with('success', 'Data berhasil ditambahkan');
-        }
-        return abort(404);
+        return redirect('/penugasan')->with('success', 'Data berhasil ditambahkan');
     }
 
     public function showJumlahKelas()
     {
-        // dd(nameRoles('midleRole'));
-        if(in_array(Auth::user()->role, nameRoles('superRole'))) {
-
             $matkul= MataKuliah::with('kelas')->withCount(['kelas as banyak_kelas' => function($query) {
                 $query->KelasAktif();
              }])->having('banyak_kelas', '>', 0)->get();
@@ -144,19 +138,13 @@ class PenugasanController extends Controller
             // dd($matkul);
 
             return view('penugasan.daftar-jumlah-kelas', ['matkul' => $matkul]);
-        }
-        return abort(404);
     }
 
     public function showKelas()
     {
-        // dd(nameRoles('midleRole'));
-        if(in_array(Auth::user()->role, nameRoles('superRole'))) {
             $kelas= Kelas::with(['tahun_ajaran', 'matkul', 'dosen_kelas'])->KelasAktif()->get();
             // dd($kelas);
 
             return view('penugasan.daftar-kelas', ['kelas' => $kelas]);
-        }
-        return abort(404);
     }
 }

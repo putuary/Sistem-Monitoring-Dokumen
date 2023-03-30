@@ -30,7 +30,7 @@
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
-          <h3 class="block-title">Dokumen {{ ($dokumen[0]->dokumen_dikumpul->kelas->matkul->nama_matkul ?? '').' '.($dokumen[0]->dokumen_dikumpul->kelas->nama_kelas ?? 'undefined') }}</h3>
+          <h3 class="block-title">Dokumen {{ ($dokumen[0]->dokumen_dikumpul[0]->kelas->matkul->nama_matkul ?? '').' '.($dokumen[0]->dokumen_dikumpul[0]->kelas->nama_kelas ?? 'undefined') }}</h3>
         </div>
         <div class="block-content block-content-full">
           <div class="block-content">

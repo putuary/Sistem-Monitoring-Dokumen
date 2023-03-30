@@ -4,7 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-    <title>Halaman {{ ucfirst(Auth()->user()->role) }}</title>
+    <title>Halaman 
+      @if (in_array(Auth()->user()->role, ['kaprodi', 'gkmp']))
+      {{ Auth()->user()->aktif_role->is_dosen == 1 ? "Dosen Pengampu" : namaPeran(Auth()->user()->role)  }}
+      @else
+        {{ namaPeran(Auth()->user()->role) }}
+      @endif
+    </title>
 
     <meta name="description" content="OneUI - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave and published on Themeforest">
     <meta name="author" content="pixelcave">
@@ -104,7 +110,7 @@
                 </a>
               </li>
 
-              @if (in_array(Auth()->user()->role, nameRoles('superRole')))
+              @if (in_array(Auth()->user()->role, ['kaprodi', 'gkmp']))
                 @if (Auth()->user()->aktif_role->is_dosen == 1)
                   @include('layouts.sidebar-dosen')
                 @else
@@ -180,7 +186,7 @@
                   <img class="img-avatar img-avatar48 img-avatar-thumb" src={{ URL::asset("assets/media/avatars/avatar10.jpg")}} alt="">
                   <p class="mt-2 mb-0 fw-medium">{{ Auth()->user()->nama }}</p>
                   <p class="mb-0 text-muted fs-sm fw-medium">
-                    @if (in_array(Auth()->user()->role, nameRoles('superRole')))
+                    @if (in_array(Auth()->user()->role, ['kaprodi', 'gkmp']))
                       {{ Auth()->user()->aktif_role->is_dosen == 1 ? "Dosen Pengampu" : namaPeran(Auth()->user()->role)  }}
                     @else
                       {{ namaPeran(Auth()->user()->role) }}
@@ -194,7 +200,7 @@
                   </a>
                 </div>
                 <div role="separator" class="dropdown-divider m-0"></div>
-                @if (in_array(Auth()->user()->role, nameRoles('superRole')))
+                @if (in_array(Auth()->user()->role, ['kaprodi', 'gkmp']))
                 <div class="p-2">
                   <form action="/change-dashboard" method="post">
                     @csrf

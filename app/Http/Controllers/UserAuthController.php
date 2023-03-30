@@ -49,7 +49,7 @@ class UserAuthController extends Controller
 
     public function dashboard()
     {
-        if(in_array(Auth::user()->role, nameRoles('superRole') )) {
+        if(in_array(Auth::user()->role, ['kaprodi', 'gkmp'] )) {
             if(Auth::user()->aktif_role->is_dosen == 0) {
                 return view('user.dashboard');
             }
@@ -62,7 +62,7 @@ class UserAuthController extends Controller
 
     public function changeDashboard()
     {
-        if(in_array(Auth::user()->role, nameRoles('superRole') )) {
+        if(in_array(Auth::user()->role, ['kaprodi', 'gkmp'] )) {
             if(Auth::user()->aktif_role->is_dosen == 0) {
                 AktifRole::where('id_user', Auth::user()->id)->update([
                     'is_dosen' => 1
@@ -74,97 +74,85 @@ class UserAuthController extends Controller
             }
             return redirect()->intended('/')->with('success', 'Login Berhasil!');
         }
+        abort (403, 'Anda tidak memiliki hak mengakses laman tersebut!');
     }
 
     public function user_management()
     {
-        if(in_array(Auth::user()->role, ["kaprodi", "gkmp", "admin"])) {
-            $data=User::get();
-            // dd($data);
+        $data=User::get();
+        // dd($data);
 
-            return view('user.user-management', ['data' => $data]);
-        }
-        return abort(404);
+        return view('user.user-management', ['data' => $data]);
     }
 
     public function add_user(Request $request)
     {
-        if(in_array(Auth::user()->role, ["kaprodi", "gkmp", "admin"])) {
-            $request->validate([
-                'nama'      => 'required|max:255',
-                'email'     => 'required|email|unique:users|domain:itera.ac.id',
-                'password'  => 'required|min:5|max:255',
-                'role'      => 'required',
+        $request->validate([
+            'nama'      => 'required|max:255',
+            'email'     => 'required|email|unique:users|domain:itera.ac.id',
+            'password'  => 'required|min:5|max:255',
+            'role'      => 'required',
+        ]);
+
+        //create user
+        $user=User::create([
+            'nama'      => $request->nama,
+            'email'     => $request->email,
+            'password'  => Hash::make($request->password),
+            'role'      => $request->role,
+            'avatar'    => 'default.png',
+        ]);
+
+        if(in_array($request->role, ['kaprodi', 'gkmp'])) {
+            $user->aktif_role()->create([
+                'is_dosen'  => 0,
             ]);
-
-            //create user
-            $user=User::create([
-                'nama'      => $request->nama,
-                'email'     => $request->email,
-                'password'  => Hash::make($request->password),
-                'role'      => $request->role,
-                'avatar'    => 'default.png',
-            ]);
-
-            if(in_array($request->role, nameRoles('superRole'))) {
-                $user->aktif_role()->create([
-                    'is_dosen'  => 0,
-                ]);
-            }
-
-            return redirect('/manajemen-pengguna')->with('success', 'Data berhasil ditambahkan');
         }
-        return abort(404);
+
+        return redirect('/manajemen-pengguna')->with('success', 'Data berhasil ditambahkan');
     }
 
     public function edit_user(Request $request)
     {
-        // dd($request->all());
-        if(in_array(Auth::user()->role, nameRoles('midleRole'))) {
+        $request->validate([
+            'nama'      => 'required|max:255',
+            'role'      => 'required',
+        ]);
+    
+        $pengguna=User::find($request->id);
+        if($pengguna->email != $request->email) {
             $request->validate([
-                'nama'      => 'required|max:255',
-                'role'      => 'required',
+                'email'     => 'required|email|unique:users',
             ]);
-        
-            $pengguna=User::find($request->id);
-            if($pengguna->email != $request->email) {
-                $request->validate([
-                    'email'     => 'required|email|unique:users',
-                ]);
-            }
-
-            if(is_null($request->password)) {
-                $user=User::where('id', $request->id)->update([
-                    'nama'      => $request->nama,
-                    'email'     => $request->email,
-                    'role'      => $request->role,
-                ]);
-
-                CreateorDeleteAktifRole($request->id, $pengguna->role, $request->role);
-
-            } else {
-                $user=User::where('id', $request->id)->update([
-                    'nama'      => $request->nama,
-                    'email'     => $request->email,
-                    'password'  => Hash::make($request->password),
-                    'role'      => $request->role,
-                ]);
-
-                CreateorDeleteAktifRole($request->id, $pengguna->role, $request->role, $request->id);
-            }
-
-            return redirect('/manajemen-pengguna')->with('success', 'Data berhasil diubah');
         }
-        return abort(404);
+
+        if(is_null($request->password)) {
+            User::where('id', $request->id)->update([
+                'nama'      => $request->nama,
+                'email'     => $request->email,
+                'role'      => $request->role,
+            ]);
+
+            CreateorDeleteAktifRole($request->id, $pengguna->role, $request->role);
+
+        } else {
+            User::where('id', $request->id)->update([
+                'nama'      => $request->nama,
+                'email'     => $request->email,
+                'password'  => Hash::make($request->password),
+                'role'      => $request->role,
+            ]);
+
+            CreateorDeleteAktifRole($request->id, $pengguna->role, $request->role, $request->id);
+        }
+
+        return redirect('/manajemen-pengguna')->with('success', 'Data berhasil diubah');
     }
 
     public function delete_user(Request $request)
     {
-        if(in_array(Auth::user()->role, ["kaprodi", "gkmp", "admin"])) {
-            User::where('id', $request->id_pengguna)->delete();
-            return redirect('/manajemen-pengguna')->with('success', 'Data berhasil dihapus');
-        }
-        return abort(404);
+        User::where('id', $request->id_pengguna)->delete();
+        return redirect('/manajemen-pengguna')->with('success', 'Data berhasil dihapus');
     }
 
 }

@@ -52,7 +52,7 @@ class DokumenDitugaskan extends Model
 
     public function dokumen_dikumpul()
     {
-        return $this->hasOne(DokumenDikumpul::class, 'id_dokumen_ditugaskan');
+        return $this->hasMany(DokumenDikumpul::class, 'id_dokumen_ditugaskan');
     }
 
 

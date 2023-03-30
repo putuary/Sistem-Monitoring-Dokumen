@@ -3,27 +3,6 @@
 use Carbon\Carbon;
 use App\Models\AktifRole;
 use App\Models\Kelas;
-use PhpParser\Node\Expr\Cast\Object_;
-
-function nameRoles($role) {
-    switch($role) {
-        case 'superRole':
-            return ['kaprodi', 'gkmp'];
-        break;
-        case 'midleRole':
-            return ['kaprodi', 'gkmp', 'admin'];
-        break;
-        case 'lowRole':
-            return ['admin', 'dosen'];
-        break;
-        case 'allRole':
-            return ['kaprodi', 'gkmp', 'admin', 'dosen'];
-        break;
-        default:
-            return ['kaprodi', 'gkmp', 'admin', 'dosen'];
-    }
-}
-
 
 function NamaPeran($peran){
     switch($peran){
@@ -47,9 +26,9 @@ function NamaPeran($peran){
 
 function CreateorDeleteAktifRole($id, $role, $requestRole) {
     if($role != $requestRole) {
-        if(in_array($role, nameRoles('superRole')) && in_array($requestRole, nameRoles('lowRole'))) {
+        if(in_array($role, ['kaprodi', 'gkmp']) && in_array($requestRole, ['dosen', 'admin'])) {
             AktifRole::where('id_user', $id)->delete();
-        } else if (in_array($role, nameRoles('lowRole')) && in_array($requestRole, nameRoles('superRole'))) {
+        } else if (in_array($role, ['dosen', 'admin']) && in_array($requestRole, ['kaprodi', 'gkmp'])) {
             AktifRole::create([
                 'id_user'   => $id,
                 'is_dosen'  => 0,
@@ -110,7 +89,43 @@ function isKelasDiampu($kode_kelas, $id_dosen) {
     return false;
 }
 
-function collectionSummary($dokumen_dikumpul) {
+function kelasSummary($dokumen_dikumpul) {
+    $terlewat=0;
+    $telat=0;
+    $terkumpul=0;
+    $ditugaskan=0;
+
+    foreach($dokumen_dikumpul as $dokumen) {
+        $tenggat=Carbon::parse($dokumen->dokumen_ditugaskan->tenggat_waktu);
+        $waktu_pengumpulan=Carbon::parse($dokumen->waktu_pengumpulan);
+        
+        if($waktu_pengumpulan->isAfter($tenggat)) {
+            $telat++;
+        }
+
+        if(Carbon::now()->isAfter($tenggat) && is_null($dokumen->file_dokumen)) {
+            $terlewat++;
+        }
+
+        if(!is_null($dokumen->file_dokumen)) {
+            $terkumpul++;
+        }
+        
+        $ditugaskan++;
+    }
+    
+    $persentase_dikumpul=round(($terkumpul/$ditugaskan)*100, 1);
+
+    return (object) [
+        'terlewat' => $terlewat,
+        'telat' => $telat,
+        'terkumpul' => $terkumpul,
+        'ditugaskan' => $ditugaskan,
+        'persentase_dikumpul' => $persentase_dikumpul,
+    ];
+}
+
+function dokumenSummary($dokumen_dikumpul) {
     $terlewat=0;
     $telat=0;
     $terkumpul=0;

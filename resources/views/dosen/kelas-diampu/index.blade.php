@@ -49,7 +49,7 @@
 
         @foreach ($kelas as $item)
         @php
-          $status = collectionSummary($item->dokumen_dikumpul);
+          $status = kelasSummary($item->dokumen_dikumpul);
           // dd($status);
         @endphp
             <!-- Progres Mata Kuliah -->
