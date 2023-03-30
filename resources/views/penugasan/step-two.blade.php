@@ -59,7 +59,8 @@
                     <input type="hidden" name="kode_matkul[]" value="{{ $data['kode_matkul'][$key] }}">
                     <label class="col-sm-4 col-form-label" for="example-hf-password">Kelas</label>
                     <div class="col-md-2 col-lg-6">
-                        <input type="text" class="form-control" id="example-hf-password" value="{{ $kelas.' R'.$a }}" name="nama_kelas[]" readonly>
+                      <div class="form-control">{{ $kelas.' R'.($data['jumlah'][$key]==1 ? '' : $a) }}</div>
+                      <input type="hidden" value="{{ 'R'.($data['jumlah'][$key]==1 ? '' : $a) }}" name="nama_kelas[]">
                     </div> 
                     <label class="col-sm-4 col-form-label" for="example-hf-password">Dosen</label>
                     <div class="col-md-2 col-lg-4">

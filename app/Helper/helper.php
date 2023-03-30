@@ -1,6 +1,9 @@
 <?php
 
 use Carbon\Carbon;
+use App\Models\AktifRole;
+use App\Models\Kelas;
+use PhpParser\Node\Expr\Cast\Object_;
 
 function nameRoles($role) {
     switch($role) {
@@ -9,6 +12,9 @@ function nameRoles($role) {
         break;
         case 'midleRole':
             return ['kaprodi', 'gkmp', 'admin'];
+        break;
+        case 'lowRole':
+            return ['admin', 'dosen'];
         break;
         case 'allRole':
             return ['kaprodi', 'gkmp', 'admin', 'dosen'];
@@ -39,6 +45,19 @@ function NamaPeran($peran){
     }
 }
 
+function CreateorDeleteAktifRole($id, $role, $requestRole) {
+    if($role != $requestRole) {
+        if(in_array($role, nameRoles('superRole')) && in_array($requestRole, nameRoles('lowRole'))) {
+            AktifRole::where('id_user', $id)->delete();
+        } else if (in_array($role, nameRoles('lowRole')) && in_array($requestRole, nameRoles('superRole'))) {
+            AktifRole::create([
+                'id_user'   => $id,
+                'is_dosen'  => 0,
+            ]);
+        }
+    }
+}
+
 function isPraktikum($data) {
     if($data == 1) {
         return 'Ya';
@@ -57,4 +76,86 @@ function showTenggat($date) {
     $tenggat=Carbon::parse($date)->locale('id')->isoFormat('LLLL');
     
     return $tenggat;
+}
+
+function backgroundStatus($tenggat, $waktu_pengumpulan) {
+    $tenggat=Carbon::parse($tenggat);
+    $waktu_pengumpulan=Carbon::parse($waktu_pengumpulan);
+    
+    if($waktu_pengumpulan->isBefore($tenggat)) {
+        return 'bg-success-light text-success';
+    }
+    return 'bg-danger-light text-danger';
+}
+
+function statusPengumpulan($tenggat, $waktu_pengumpulan) {
+    $tenggat=Carbon::parse($tenggat);
+    $waktu_pengumpulan=Carbon::parse($waktu_pengumpulan);
+    
+    if($waktu_pengumpulan->isBefore($tenggat)) {
+        return 'Dikumpulkan';
+    }
+    return 'Terlambat Dikumpulkan';
+}
+   
+
+function isKelasDiampu($kode_kelas, $id_dosen) {
+    $kelas=Kelas::where('kode_kelas', $kode_kelas)->whereHas('dosen_kelas', function($query) use ($id_dosen) {
+        $query->where('id_dosen', $id_dosen);
+    })->first();
+    
+    if($kelas) {
+        return true;
+    }
+    return false;
+}
+
+function collectionSummary($dokumen_dikumpul) {
+    $terlewat=0;
+    $telat=0;
+    $terkumpul=0;
+    $ditugaskan=0;
+
+    foreach($dokumen_dikumpul as $dokumen) {
+        $tenggat=Carbon::parse($dokumen->dokumen_ditugaskan->tenggat_waktu);
+        $waktu_pengumpulan=Carbon::parse($dokumen->waktu_pengumpulan);
+        
+        if($waktu_pengumpulan->isAfter($tenggat)) {
+            $telat++;
+        }
+
+        if(Carbon::now()->isAfter($tenggat) && is_null($dokumen->file_dokumen)) {
+            $terlewat++;
+        }
+
+        if(!is_null($dokumen->file_dokumen)) {
+            $terkumpul++;
+        }
+        
+        $ditugaskan++;
+    }
+    
+    $persentase_dikumpul=round(($terkumpul/$ditugaskan)*100, 1);
+
+    return (object) [
+        'terlewat' => $terlewat,
+        'telat' => $telat,
+        'terkumpul' => $terkumpul,
+        'ditugaskan' => $ditugaskan,
+        'persentase_dikumpul' => $persentase_dikumpul,
+    ];
+}
+
+function isMatkul($type) {
+    if($type == 0) {
+        return true;
+    }
+    return false;
+}
+
+function pathDokumen($tahun_ajaran, $isMatkul, $matkul, $kelas=null) {
+    if($isMatkul) {
+        return '/Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/Dokumen_Mata_Kuliah/'.$matkul.'/';
+    }
+    return '/Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/Dokumen_Kelas/'.$matkul.'/'.$kelas;
 }

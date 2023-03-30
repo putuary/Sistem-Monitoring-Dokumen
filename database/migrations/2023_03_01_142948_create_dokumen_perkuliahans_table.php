@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('id_dokumen')->primary();
             $table->string('nama_dokumen');
             $table->integer('tenggat_waktu_default');
-            $table->string('dikumpulkan_per');
+            $table->tinyInteger('dikumpulkan_per');
             $table->string('template')->nullable();
             $table->timestamps();
         });

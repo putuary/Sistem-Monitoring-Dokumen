@@ -3,19 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\DokumenDitugaskan;
 use App\Models\User;
+use App\Models\Kelas;
+use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\MessageBag;
 
 
 class ProgresController extends Controller
 {
     public function index()
     {
-        return view('user.progres');
+        $tahun_ajaran = TahunAjaran::orderBy('id_tahun_ajaran', 'desc')->get();
+        if(request('filter')== null || request('filter')== 'kelas') {
+            $kelas = Kelas::with(['matkul','dosen_kelas', 'tahun_ajaran', 'dokumen_dikumpul'])->kelasTahun(request('tahun_ajaran'))->get();
+            // dd($kelas);
+            return view('admin.progres.progres_kelas', ['kelas' => $kelas, 'tahun_ajaran' => $tahun_ajaran]);
+        } else if(request('filter') != null && request('filter') == 'dokumen') {
+            $dokumen = DokumenDitugaskan::with(['dokumen_perkuliahan', 'dokumen_dikumpul'])->dokumenTahun(request('tahun_ajaran'))->get();
+            dd($dokumen);
+            return view('admin.progres.progres_dokumen', ['dokumen' => $dokumen, 'tahun_ajaran' => $tahun_ajaran]);
+        }
     }
 
     public function delete_user(Request $request)

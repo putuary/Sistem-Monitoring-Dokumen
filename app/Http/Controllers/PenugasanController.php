@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
+
 class PenugasanController extends Controller
 {
     public function index()
@@ -76,10 +77,19 @@ class PenugasanController extends Controller
                 }
             }
 
+            $kelas=Kelas::KelasAktif()->get();
+
+            $matkul=MataKuliah::with(['kelas' => function($query) {
+                    $query->KelasAktif();
+                }])->whereHas('kelas', function($query) {
+                    $query->KelasAktif();
+                })->get();
+
+
             for($i=0; $i<count($request->id_dokumen); $i++) {
-                $default=DokumenPerkuliahan::where('id_dokumen', $request->id_dokumen[$i])->first()->tenggat_waktu_default;
+                $dokumen=DokumenPerkuliahan::where('id_dokumen', $request->id_dokumen[$i])->first();
                 
-                $tenggat=createTenggat($request->tanggal_mulai_kuliah, $default);
+                $tenggat=createTenggat($request->tanggal_mulai_kuliah, $dokumen->tenggat_waktu_default);
                 $id = IdGenerator::generate(['table' => 'dokumen_ditugaskan', 'field'=>'id_dokumen_ditugaskan', 'length' => 6, 'prefix' => 'DT']);
                 DokumenDitugaskan::create([
                     'id_dokumen_ditugaskan' => $id,
@@ -88,8 +98,35 @@ class PenugasanController extends Controller
                     'tenggat_waktu'         => $tenggat,
                     'pengumpulan'           => 1,
                 ]);
-            }
 
+                if($dokumen->dikumpulkan_per == 1) {
+                    foreach($kelas as $kls) {
+                        // $id_dokumen_dikumpul=IdGenerator::generate(['table' => 'dokumen_dikumpul', 'field'=>'id_dokumen_dikumpul', 'length' => 10, 'prefix' => 'DK']);
+                        $kls->dokumen_dikumpul()->create([
+                            // 'id_dokumen_dikumpul' => $id_dokumen_dikumpul,
+                            'id_dokumen_ditugaskan' => $id,
+                            'file_dokumen' => null,
+                            'waktu_pengumpulan' => null,
+                        ]);
+                    }
+                } else {
+                    foreach($matkul as $mkl) {
+                        if($mkl->praktikum == 0  && $request->id_dokumen[$i] == 'DP0003') {
+                            continue; 
+                        }
+                        foreach($mkl->kelas as $kls) {
+                            // $id_dokumen_dikumpul=IdGenerator::generate(['table' => 'dokumen_dikumpul', 'field'=>'id_dokumen_dikumpul', 'length' => 10, 'prefix' => 'DK']);
+                            $kls->dokumen_dikumpul()->create([
+                                // 'id_dokumen_dikumpul' => $id_dokumen_dikumpul,
+                                'id_dokumen_ditugaskan' => $id,
+                                'file_dokumen' => null,
+                                'waktu_pengumpulan' => null,
+                            ]);
+                        }
+                    }
+                }
+            }
+                        
             return redirect('/penugasan')->with('success', 'Data berhasil ditambahkan');
         }
         return abort(404);
@@ -99,7 +136,11 @@ class PenugasanController extends Controller
     {
         // dd(nameRoles('midleRole'));
         if(in_array(Auth::user()->role, nameRoles('superRole'))) {
-            $matkul= MataKuliah::withCount('kelas as banyak_kelas')->having('banyak_kelas', '>', 0)->get();
+
+            $matkul= MataKuliah::with('kelas')->withCount(['kelas as banyak_kelas' => function($query) {
+                $query->KelasAktif();
+             }])->having('banyak_kelas', '>', 0)->get();
+
             // dd($matkul);
 
             return view('penugasan.daftar-jumlah-kelas', ['matkul' => $matkul]);
@@ -111,140 +152,11 @@ class PenugasanController extends Controller
     {
         // dd(nameRoles('midleRole'));
         if(in_array(Auth::user()->role, nameRoles('superRole'))) {
-            $kelas= Kelas::with('dosen_kelas')->get();
+            $kelas= Kelas::with(['tahun_ajaran', 'matkul', 'dosen_kelas'])->KelasAktif()->get();
             // dd($kelas);
 
             return view('penugasan.daftar-kelas', ['kelas' => $kelas]);
         }
         return abort(404);
     }
-
-
-    public function editMatkul(Request $request, $kode_matkul)
-    {
-        if(in_array(Auth::user()->role, nameRoles('midleRole'))) {
-            $request->validate([
-                'kode_matkul' => 'required',
-                'nama_matkul' => 'required',
-                'bobot_sks' => 'required',
-                'praktikum' => 'required',
-            ]);
-
-            MataKuliah::where('kode_matkul', $kode_matkul)->update([
-                'kode_matkul' => $request->kode_matkul,
-                'nama_matkul' => $request->nama_matkul,
-                'bobot_sks'   => $request->bobot_sks,
-                'praktikum'   => $request->praktikum,
-            ]);
-
-            return redirect('/penugasan')->with('success', 'Data berhasil diubah');
-        }
-        return abort(404);
-    }
-
-    public function deleteMatkul(Request $request)
-    {
-        if(in_array(Auth::user()->role, nameRoles('midleRole'))) {
-            MataKuliah::where('kode_matkul', $request->kode_matkul)->delete();
-            return redirect()->back()->with('success', 'Data berhasil dihapus');
-        }
-        return abort(404);
-    }
-
-    public function showDokumen()
-    {
-        if(in_array(Auth::user()->role, nameRoles('midleRole'))) {
-            $dokumen= DokumenPerkuliahan::all();
-
-            return view('data-management.dokumen', ['dokumen' => $dokumen]);
-        }
-        return abort(404);
-    }
-
-    public function storeDokumen(Request $request)
-    {
-        if(in_array(Auth::user()->role, nameRoles('midleRole'))) {
-            // dd(request()->all());
-            $request->validate([
-                'nama_dokumen'          => 'required',
-                'tenggat_waktu_default' => 'required',
-                'dikumpulkan_per'       => 'required',
-                'template'              => 'mimes:docx,doc,xls,xlsx|max:3072'
-            ]);
-
-            $id = IdGenerator::generate(['table' => 'dokumen_perkuliahan', 'field'=>'id_dokumen', 'length' => 6, 'prefix' => 'DP']);
-            if($request->hasFile('template')) {
-                // dd($request->file('template')->extension());
-                $nama_dokumen= 'Template-'.$request->nama_dokumen.'.'.$request->file('template')->extension();
-                $request->file('template')->storeAs('public/template', $nama_dokumen); // 'public' adalah nama folder di storage/app/public/template
-
-                // dd($id);
-                DokumenPerkuliahan::create([
-                    'id_dokumen'            => $id,
-                    'nama_dokumen'          => $request->nama_dokumen,
-                    'tenggat_waktu_default' => $request->tenggat_waktu_default,
-                    'dikumpulkan_per'       => $request->dikumpulkan_per,
-                    'template'              => $nama_dokumen,
-            ]);
-            } else {
-                DokumenPerkuliahan::create([
-                    'id_dokumen'            => $id,
-                    'nama_dokumen'          => $request->nama_dokumen,
-                    'tenggat_waktu_default' => $request->tenggat_waktu_default,
-                    'dikumpulkan_per'       => $request->dikumpulkan_per,
-            ]);
-            }
-            
-            return redirect()->back()->with('success', 'Data berhasil ditambahkan');
-        }
-        return abort(404);
-    }
-
-    public function editDokumen(Request $request)
-    {
-        if(in_array(Auth::user()->role, nameRoles('midleRole'))) {
-            // dd(request()->all());
-            $request->validate([
-                'id_dokumen'            => 'required',
-                'nama_dokumen'          => 'required',
-                'tenggat_waktu_default' => 'required',
-                'dikumpulkan_per'       => 'required',
-                'template'              => 'mimes:docx,doc,xls,xlsx|max:3072'
-            ]);
-
-            if($request->hasFile('template')) {
-                // dd($request->file('template')->extension());
-                $nama_dokumen= 'Template-'.$request->nama_dokumen.'.'.$request->file('template')->extension();
-                $request->file('template')->storeAs('public/template', $nama_dokumen); // 'public' adalah nama folder di storage/app/public/template
-
-                // dd($id);
-                DokumenPerkuliahan::where('id_dokumen', $request->id_dokumen)->update([
-                    'nama_dokumen'          => $request->nama_dokumen,
-                    'tenggat_waktu_default' => $request->tenggat_waktu_default,
-                    'dikumpulkan_per'       => $request->dikumpulkan_per,
-                    'template'              => $nama_dokumen,
-            ]);
-            } else {
-                DokumenPerkuliahan::where('id_dokumen', $request->id_dokumen)->update([
-                    'nama_dokumen'          => $request->nama_dokumen,
-                    'tenggat_waktu_default' => $request->tenggat_waktu_default,
-                    'dikumpulkan_per'       => $request->dikumpulkan_per,
-            ]);
-            }
-            
-            return redirect()->back()->with('success', 'Data berhasil diubah');
-        }
-        return abort(404);
-    }
-
-    public function deleteDokumen(Request $request)
-    {
-        if(in_array(Auth::user()->role, nameRoles('midleRole'))) {
-            DokumenPerkuliahan::where('id_dokumen', $request->id_dokumen)->delete();
-
-            return redirect()->back()->with('success', 'Data berhasil dihapus');
-        }
-        return abort(404);
-    }
-
 }

@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('kelas', function (Blueprint $table) {
+            $table->id('kode_kelas');
             $table->string('nama_kelas');
             $table->string('kode_matkul');
             $table->bigInteger('id_tahun_ajaran')->unsigned();

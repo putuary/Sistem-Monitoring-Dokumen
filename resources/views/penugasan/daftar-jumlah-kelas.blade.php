@@ -35,14 +35,7 @@
             <div class="row justify-content-center">
               <div class="col-md-2 col-lg-3">
                 <div class="mb-4 d-flex">
-                  <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
-                  <!-- For more info and examples you can check out https://github.com/select2/select2 -->
-                  <div class="form-control">
-                    Tes
-                  </div>
-                  <button class="input-group-text">
-                    <i class="fa fa-fw fa-search"></i>
-                  </button>                
+                  <div class="form-control text-center">TA : {{ $matkul[0]->kelas[0]->tahun_ajaran->tahun_ajaran ?? '-' }}</div>   
                 </div>
               </div>
             </div>

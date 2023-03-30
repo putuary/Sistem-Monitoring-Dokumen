@@ -54,10 +54,18 @@ Route::get('/penugasan/daftar-kelas', [PenugasanController::class, 'showKelas'])
 
 // Pengingat
 Route::get('/atur-pengingat-pengumpulan', [PengingatController::class, 'showPengingat'])->middleware('auth');
+Route::post('/atur-pengingat-pengumpulan/edit', [PengingatController::class, 'editPengingat'])->middleware('auth');
+Route::post('/atur-pengingat-pengumpulan/edit_pengumpulan', [PengingatController::class, 'editPengumpulan'])->middleware('auth');
+
 
 
 // Route Dosen
+
+// Kelas Diampu
 Route::get('/kelas-diampu', [KelasController::class, 'showKelasDiampu'])->middleware('auth');
+Route::get('/kelas-diampu/{kode_kelas}', [KelasController::class, 'showDokumenDitugaskan'])->middleware('auth');
+Route::get('/kelas-diampu/download/{id_dokumen}', [KelasController::class, 'downloadTemplate'])->middleware('auth');
+Route::post('/kelas-diampu/upload', [KelasController::class, 'uploadDokumen'])->middleware('auth');
 
 Route::get('/progres-pengumpulan', [ProgresController::class, 'index'])->middleware('auth');
 
@@ -72,6 +80,10 @@ Route::get('/dokumen-sebelumnya', function () {
 // Route::get('/atur-pengingat-pengumpulan', function () {
 //     return view('user.atur-pengingat');
 // })->middleware('auth');
+
+Route::get('/riwayat', function () {
+    return view('admin.riwayat.index');
+})->middleware('auth');
 
 Route::get('/jumlah-kelas', function () {
     return view('user.jumlah-kelas');

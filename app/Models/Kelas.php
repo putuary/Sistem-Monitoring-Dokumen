@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\TahunAjaran;
+use App\Models\MataKuliah;
+use Illuminate\Support\Facades\Auth;
 
 class Kelas extends Model
 {
@@ -17,9 +21,40 @@ class Kelas extends Model
         'id_tahun_ajaran',
     ];
 
+    public function scopeKelasAktif($query)
+    {
+        return $query->whereHas('tahun_ajaran', function($query) {
+            $query->where('status', 1);
+        });
+    }
+
+    public function scopeKelasTahun($query, $id_tahun_ajaran)
+    {
+        if(isset($id_tahun_ajaran)) {
+            return $query->whereHas('tahun_ajaran', function($query) use ($id_tahun_ajaran) {
+                $query->where('id_tahun_ajaran', $id_tahun_ajaran);
+            });   
+        }
+        return $query->kelasAktif();
+    }
+
+    public function scopeKelasMatkulTahun($query, $kode_matkul, $id_tahun_ajaran)
+    {
+        return $query->where('kode_matkul', $kode_matkul)
+        ->where('id_tahun_ajaran', $id_tahun_ajaran);
+    }
+
+    public function scopeKelasDiampu($query)
+    {
+        return $query->whereHas('dosen_kelas', function($query) {
+            $query->where('id_dosen', Auth::user()->id);
+        });
+    }
+        
+
     public function dokumen_dikumpul()
     {
-        return $this->belongsToMany(DokumenDitugaskan::class, 'dokumen_dikumpul', 'kode_kelas', 'id_dokumen_ditugaskan')->withPivot(['file_dokumen', 'waktu_pengumpulan']);
+        return $this->hasMany(DokumenDikumpul::class, 'kode_kelas');
     }
 
     public function matkul()

@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('dokumen_dikumpul', function (Blueprint $table) {
+            // $table->string('id_dokumen_dikumpul')->primary();
             $table->id('id_dokumen_dikumpul');
             $table->string('id_dokumen_ditugaskan');
             $table->bigInteger('kode_kelas')->unsigned();
-            $table->string('file_dokumen');
-            $table->dateTime('waktu_pengumpulan');
+            $table->string('file_dokumen')->nullable();
+            $table->dateTime('waktu_pengumpulan')->nullable();
             $table->timestamps();
 
             $table->unique(['id_dokumen_ditugaskan', 'kode_kelas']);

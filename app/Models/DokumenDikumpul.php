@@ -14,9 +14,20 @@ class DokumenDikumpul extends Model
     protected $primaryKey = 'id_dokumen_dikumpul';
     
     protected $fillable = [
+        // 'id_dokumen_dikumpul',
         'id_dokumen_ditugaskan',
         'kode_kelas',
         'file_dokumen',
         'waktu_pengumpulan',
     ];
+
+    public function dokumen_ditugaskan()
+    {
+        return $this->belongsTo(DokumenDitugaskan::class, 'id_dokumen_ditugaskan');
+    }
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'kode_kelas');
+    }
 }

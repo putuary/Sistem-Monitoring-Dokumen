@@ -24,11 +24,13 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    <script>
+    </script>
     <div class="content">
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
-          <h3 class="block-title">Daftar Jumlah Kelas</h3>
+          <h3 class="block-title">Dokumen {{ ($dokumen[0]->dokumen_dikumpul->kelas->matkul->nama_matkul ?? '').' '.($dokumen[0]->dokumen_dikumpul->kelas->nama_kelas ?? 'undefined') }}</h3>
         </div>
         <div class="block-content block-content-full">
           <div class="block-content">
@@ -37,9 +39,18 @@
                 <div class="mb-4 d-flex">
                   <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
                   <!-- For more info and examples you can check out https://github.com/select2/select2 -->
-                  <div class="form-control">
-                    Tes
-                  </div>
+                  <select class="js-select2 form-select" id="one-ecom-product-category" name="one-ecom-product-category" style="width: 100%;" data-placeholder="Choose one..">
+                    <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+                    <option value="1">2020/2021 Genap</option>
+                    <option value="2" selected>Video Games</option>
+                    <option value="3">Tablets</option>
+                    <option value="4">Laptops</option>
+                    <option value="5">PC</option>
+                    <option value="6">Home Cinema</option>
+                    <option value="7">Sound</option>
+                    <option value="8">Office</option>
+                    <option value="9">Adapters</option>
+                  </select>
                   <button class="input-group-text">
                     <i class="fa fa-fw fa-search"></i>
                   </button>                
@@ -51,36 +62,63 @@
           <table class="table table-bordered table-striped table-vcenter js-dataTable-responsive">
             <thead>
               <tr>
-                <th class="text-center">Kode Kelas</th>
-                <th class="text-center" >Nama Kelas</th>
-                <th class="text-center" >Dosen Pengampu</th>
-                <th class="text-center"  style="width: 15%;">Aksi</th>
+                <th class="text-center">No.</th>
+                <th class="text-center" >Nama Dokumen</th>
+                <th class="text-center" >Tenggat Waktu</th>
+                <th class="text-center" >Status Pengumpulan</th>
+                <th class="text-center" style="width: %;">Aksi</th>
               </tr>
             </thead>
             <tbody>
-              @foreach ($kelas as $item)
+             
+              @foreach ($dokumen as $key => $item)
               <tr>
-                
-                <td class="text-center fs-sm">{{ $item->kode_kelas }}</td>
-                <td class="text-center fs-sm">{{ $item->nama_kelas }}</td>
-                <td class="fw-semibold fs-sm">
-                  <ul class="list-group list-group-flush">
-                    @foreach ($item->dosen_kelas as $dosen)
-                    <li class="list-group-item">{{ $dosen->nama }}</li>
-                    @endforeach
-                  </ul>
+                <td class="text-center fs-sm">{{ $key+1 }}</td>
+                <td class="fs-sm">{{ $item->dokumen_perkuliahan->nama_dokumen }}</td>
+                <td class="fs-sm">{{ showTenggat($item->tenggat_waktu) }}</td>
+                <td class="text-center">
+                  <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->dokumen_dikumpul->waktu_pengumpulan ? backgroundStatus($item->tenggat_waktu, $item->dokumen_dikumpul->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->dokumen_dikumpul->waktu_pengumpulan ? statusPengumpulan($item->tenggat_waktu, $item->dokumen_dikumpul->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
+                </td>
+                <td class="text-center">
+                  <form action="/manajemen-pengguna/delete" method="POST">
+                    @csrf
+                  @if (isset($item->dokumen_perkuliahan->template))
+                  <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" href='/kelas-diampu/download/{{ $item->dokumen_perkuliahan->id_dokumen }}' data-bs-toggle="tooltip" title="Template Dokumen">
+                    <i class="fa fa-file-lines fa-fw"></i>
+                  </a> 
+                  @endif
+                  @if (isset($item->dokumen_dikumpul->file_dokumen))
+                  <a href="{{ asset('/storage/'.pathDokumen($item->tahun_ajaran->tahun_ajaran, ismatkul($item->dokumen_perkuliahan->dikumpulkan_per), $item->dokumen_dikumpul->kelas->matkul->nama_matkul, ($item->dokumen_perkuliahan->dikumpulkan_per==0 ? '' : $item->dokumen_dikumpul->kelas->nama_kelas )).'/'.$item->dokumen_dikumpul->file_dokumen ) }}" class="btn btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
+                    <i class="fa fa-fw fa-eye"></i>
+                  </a>
+                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                    <i class="fa fa-fw fa-download"></i>
+                  </a>
+                    <input type="hidden" name="id_pengguna" value="">
+                    <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus">
+                      <i class="fa fa-fw fa-times"></i>
+                    </button>
+                  @else
+                    @if ($item->pengumpulan != 0)
+                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="uploadDokumen({{ $key }})" data-bs-toggle="tooltip" title="Unggah Dokumen">
+                    <i class="fa fa-fw fa-upload"></i>
+                  </a>
+                    @endif
+                  @endif
+                  
+                  </form>
                 </td>
               </tr>
               @endforeach
               
             </tbody>
           </table>
-          <div class="modal fade modal-edit" id="modal-block-fromleft" tabindex="-1" aria-labelledby="modal-block-fromleft" style="display: none;" aria-hidden="true">
+          <div class="modal fade modal-upload" id="modal-block-fromleft" tabindex="-1" aria-labelledby="modal-block-fromleft" style="display: none;" aria-hidden="true">
             <div class="modal-dialog modal-dialog-fromleft" role="document">
               <div class="modal-content">
                 <div class="block block-rounded block-transparent mb-0">
                   <div class="block-header block-header-default">
-                    <h3 class="block-title">Edit Pengguna</h3>
+                    <h3 class="block-title title"></h3>
                     <div class="block-options">
                       <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
                         <i class="fa fa-fw fa-times"></i>
@@ -88,7 +126,7 @@
                     </div>
                   </div>
                   
-                  <form  action="/manajemen-pengguna/edit"
+                  <form  action="/kelas-diampu/upload"
                   method="POST"
                   enctype="multipart/form-data">
                    @csrf
@@ -96,43 +134,19 @@
                       <div class="row">
                         <div class="col-lg-12">
                           <div class="form-group">
-                            <input type="hidden" name="id" id="id_pengguna">
-                            <label for="example-text-input">Nama</label>
+                            <input type="hidden" name="id_dokumen_dikumpul" id="id_dokumen_dikumpul">
+                            <label for="example-text-input">File Dokumen</label>
                             <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Masukkan Nama"
-                                id="nama"
-                                name="nama"
+                                type="file"
+                                class="form-control @error('file_dokumen') is-invalid @enderror"
+                                placeholder="Masukkan File Dokumen"
+                                id="file_dokumen"
+                                name="file_dokumen"
                                 required />
-                            <label for="example-text-input">Email</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Masukkan Email"
-                                id="email"
-                                name="email"
-                                required />
-                            <label for="example-text-input">Password</label>
-                            <input
-                                type="password"
-                                class="form-control"
-                                placeholder="Kosongkan Password Jika Tidak Diubah"
-                                name="password"
-                                />
-                            <label for="example-text-input">Peran</label>
-                            <select
-                                class="js-select2 form-select"
-                                name="role"
-                                required >
-                                <option value="">Pilih Peran</option>
-                                <!-- Required for data-placeholder attribute to work with Select2 plugin -->
-                                <option id="kaprodi" value="kaprodi">Koordinator Prodi</option>
-                                <option id="gkmp" value="gkmp">Gugus Kendali Mutu Prodi</option>
-                                <option id="dosen" value="dosen">Dosen Pengampu</option>
-                                <option id="admin" value="admin">Administrator Prodi</option>
-                            </select>    
                           </div>
+                          @error('file_dokumen')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                          @enderror
                         </div>
                       </div>
                     </div>
@@ -184,11 +198,17 @@
         "jq-select2",
       ]);
     </script>
-
      <script>
-      let jsfiles = 1;
+
+      let jsfiles = {{ Js::from($dokumen) }};
       console.log(jsfiles);
       //modal
+      function uploadDokumen(id) {
+        $('.modal-upload').modal("show");
+        $('.title').html('Unggah Dokumen '+jsfiles[id].dokumen_perkuliahan.nama_dokumen);
+        $('#id_dokumen_dikumpul').val(jsfiles[id].dokumen_dikumpul.id_dokumen_dikumpul);
+      }
+
       function edit_pengguna(id) {
         $('.modal-edit').modal("show");
         $('#id_pengguna').val(jsfiles[id].id);

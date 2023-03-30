@@ -19,6 +19,14 @@ class MataKuliah extends Model
         'praktikum',
     ];
 
+    public function scopeMatkulKelas($query, $kode_matkul, $id_tahun_ajaran)
+    {
+        return $query->whereHas('kelas', function($query) use ($kode_matkul, $id_tahun_ajaran) {
+            $query->where('kode_matkul', $kode_matkul)
+            ->where('id_tahun_ajaran', $id_tahun_ajaran);
+        });
+    }
+
     public function kelas()
     {
         return $this->hasMany(Kelas::class, 'kode_matkul');

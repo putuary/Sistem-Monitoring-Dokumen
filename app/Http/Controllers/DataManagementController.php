@@ -98,7 +98,7 @@ class DataManagementController extends Controller
             $id = IdGenerator::generate(['table' => 'dokumen_perkuliahan', 'field'=>'id_dokumen', 'length' => 6, 'prefix' => 'DP']);
             if($request->hasFile('template')) {
                 // dd($request->file('template')->extension());
-                $nama_dokumen= 'Template-'.$request->nama_dokumen.'.'.$request->file('template')->extension();
+                $nama_dokumen= 'Template '.$request->nama_dokumen.'.'.$request->file('template')->extension();
                 $request->file('template')->storeAs('public/template', $nama_dokumen); // 'public' adalah nama folder di storage/app/public/template
 
                 // dd($id);

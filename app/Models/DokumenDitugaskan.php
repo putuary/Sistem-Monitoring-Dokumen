@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DokumenPerkuliahan;
 use App\Models\TahunAjaran;
+use App\Models\Kelas;
 
 class DokumenDitugaskan extends Model
 {
@@ -22,6 +23,23 @@ class DokumenDitugaskan extends Model
         'pengumpulan',
     ];
 
+    public function scopeDokumenAktif($query)
+    {
+        return $query->whereHas('tahun_ajaran', function($query) {
+            $query->where('status', 1);
+        });
+    }
+
+    public function scopeDokumenTahun($query, $id_tahun_ajaran)
+    {
+        if(isset($id_tahun_ajaran)) {
+            return $query->whereHas('tahun_ajaran', function($query) use ($id_tahun_ajaran) {
+                $query->where('id_tahun_ajaran', $id_tahun_ajaran);
+            });   
+        }
+        return $query->dokumenAktif();
+    }
+
     public function dokumen_perkuliahan()
     {
         return $this->belongsTo(DokumenPerkuliahan::class, 'id_dokumen');
@@ -34,7 +52,7 @@ class DokumenDitugaskan extends Model
 
     public function dokumen_dikumpul()
     {
-        return $this->belongsToMany(Kelas::class, 'dokumen_dikumpul', 'id_dokumen_ditugaskan', 'kode_kelas')->withPivot(['file_dokumen', 'waktu_pengumpulan']);
+        return $this->hasOne(DokumenDikumpul::class, 'id_dokumen_ditugaskan');
     }
 
 

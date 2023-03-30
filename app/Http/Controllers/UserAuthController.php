@@ -7,7 +7,6 @@ use App\Models\AktifRole;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\MessageBag;
 
@@ -91,21 +90,27 @@ class UserAuthController extends Controller
     public function add_user(Request $request)
     {
         if(in_array(Auth::user()->role, ["kaprodi", "gkmp", "admin"])) {
-            Validator::make($request->all(), [
+            $request->validate([
                 'nama'      => 'required|max:255',
-                'email'     => ['required', 'email', 'unique:users', 'domain:itera.ac.id'],
+                'email'     => 'required|email|unique:users|domain:itera.ac.id',
                 'password'  => 'required|min:5|max:255',
                 'role'      => 'required',
             ]);
 
             //create user
-            User::create([
+            $user=User::create([
                 'nama'      => $request->nama,
                 'email'     => $request->email,
                 'password'  => Hash::make($request->password),
                 'role'      => $request->role,
                 'avatar'    => 'default.png',
             ]);
+
+            if(in_array($request->role, nameRoles('superRole'))) {
+                $user->aktif_role()->create([
+                    'is_dosen'  => 0,
+                ]);
+            }
 
             return redirect('/manajemen-pengguna')->with('success', 'Data berhasil ditambahkan');
         }
@@ -115,26 +120,37 @@ class UserAuthController extends Controller
     public function edit_user(Request $request)
     {
         // dd($request->all());
-        if(in_array(Auth::user()->role, ["kaprodi", "gkmp", "admin"])) {
+        if(in_array(Auth::user()->role, nameRoles('midleRole'))) {
             $request->validate([
                 'nama'      => 'required|max:255',
-                'email'     => ['required|email:dns', 'unique:users', 'domain:itera.ac.id'],
                 'role'      => 'required',
             ]);
+        
+            $pengguna=User::find($request->id);
+            if($pengguna->email != $request->email) {
+                $request->validate([
+                    'email'     => 'required|email|unique:users',
+                ]);
+            }
 
             if(is_null($request->password)) {
-                User::where('id', $request->id)->update([
+                $user=User::where('id', $request->id)->update([
                     'nama'      => $request->nama,
                     'email'     => $request->email,
                     'role'      => $request->role,
                 ]);
+
+                CreateorDeleteAktifRole($request->id, $pengguna->role, $request->role);
+
             } else {
-                User::where('id', $request->id)->update([
+                $user=User::where('id', $request->id)->update([
                     'nama'      => $request->nama,
                     'email'     => $request->email,
-                    'password'  => $request->password,
+                    'password'  => Hash::make($request->password),
                     'role'      => $request->role,
                 ]);
+
+                CreateorDeleteAktifRole($request->id, $pengguna->role, $request->role, $request->id);
             }
 
             return redirect('/manajemen-pengguna')->with('success', 'Data berhasil diubah');

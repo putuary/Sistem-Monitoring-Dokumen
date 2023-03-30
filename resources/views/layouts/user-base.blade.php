@@ -104,11 +104,19 @@
                 </a>
               </li>
 
-              @if (Auth()->user()->role == 'dosen' || Auth()->user()->aktif_role->is_dosen == 1)
+              @if (in_array(Auth()->user()->role, nameRoles('superRole')))
+                @if (Auth()->user()->aktif_role->is_dosen == 1)
                   @include('layouts.sidebar-dosen')
-              @else
+                @else
                   @include('layouts.sidebar-admin')
+                @endif
+              @elseif(Auth()->user()->role == 'admin')
+                @include('layouts.sidebar-admin')
+              @else
+                @include('layouts.sidebar-dosen')
               @endif
+
+
 
             </ul>
           </div>
@@ -171,7 +179,13 @@
                 <div class="p-3 text-center bg-body-light border-bottom rounded-top">
                   <img class="img-avatar img-avatar48 img-avatar-thumb" src={{ URL::asset("assets/media/avatars/avatar10.jpg")}} alt="">
                   <p class="mt-2 mb-0 fw-medium">{{ Auth()->user()->nama }}</p>
-                  <p class="mb-0 text-muted fs-sm fw-medium">{{ NamaPeran(Auth()->user()->role) }}</p>
+                  <p class="mb-0 text-muted fs-sm fw-medium">
+                    @if (in_array(Auth()->user()->role, nameRoles('superRole')))
+                      {{ Auth()->user()->aktif_role->is_dosen == 1 ? "Dosen Pengampu" : namaPeran(Auth()->user()->role)  }}
+                    @else
+                      {{ namaPeran(Auth()->user()->role) }}
+                    @endif
+                  </p>
                 </div>
                 <div class="p-2">
                   <a class="dropdown-item d-flex align-items-center justify-content-between" href="be_pages_generic_profile.html">

@@ -103,11 +103,11 @@
                             <label class="form-label">Dikumpulkan Per</label>
                             <div class="space-x-2 mb-3">
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="example-radios-inline1" name="dikumpulkan_per" value="Mata Kuliah" checked>
+                                <input class="form-check-input" type="radio" id="example-radios-inline1" name="dikumpulkan_per" value=0 required>
                                 <label class="form-check-label" for="example-radios-inline1">Mata Kuliah</label>
                               </div>
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="example-radios-inline2" name="dikumpulkan_per" value="Kelas">
+                                <input class="form-check-input" type="radio" id="example-radios-inline2" name="dikumpulkan_per" value=1 required>
                                 <label class="form-check-label" for="example-radios-inline2">Kelas</label>
                               </div>
                             </div>
@@ -149,6 +149,7 @@
                 <th class="text-center" >Nama Dokumen Perkuliahan</th>
                 <th class="text-center" >Tenggat Waktu</th>
                 <th class="text-center" >Dikumpulkan Per</th>
+                <th class="text-center" >Template</th>
                 <th class="text-center" >Aksi</th>
               </tr>
             </thead>
@@ -156,9 +157,10 @@
               @foreach ($dokumen as $key => $item)
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="text-center fs-sm">{{ $item->nama_dokumen }}</td>
-                <td class="text-center fw-semibold fs-sm">{{ $item->tenggat_waktu_default }}</td>
-                <td class="text-center fw-semibold fs-sm">{{ $item->dikumpulkan_per }}</td>
+                <td class="fs-sm">{{ $item->nama_dokumen }}</td>
+                <td class="fs-sm">{{ 'Minggu '.$item->tenggat_waktu_default }}</td>
+                <td class="text-center fw-semibold fs-sm">{{ $item->dikumpulkan_per==0 ? "Mata Kuliah" : "Kelas" }}</td>
+                <td class="text-center fw-semibold fs-sm"><i class="far fa-fw fa-{{ isset($item->template) ? 'square-check' : 'rectangle-xmark' }}"></i></td>
                 <td class="text-center">
                   <form action="/manajemen-data/dokumen-perkuliahan/delete" method="POST">
                     @csrf
@@ -216,11 +218,11 @@
                             <label class="form-label">Dikumpulkan Per</label>
                             <div class="space-x-2 mb-3">
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="mata-kuliah" name="dikumpulkan_per" value="Mata Kuliah" checked>
+                                <input class="form-check-input" type="radio" id="mata-kuliah" name="dikumpulkan_per" value=0>
                                 <label class="form-check-label" for="example-radios-inline1">Mata Kuliah</label>
                               </div>
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="kelas" name="dikumpulkan_per" value="Kelas">
+                                <input class="form-check-input" type="radio" id="kelas" name="dikumpulkan_per" value=1>
                                 <label class="form-check-label" for="example-radios-inline2">Kelas</label>
                               </div>
                             </div>
@@ -290,7 +292,7 @@
         $('#id_dokumen').val(jsfiles[id].id_dokumen);
         $('#nama_dokumen').val(jsfiles[id].nama_dokumen);
         $('#tenggat_waktu_default').val(jsfiles[id].tenggat_waktu_default);
-        if(jsfiles[id].dikumpulkan_per === 'Mata Kuliah'){
+        if(jsfiles[id].dikumpulkan_per === 0){
           $('#mata-kuliah').attr('checked', 'checked');
         }else{
           $('#kelas').attr('checked', 'checked');
