@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DokumenPerkuliahan;
 use App\Models\TahunAjaran;
-use App\Models\Kelas;
+use App\Models\DokumenKelas;
+use App\Models\DokumenMatkul;
 
 class DokumenDitugaskan extends Model
 {
@@ -50,9 +51,14 @@ class DokumenDitugaskan extends Model
         return $this->belongsTo(TahunAjaran::class, 'id_tahun_ajaran');
     }
 
-    public function dokumen_dikumpul()
+    public function dokumen_kelas()
     {
-        return $this->hasMany(DokumenDikumpul::class, 'id_dokumen_ditugaskan');
+        return $this->hasMany(DokumenKelas::class, 'id_dokumen_ditugaskan');
+    }
+
+    public function dokumen_matkul()
+    {
+        return $this->hasMany(DokumenMatkul::class, 'id_dokumen_ditugaskan');
     }
 
 

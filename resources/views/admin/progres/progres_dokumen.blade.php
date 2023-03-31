@@ -21,7 +21,7 @@
           dd($kelas[0]->tahun_ajaran->id_tahun_ajaran);
       @endphp --}}
 
-      {{-- <form action="/progres-pengumpulan">
+      <form action="/progres-pengumpulan">
         <div class="block-content">
           <div class="row justify-content-center">
             <div class="col-md-2 col-lg-3">
@@ -34,7 +34,7 @@
                 <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Pilih Tahun Ajaran ....">
                   <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                   @foreach ($tahun_ajaran as $item)
-                  <option value={{ $item->id_tahun_ajaran }} @selected($kelas[0]->tahun_ajaran->id_tahun_ajaran==$item->id_tahun_ajaran)>{{ $item->tahun_ajaran }} </option>
+                  <option value={{ $item->id_tahun_ajaran }} @selected($dokumen[0]->id_tahun_ajaran==$item->id_tahun_ajaran)>{{ $item->tahun_ajaran }} </option>
                   @endforeach
                 </select>
                 <button class="input-group-text" type="submit">
@@ -44,7 +44,7 @@
             </div>
           </div>
         </div>
-      </form> --}}
+      </form>
 
       <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
           <div class="mt-3 mt-md-0">
@@ -94,10 +94,14 @@
       <div class="row items-push">
 
         @foreach ($dokumen as $item)
-        @php
-          $status = SummaryDokumen($item->dokumen_dikumpul);
-          // dd($status);
-        @endphp
+
+       <?php 
+          if($item->dokumen_perkuliahan->dikumpulkan_per==0){
+            $status = dokumenSummary($item->dokumen_matkul);
+          }else{
+            $status = dokumenSummary($item->dokumen_kelas);
+          }
+        ?>
             <!-- Progres Mata Kuliah -->
         <div class="col-sm-6 col-xxl-3">
           <a class="block block-rounded d-flex flex-column h-100 mb-0" href="/kelas-diampu/{{ $item->kode_kelas }}">
@@ -105,22 +109,22 @@
               class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
               <dl class="mb-0">
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                  Terlewat <span class="text-danger">1</span>
+                  Terlewat <span class="text-danger">{{ $status->terlewat }}</span>
                 </dd>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                  Telat <span class="text-danger">2</span>
+                  Telat <span class="text-danger">{{ $status->telat }}</span>
                 </dd>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                  Terkumpul <span class="text-success">3</span>
+                  Terkumpul <span class="text-success">{{ $status->terkumpul }}</span>
                 </dd>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                  Ditugaskan <span class="text-primary">4</span>
+                  Ditugaskan <span class="text-primary">{{ $status->ditugaskan }}</span>
                 </dd>
               </dl>
               <div class="item item-2x item-circle bg-body-light">
                 <!-- Pie Chart Container -->
-                <div class="js-pie-chart pie-chart" data-percent=5 data-line-width="3" data-size="100" data-bar-color="#fadb7d" data-track-color="#eeeeee" data-scale-color="#dddddd">
-                  <span>{{ '4%' }}</span>
+                <div class="js-pie-chart pie-chart" data-percent={{ $status->persentase_dikumpul }} data-line-width="3" data-size="100" data-bar-color="#fadb7d" data-track-color="#eeeeee" data-scale-color="#dddddd">
+                  <span>{{ $status->persentase_dikumpul.'%' }}</span>
                 </div>
               </div>
             </div>

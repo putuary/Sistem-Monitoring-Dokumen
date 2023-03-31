@@ -78,10 +78,8 @@ function statusPengumpulan($tenggat, $waktu_pengumpulan) {
 }
    
 
-function isKelasDiampu($kode_kelas, $id_dosen) {
-    $kelas=Kelas::where('kode_kelas', $kode_kelas)->whereHas('dosen_kelas', function($query) use ($id_dosen) {
-        $query->where('id_dosen', $id_dosen);
-    })->first();
+function isKelasDiampu($kode_kelas) {
+    $kelas=Kelas::where('kode_kelas', $kode_kelas)->kelasDiampu()->first();
     
     if($kelas) {
         return true;
@@ -89,17 +87,36 @@ function isKelasDiampu($kode_kelas, $id_dosen) {
     return false;
 }
 
-function kelasSummary($dokumen_dikumpul) {
+function kelasSummary($dokumen_kelas, $dokumen_matkul) {
     $terlewat=0;
     $telat=0;
     $terkumpul=0;
     $ditugaskan=0;
 
-    foreach($dokumen_dikumpul as $dokumen) {
+    foreach($dokumen_kelas as $dokumen) {
         $tenggat=Carbon::parse($dokumen->dokumen_ditugaskan->tenggat_waktu);
         $waktu_pengumpulan=Carbon::parse($dokumen->waktu_pengumpulan);
         
-        if($waktu_pengumpulan->isAfter($tenggat)) {
+        if($waktu_pengumpulan->isAfter($tenggat) && !is_null($dokumen->file_dokumen)) {
+            $telat++;
+        }
+
+        if(Carbon::now()->isAfter($tenggat) && is_null($dokumen->file_dokumen)) {
+            $terlewat++;
+        }
+
+        if(!is_null($dokumen->file_dokumen)) {
+            $terkumpul++;
+        }
+        
+        $ditugaskan++;
+    }
+
+    foreach($dokumen_matkul as $dokumen) {
+        $tenggat=Carbon::parse($dokumen->dokumen_ditugaskan->tenggat_waktu);
+        $waktu_pengumpulan=Carbon::parse($dokumen->waktu_pengumpulan);
+        
+        if($waktu_pengumpulan->isAfter($tenggat) && !is_null($dokumen->file_dokumen)) {
             $telat++;
         }
 
@@ -131,11 +148,13 @@ function dokumenSummary($dokumen_dikumpul) {
     $terkumpul=0;
     $ditugaskan=0;
 
+    // dd($dokumen_dikumpul);
+
     foreach($dokumen_dikumpul as $dokumen) {
         $tenggat=Carbon::parse($dokumen->dokumen_ditugaskan->tenggat_waktu);
         $waktu_pengumpulan=Carbon::parse($dokumen->waktu_pengumpulan);
         
-        if($waktu_pengumpulan->isAfter($tenggat)) {
+        if($waktu_pengumpulan->isAfter($tenggat) && !is_null($dokumen->file_dokumen)) {
             $telat++;
         }
 
@@ -170,7 +189,7 @@ function isMatkul($type) {
 
 function pathDokumen($tahun_ajaran, $isMatkul, $matkul, $kelas=null) {
     if($isMatkul) {
-        return '/Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/Dokumen_Mata_Kuliah/'.$matkul.'/';
+        return '/Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/';
     }
-    return '/Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/Dokumen_Kelas/'.$matkul.'/'.$kelas;
+    return '/Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/'.$kelas;
 }

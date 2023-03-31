@@ -20,9 +20,9 @@ class Role
                 if($request->user()->aktif_role->is_dosen == 0) {
                     return $next($request);
                 }
-                abort(403, 'Anda tidak memiliki hak mengakses laman tersebut!');
+                abort(403, 'Anda tidak memiliki akses ke halaman ini');
             }
-            abort(403, 'Anda tidak memiliki hak mengakses laman tersebut!');
+            abort(403, 'Anda tidak memiliki akses ke halaman ini');
         } else if($role=='admin') {
             if (in_array($request->user()->role, ['kaprodi', 'gkmp','admin'])) {
                 if($request->user()->role == 'admin') {
@@ -31,10 +31,10 @@ class Role
                     if($request->user()->aktif_role->is_dosen == 0) {
                         return $next($request);
                     }
-                    abort(403, 'Anda tidak memiliki hak mengakses laman tersebut!');
+                    abort(403, 'Anda tidak memiliki akses ke halaman ini');
                 }
             }
-            abort(403, 'Anda tidak memiliki hak mengakses laman tersebut!');  
+            abort(403, 'Anda tidak memiliki akses ke halaman ini');  
         } else if($role == 'dosen') {
             if (in_array($request->user()->role, ['kaprodi', 'gkmp','dosen'])) {
                 if($request->user()->role == 'dosen') {
@@ -43,11 +43,11 @@ class Role
                     if($request->user()->aktif_role->is_dosen == 1) {
                         return $next($request);
                     }
-                    abort(403, 'Anda tidak memiliki hak mengakses laman tersebut!');
+                    abort(403, 'Anda tidak memiliki akses ke halaman ini');
                 }
             }
-            abort(403, 'Anda tidak memiliki hak mengakses laman tersebut!');
+            abort(403, 'Anda tidak memiliki akses ke halaman ini');
         }
-        abort(403, 'Anda tidak memiliki hak mengakses laman tersebut!');
+        abort(403, 'Anda tidak memiliki akses ke halaman ini');
     }
 }

@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Models\TahunAjaran;
 use App\Models\MataKuliah;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DokumenKelas;
+use App\Models\DokumenMatkul;
 
 class Kelas extends Model
 {
@@ -52,9 +54,14 @@ class Kelas extends Model
     }
         
 
-    public function dokumen_dikumpul()
+    public function dokumen_kelas()
     {
-        return $this->hasMany(DokumenDikumpul::class, 'kode_kelas');
+        return $this->hasMany(DokumenKelas::class, 'kode_kelas');
+    }
+    
+    public function kelas_dokumen_matkul()
+    {
+        return $this->belongsToMany(DokumenMatkul::class, 'kelas_dokumen_matkul', 'kode_kelas', 'id_dokumen_matkul');
     }
 
     public function matkul()

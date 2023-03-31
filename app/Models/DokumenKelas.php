@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\DokumenDitugaskan;
 use App\Models\Kelas;
 
-class DokumenDikumpul extends Model
+class DokumenKelas extends Model
 {
     use HasFactory;
-    protected $table = 'dokumen_dikumpul';
-    protected $primaryKey = 'id_dokumen_dikumpul';
+    protected $table = 'dokumen_kelas';
+    protected $primaryKey = 'id_dokumen_kelas';
     
     protected $fillable = [
         // 'id_dokumen_dikumpul',

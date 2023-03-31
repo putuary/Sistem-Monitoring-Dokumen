@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Kelas;
+use App\Models\DokumenMatkul;
 
 class MataKuliah extends Model
 {
@@ -30,5 +32,10 @@ class MataKuliah extends Model
     public function kelas()
     {
         return $this->hasMany(Kelas::class, 'kode_matkul');
+    }
+
+    public function dokumen_matkul()
+    {
+        return $this->hasMany(DokumenMatkul::class, 'kode_matkul');
     }
 }

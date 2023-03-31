@@ -95,7 +95,7 @@
 
         @foreach ($kelas as $item)
         @php
-          $status = kelasSummary($item->dokumen_dikumpul);
+          $status = kelasSummary($item->dokumen_kelas, $item->kelas_dokumen_matkul);
           // dd($status);
         @endphp
             <!-- Progres Mata Kuliah -->

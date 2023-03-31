@@ -101,8 +101,7 @@ class PenugasanController extends Controller
                 if($dokumen->dikumpulkan_per == 1) {
                     foreach($kelas as $kls) {
                         // $id_dokumen_dikumpul=IdGenerator::generate(['table' => 'dokumen_dikumpul', 'field'=>'id_dokumen_dikumpul', 'length' => 10, 'prefix' => 'DK']);
-                        $kls->dokumen_dikumpul()->create([
-                            // 'id_dokumen_dikumpul' => $id_dokumen_dikumpul,
+                        $kls->dokumen_kelas()->create([
                             'id_dokumen_ditugaskan' => $id,
                             'file_dokumen' => null,
                             'waktu_pengumpulan' => null,
@@ -113,14 +112,14 @@ class PenugasanController extends Controller
                         if($mkl->praktikum == 0  && $request->id_dokumen[$i] == 'DP0003') {
                             continue; 
                         }
+                        // $id_dokumen_dikumpul=IdGenerator::generate(['table' => 'dokumen_dikumpul', 'field'=>'id_dokumen_dikumpul', 'length' => 10, 'prefix' => 'DK']);
+                        $dokumen_matkul=$mkl->dokumen_matkul()->create([
+                            'id_dokumen_ditugaskan' => $id,
+                            'file_dokumen' => null,
+                            'waktu_pengumpulan' => null,
+                        ]);
                         foreach($mkl->kelas as $kls) {
-                            // $id_dokumen_dikumpul=IdGenerator::generate(['table' => 'dokumen_dikumpul', 'field'=>'id_dokumen_dikumpul', 'length' => 10, 'prefix' => 'DK']);
-                            $kls->dokumen_dikumpul()->create([
-                                // 'id_dokumen_dikumpul' => $id_dokumen_dikumpul,
-                                'id_dokumen_ditugaskan' => $id,
-                                'file_dokumen' => null,
-                                'waktu_pengumpulan' => null,
-                            ]);
+                            $kls->kelas_dokumen_matkul()->attach($dokumen_matkul->id_dokumen_matkul);
                         }
                     }
                 }

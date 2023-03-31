@@ -11,18 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dokumen_dikumpul', function (Blueprint $table) {
-            // $table->string('id_dokumen_dikumpul')->primary();
-            $table->id('id_dokumen_dikumpul');
+        Schema::create('dokumen_matkul', function (Blueprint $table) {
+            $table->id('id_dokumen_matkul');
             $table->string('id_dokumen_ditugaskan');
-            $table->bigInteger('kode_kelas')->unsigned();
+            $table->string('kode_matkul');
             $table->string('file_dokumen')->nullable();
             $table->dateTime('waktu_pengumpulan')->nullable();
             $table->timestamps();
 
-            $table->unique(['id_dokumen_ditugaskan', 'kode_kelas']);
+            $table->unique(['id_dokumen_ditugaskan', 'kode_matkul']);
             $table->foreign('id_dokumen_ditugaskan')->references('id_dokumen_ditugaskan')->on('dokumen_ditugaskan');
-            $table->foreign('kode_kelas')->references('kode_kelas')->on('kelas');
+            $table->foreign('kode_matkul')->references('kode_matkul')->on('mata_kuliah');
         });
     }
 
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dokumen_dikumpuls');
+        Schema::dropIfExists('dokumen_matkul');
     }
 };
