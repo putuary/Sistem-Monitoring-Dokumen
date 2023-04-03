@@ -2,6 +2,8 @@
 
 use Carbon\Carbon;
 use App\Models\AktifRole;
+use App\Models\DokumenKelas;
+use App\Models\DokumenMatkul;
 use App\Models\Kelas;
 
 function NamaPeran($peran){
@@ -55,6 +57,15 @@ function showTenggat($date) {
     $tenggat=Carbon::parse($date)->locale('id')->isoFormat('LLLL');
     
     return $tenggat;
+}
+
+function showWaktu($date) {
+    if(is_null($date)) {
+        return '-';
+    }
+    $waktu=Carbon::parse($date)->locale('id')->isoFormat('LLLL');
+    
+    return $waktu;
 }
 
 function backgroundStatus($tenggat, $waktu_pengumpulan) {
@@ -142,16 +153,20 @@ function kelasSummary($dokumen_kelas, $dokumen_matkul) {
     ];
 }
 
-function dokumenSummary($dokumen_dikumpul) {
+function dokumenSummary($dokumen_ditugaskan) {
     $terlewat=0;
     $telat=0;
     $terkumpul=0;
     $ditugaskan=0;
 
-    // dd($dokumen_dikumpul);
+    if($dokumen_ditugaskan->dokumen_perkuliahan->dikumpulkan_per==0){
+        $dokumen_dikumpul=$dokumen_ditugaskan->dokumen_matkul;
+    }else{
+        $dokumen_dikumpul=$dokumen_ditugaskan->dokumen_kelas;
+    }
 
     foreach($dokumen_dikumpul as $dokumen) {
-        $tenggat=Carbon::parse($dokumen->dokumen_ditugaskan->tenggat_waktu);
+        $tenggat=Carbon::parse($dokumen_ditugaskan->tenggat_waktu);
         $waktu_pengumpulan=Carbon::parse($dokumen->waktu_pengumpulan);
         
         if($waktu_pengumpulan->isAfter($tenggat) && !is_null($dokumen->file_dokumen)) {
@@ -192,4 +207,36 @@ function pathDokumen($tahun_ajaran, $isMatkul, $matkul, $kelas=null) {
         return '/Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/';
     }
     return '/Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/'.$kelas;
+}
+
+function countStatusDokumen($filter=null, $tahun_ajaran=null) {
+    $dokumen_kelas=DokumenKelas::with(['dokumen_ditugaskan', 'kelas'])->whereHas('dokumen_ditugaskan', function($query) use ($tahun_ajaran) {
+        $query->dokumenTahun($tahun_ajaran);
+    })->filter($filter);
+    $dokumen_all=DokumenMatkul::with(['dokumen_ditugaskan', 'kelas_dokumen_matkul'])->whereHas('dokumen_ditugaskan', function($query) use ($tahun_ajaran) {
+        $query->dokumenTahun($tahun_ajaran);
+    })->filter($filter)->union($dokumen_kelas)->orderBy('waktu_pengumpulan', 'desc')->get();
+
+    return count($dokumen_all);
+}
+
+function dosenKelas($kelas_dokumen_matkul) {
+    $dosen=array();
+    foreach ($kelas_dokumen_matkul as $kelas) {
+        foreach ($kelas->dosen_kelas as $dosen_kelas) {
+            if(!in_array($dosen_kelas->nama, $dosen)) {
+                array_push($dosen, $dosen_kelas->nama);
+            }
+        }
+    }
+    return $dosen;
+}
+
+function showProfilDokumen($id_dokumen) {
+    $dokumen=DokumenMatkul::where('id_dokumen_matkul', $id_dokumen)->first();
+
+    return (object) [
+        'nama_matkul' => $dokumen->matkul->nama_matkul,
+        'dosen'       => dosenKelas($dokumen->kelas_dokumen_matkul),
+    ];
 }

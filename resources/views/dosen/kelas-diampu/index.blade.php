@@ -1,4 +1,9 @@
 @extends('layouts.user-base')
+
+@section('style')
+  <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/select2/css/select2.min.css') }}">
+@endsection
+
 @section('content')
     <!-- Hero -->
     <div class="content">
@@ -11,11 +16,33 @@
 
       {{-- <?php dd($kelas); ?> --}}
 
-      <div class="row">
+      {{-- <div class="row">
         <div class="col-md mb-4 text-center">
           <span class="p-2 btn-outline-dark bg-white rounded text-dark fw-semibold">TA : {{ $kelas[0]->tahun_ajaran->tahun_ajaran ?? '-' }}</span>
         </div>
-      </div>
+      </div> --}}
+
+      <form action="/kelas-diampu">
+        <div class="block-content">
+          <div class="row justify-content-center">
+            <div class="col-md-2 col-lg-3">
+              <div class="mb-4 d-flex">
+                <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
+                <!-- For more info and examples you can check out https://github.com/select2/select2 -->
+                <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Pilih Tahun Ajaran ....">
+                  <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+                  @foreach ($tahun_ajaran as $item)
+                  <option value={{ $item->id_tahun_ajaran }} @selected($kelas[0]->tahun_ajaran->id_tahun_ajaran==$item->id_tahun_ajaran)>{{ $item->tahun_ajaran }} </option>
+                  @endforeach
+                </select>
+                <button class="input-group-text" type="submit">
+                  <i class="fa fa-fw fa-search"></i>
+                </button>                
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
 
       <div class="d-flex flex-column flex-md-row justify-content-end align-items-md-center py-2 text-center text-md-start">
           {{-- <div class="mt-3 mt-md-0">
@@ -101,6 +128,10 @@
     <script src={{ URL::asset("assets/js/plugins/easy-pie-chart/jquery.easypiechart.min.js") }}></script>
     <script src={{ URL::asset("assets/js/plugins/jquery-sparkline/jquery.sparkline.min.js") }}></script>
     <script src={{ URL::asset("assets/js/plugins/chart.js/chart.min.js") }}></script>
+    <script src={{  URL::asset("assets/js/plugins/select2/js/select2.full.min.js") }}></script>
+    
+    <!-- Page JS Helpers (Select2 + Bootstrap Maxlength + CKEditor plugins) -->
+    <script>One.helpersOnLoad(["jq-select2"]);</script>
 
     <!-- Page JS Code -->
     <script src={{ URL::asset("assets/js/pages/be_comp_charts.min.js") }}></script>

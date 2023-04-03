@@ -22,6 +22,33 @@ class DokumenMatkul extends Model
         'waktu_pengumpulan',
     ];
 
+    public function scopeFilter($query, $filter)
+    {
+        if(isset($filter)) {
+            if($filter == 'terkumpul') {
+                return $query->whereNotNull('file_dokumen');
+            } else if($filter == 'tepat_waktu') {
+                return $query->whereNotNull('file_dokumen')->where('waktu_pengumpulan', '<=', function($query) {
+                    $query->select('tenggat_waktu')->from('dokumen_ditugaskan')->whereColumn('id_dokumen_ditugaskan', 'dokumen_matkul.id_dokumen_ditugaskan');
+                });
+            } else if($filter == 'terlambat') {
+                return $query->whereNotNull('file_dokumen')->where('waktu_pengumpulan', '>', function($query) {
+                    $query->select('tenggat_waktu')->from('dokumen_ditugaskan')->whereColumn('id_dokumen_ditugaskan', 'dokumen_matkul.id_dokumen_ditugaskan');
+                });
+            } else if( $filter == 'belum_terkumpul') {
+                return $query->whereNull('file_dokumen');
+            }
+        }
+        return $query->whereNotNull('file_dokumen');
+    }
+
+    public function scopeDokumenKelas($query, $kode_kelas)
+    {
+        return $query->whereHas('kelas_dokumen_matkul', function($query) use ($kode_kelas) {
+            $query->where('kelas_dokumen_matkul.kode_kelas', $kode_kelas);
+        });
+    }
+
     public function dokumen_ditugaskan()
     {
         return $this->belongsTo(DokumenDitugaskan::class, 'id_dokumen_ditugaskan');

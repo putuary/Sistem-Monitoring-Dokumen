@@ -12,7 +12,7 @@
      rel="stylesheet"
      href={{ URL::asset("assets/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css")}} />
 
-     <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/flatpickr/flatpickr.min.css') }}" />
+     <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/select2/css/select2.min.css') }}">
 @endsection
 
 @section('content')
@@ -29,30 +29,54 @@
       <div class="block block-rounded">
         <div class="block-header block-header-default">
           <h3 class="block-title">Riwayat Pengumpulan</h3>
+          <div class="block-options">
+            <div class="dropdown">
+              <button type="button" class="btn-block-option" id="dropdown-ecom-filters" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Filters <i class="fa fa-angle-down ms-1"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-ecom-filters">
+                <a class="dropdown-item d-flex align-items-center justify-content-between" href="?filter=terkumpul{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
+                  Terkumpul
+                  <span class="badge bg-black-50 rounded-pill">{{ $terkumpul }}</span>
+                </a>
+                <a class="dropdown-item d-flex align-items-center justify-content-between" href="?filter=tepat_waktu{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
+                  Tepat Waktu
+                  <span class="badge bg-warning rounded-pill">{{ $tepat_waktu }}</span>
+                </a>
+                <a class="dropdown-item d-flex align-items-center justify-content-between" href="?filter=terlambat{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
+                  Terlambat
+                  <span class="badge bg-info rounded-pill">{{ $terlambat }}</span>
+                </a>
+                <a class="dropdown-item d-flex align-items-center justify-content-between" href="?filter=belum_terkumpul{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
+                  Kosong
+                  <span class="badge bg-danger rounded-pill">{{ $belum_terkumpul }}</span>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="block-content block-content-full">
           <div class="block-content">
             <div class="row justify-content-center">
               <div class="col-md-2 col-lg-3">
+              <form action="/riwayat-pengumpulan">
                 <div class="mb-4 d-flex">
+                  @if(request('filter'))
+                  <input type="hidden" name="filter" value="{{ request('filter') }}">
+                  @endif
                   <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
                   <!-- For more info and examples you can check out https://github.com/select2/select2 -->
-                  <select class="js-select2 form-select" id="one-ecom-product-category" name="one-ecom-product-category" style="width: 100%;" data-placeholder="Choose one..">
+                  <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Choose one..">
                     <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-                    <option value="1">Semua</option>
-                    <option value="2" selected>Video Games</option>
-                    <option value="3">Tablets</option>
-                    <option value="4">Laptops</option>
-                    <option value="5">PC</option>
-                    <option value="6">Home Cinema</option>
-                    <option value="7">Sound</option>
-                    <option value="8">Office</option>
-                    <option value="9">Adapters</option>
+                    @foreach ($tahun_ajaran as $item)
+                    <option value={{ $item->id_tahun_ajaran }} @selected(($dokumen[0]->dokumen_ditugaskan->id_tahun_ajaran ?? null) == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }}</option>
+                    @endforeach
                   </select>
-                  <button class="input-group-text">
+                  <button type="submit" class="input-group-text">
                     <i class="fa fa-fw fa-search"></i>
-                  </button>                
+                  </button>
                 </div>
+              </form>
               </div>
             </div>
           </div>
@@ -61,6 +85,7 @@
             <thead>
               <tr>
                 <th class="text-center">No.</th>
+                <th class="text-center" >Dokumen</th>
                 <th class="text-center" >Kelas</th>
                 <th class="text-center" >Dosen</th>
                 <th class="text-center" >Waktu Pengumpulan</th>
@@ -68,70 +93,43 @@
               </tr>
             </thead>
             <tbody>
-              {{-- @foreach ($dokumen as $key => $item)
+              @foreach ($dokumen as $key => $item)
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="fs-sm">{{ $item->dokumen_perkuliahan->nama_dokumen }}</td>
-                <td class="fs-sm">{{ showTenggat($item->tenggat_waktu) }}</td>
+                <td class="fs-sm">{{ $item->dokumen_ditugaskan->dokumen_perkuliahan->nama_dokumen }}</td>
+                @if($item->dokumen_ditugaskan->dokumen_perkuliahan->dikumpulkan_per == 1)
+                <td class="fs-sm">{{ $item->kelas->matkul->nama_matkul.' '.$item->kelas->nama_kelas }}</td>
+                <td class="fs-sm">
+                  <ul>
+                    @foreach ($item->kelas->dosen_kelas as $dosen)
+                    <li>{{ $dosen->nama }}</li>
+                    @endforeach
+                  </ul>
+                </td>
+                @else
+                  @php
+                      $dokumen_matkul=showProfilDokumen($item->id_dokumen_kelas)
+                  @endphp
+                 
+                <td class="fs-sm">{{ $dokumen_matkul->nama_matkul }}</td>
+                <td class="fs-sm">
+                  <ul>
+                    @foreach ($dokumen_matkul->dosen as $dosen)
+                      <li>{{ $dosen }}</li>
+                    @endforeach
+                  </ul>
+                </td>
+                @endif
                 <td class="text-center">
-                  <div class="d-flex">
-                      <div class="form-check form-switch align-items-center">
-                        <input class="form-check-input" type="checkbox" onclick="aturPengumpulan({{ $key }})" id="example-switch-default1" name="example-switch-default1" @if($item->pengumpulan == 1) checked @endif>
-                      </div>
-                  </div>
+                  {{ showWaktu($item->waktu_pengumpulan) }}
                 </td>
                 <td class="text-center">
-                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editPengingat({{ $key }})" data-bs-toggle="tooltip" title="Edit">
-                    <i class="fa fa-fw fa-pencil-alt"></i>
-                  </a>
+                  <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->waktu_pengumpulan ? backgroundStatus($item->dokumen_ditugaskan->tenggat_waktu, $item->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->waktu_pengumpulan ? statusPengumpulan($item->dokumen_ditugaskan->tenggat_waktu, $item->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
                 </td>
               </tr>
-              @endforeach --}}
+              @endforeach
             </tbody>
           </table>
-          <div class="modal fade modal-edit" id="modal-block-fromleft" tabindex="-1" aria-labelledby="modal-block-fromleft" style="display: none;" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-fromleft" role="document">
-              <div class="modal-content">
-                <div class="block block-rounded block-transparent mb-0">
-                  <div class="block-header block-header-default">
-                    <h3 class="block-title">Edit Tenggat Waktu</h3>
-                    <div class="block-options">
-                      <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fa fa-fw fa-times"></i>
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <form  action="/atur-pengingat-pengumpulan/edit"
-                  method="POST"
-                  enctype="multipart/form-data">
-                   @csrf
-                    <div class="block-content fs-sm mb-3">
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <div class="form-group">
-                            <input type="hidden" name="id_dokumen_ditugaskan" id="id_dokumen_ditugaskan">
-                            <label for="example-text-input">Tenggat Waktu</label>
-                            <input type="text" class="js-flatpickr form-control" id="tenggat_waktu" name="tenggat_waktu" data-enable-time="true" data-time_24hr="true" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="block-content block-content-full text-end border-top">
-                      <button
-                        type="submit"
-                        class="btn btn-alt-primary"
-                        data-bs-dismiss="modal">
-                        <i class="fa fa-check me-1"></i>Simpan
-                      </button>
-                    </div>
-                  </form>
-                  
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       <!-- END All Products -->
@@ -156,13 +154,13 @@
      <script src={{  URL::asset("assets/js/pages/be_tables_datatables.min.js") }}></script>
 
      <!-- Page JS Plugins -->
-     <script src="{{ URL::asset('assets/js/plugins/flatpickr/flatpickr.min.js') }}"></script>
+    <script src={{  URL::asset("assets/js/plugins/select2/js/select2.full.min.js") }}></script>
 
     <!-- Page JS Helpers (Select2 + Bootstrap Maxlength + CKEditor plugins) -->
 
     <script>
       One.helpersOnLoad([
-        "js-flatpickr",
+        "jq-select2",
       ]);
     </script>
 

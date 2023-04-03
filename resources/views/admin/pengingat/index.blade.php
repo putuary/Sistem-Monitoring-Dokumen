@@ -13,6 +13,7 @@
      href={{ URL::asset("assets/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css")}} />
 
      <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/flatpickr/flatpickr.min.css') }}" />
+     <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/select2/css/select2.min.css') }}">
 @endsection
 
 @section('content')
@@ -34,25 +35,21 @@
           <div class="block-content">
             <div class="row justify-content-center">
               <div class="col-md-2 col-lg-3">
+                <form action="/atur-pengingat-pengumpulan">
                 <div class="mb-4 d-flex">
                   <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
                   <!-- For more info and examples you can check out https://github.com/select2/select2 -->
-                  <select class="js-select2 form-select" id="one-ecom-product-category" name="one-ecom-product-category" style="width: 100%;" data-placeholder="Choose one..">
+                  <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Choose one..">
                     <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-                    <option value="1">2020/2021 Genap</option>
-                    <option value="2" selected>Video Games</option>
-                    <option value="3">Tablets</option>
-                    <option value="4">Laptops</option>
-                    <option value="5">PC</option>
-                    <option value="6">Home Cinema</option>
-                    <option value="7">Sound</option>
-                    <option value="8">Office</option>
-                    <option value="9">Adapters</option>
+                    @foreach ($tahun_ajaran as $item)
+                    <option value="{{ $item->id_tahun_ajaran }}"@selected($dokumen[0]->id_tahun_ajaran == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }}</option>
+                    @endforeach
                   </select>
                   <button class="input-group-text">
                     <i class="fa fa-fw fa-search"></i>
                   </button>                
                 </div>
+                </form>
               </div>
             </div>
           </div>
@@ -74,16 +71,18 @@
                 <td class="fs-sm">{{ $item->dokumen_perkuliahan->nama_dokumen }}</td>
                 <td class="fs-sm">{{ showTenggat($item->tenggat_waktu) }}</td>
                 <td class="text-center">
-                  <div class="d-flex">
-                      <div class="form-check form-switch align-items-center">
+                  <div class="ms-5">
+                      <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" onclick="aturPengumpulan({{ $key }})" id="example-switch-default1" name="example-switch-default1" @if($item->pengumpulan == 1) checked @endif>
                       </div>
                   </div>
                 </td>
                 <td class="text-center">
+                  @if($item->tahun_ajaran->status == 1)
                   <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editPengingat({{ $key }})" data-bs-toggle="tooltip" title="Edit">
                     <i class="fa fa-fw fa-pencil-alt"></i>
                   </a>
+                  @endif
                 </td>
               </tr>
               @endforeach
@@ -157,11 +156,12 @@
 
      <!-- Page JS Plugins -->
      <script src="{{ URL::asset('assets/js/plugins/flatpickr/flatpickr.min.js') }}"></script>
+     <script src={{  URL::asset("assets/js/plugins/select2/js/select2.full.min.js") }}></script>
 
     <!-- Page JS Helpers (Select2 + Bootstrap Maxlength + CKEditor plugins) -->
-
     <script>
       One.helpersOnLoad([
+        "jq-select2",
         "js-flatpickr",
       ]);
     </script>

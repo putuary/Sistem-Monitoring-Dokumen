@@ -18,9 +18,11 @@ class PengingatController extends Controller
 {
     public function showPengingat()
     {
-        $dokumen=DokumenDitugaskan::with('dokumen_perkuliahan')->DokumenAktif()->get();
+        $tahun_ajaran = TahunAjaran::orderBy('id_tahun_ajaran', 'desc')->get();
         
-        return view('admin.pengingat.index', ['dokumen' => $dokumen]);
+        $dokumen=DokumenDitugaskan::with(['dokumen_perkuliahan', 'tahun_ajaran'])->dokumenTahun(request('tahun_ajaran'))->get();
+        
+        return view('admin.pengingat.index', ['tahun_ajaran' => $tahun_ajaran, 'dokumen' => $dokumen]);
     }
 
     public function editPengingat(Request $request)

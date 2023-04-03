@@ -14,7 +14,7 @@
   </a>
 </li>
 
-<li class="nav-main-heading">DOKUMEN PENGAJARAN</li>
+<li class="nav-main-heading">DOKUMEN PERKULIAHAN</li>
 
 <li class="nav-main-item">
   <a class="nav-main-link" href="/penugasan">
@@ -31,9 +31,9 @@
 </li>
 
 <li class="nav-main-item">
-  <a class="nav-main-link" href="/dokumen-sebelumnya">
+  <a class="nav-main-link" href="/riwayat-pengumpulan">
     <i class="nav-main-link-icon si si-wrench"></i>
-    <span class="nav-main-link-name">Dokumen Semester Sebelumnya</span>
+    <span class="nav-main-link-name">Riwayat Pengumpulan</span>
   </a>
 </li>
 
@@ -46,9 +46,11 @@
   </a>
 </li>
 
+<li class="nav-main-heading">MANAJEMEN PERINGKAT</li>
+
 <li class="nav-main-item">
-  <a class="nav-main-link" href="/atur-pengingat-pengumpulan-sebelumnya">
+  <a class="nav-main-link" href="/atur-pengingat-pengumpulan">
     <i class="nav-main-link-icon si si-wrench"></i>
-    <span class="nav-main-link-name">Atur Pengingat dan Pengumpulan Sebelumnya</span>
+    <span class="nav-main-link-name">Atur Pengingat dan Pengumpulan</span>
   </a>
 </li>

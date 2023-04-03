@@ -51,11 +51,11 @@ class UserAuthController extends Controller
     {
         if(in_array(Auth::user()->role, ['kaprodi', 'gkmp'] )) {
             if(Auth::user()->aktif_role->is_dosen == 0) {
-                return view('user.dashboard');
+                return view('admin.dashboard');
             }
             return view('dosen.dashboard-dosen');
         } else if(Auth::user()->role == "admin") {
-            return view('user.dashboard');
+            return view('admin.dashboard');
         }
         return view('dosen.dashboard-dosen');
     }
@@ -82,7 +82,7 @@ class UserAuthController extends Controller
         $data=User::get();
         // dd($data);
 
-        return view('user.user-management', ['data' => $data]);
+        return view('admin.user-management', ['data' => $data]);
     }
 
     public function add_user(Request $request)
@@ -109,7 +109,7 @@ class UserAuthController extends Controller
             ]);
         }
 
-        return redirect('/manajemen-pengguna')->with('success', 'Data berhasil ditambahkan');
+        return redirect()->back()->with('success', 'Data berhasil ditambahkan');
     }
 
     public function edit_user(Request $request)
@@ -146,13 +146,13 @@ class UserAuthController extends Controller
             CreateorDeleteAktifRole($request->id, $pengguna->role, $request->role, $request->id);
         }
 
-        return redirect('/manajemen-pengguna')->with('success', 'Data berhasil diubah');
+        return redirect()->back()->with('success', 'Data berhasil diubah');
     }
 
     public function delete_user(Request $request)
     {
         User::where('id', $request->id_pengguna)->delete();
-        return redirect('/manajemen-pengguna')->with('success', 'Data berhasil dihapus');
+        return redirect()->back()->with('success', 'Data berhasil dihapus');
     }
 
 }

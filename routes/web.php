@@ -7,6 +7,7 @@ use App\Http\Controllers\PenugasanController;
 use App\Http\Controllers\ProgresController;
 use App\Http\Controllers\PengingatController;
 use App\Http\Controllers\KelasController;
+use App\Http\Controllers\DokumenPerkuliahanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +60,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Progres Pengumpulan
     Route::get('/progres-pengumpulan', [ProgresController::class, 'index']);
+    Route::get('/progres-pengumpulan/kelas', [ProgresController::class, 'showProgresKelas']);
+    Route::get('/progres-pengumpulan/dokumen', [ProgresController::class, 'showProgresDokumen']);
+
+    // Riwayat Pengumpulan
+    Route::get('/riwayat-pengumpulan', [ProgresController::class, 'showRiwayat']);
 
     // Pengingat
     Route::get('/atur-pengingat-pengumpulan', [PengingatController::class, 'showPengingat']);
@@ -71,11 +77,13 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
     // Kelas Diampu
     Route::get('/kelas-diampu', [KelasController::class, 'showKelasDiampu']);
     Route::get('/kelas-diampu/{kode_kelas}', [KelasController::class, 'showDokumenDitugaskan']);
-    Route::get('/kelas-diampu/download/{id_dokumen}', [KelasController::class, 'downloadTemplate']);
+    Route::get('/kelas-diampu/download-template/{id_dokumen}', [KelasController::class, 'downloadTemplate']);
     Route::post('/kelas-diampu/upload', [KelasController::class, 'uploadDokumen']);
 
-});
+    // Dokumen Perkuliahan
+    Route::get('/dokumen-perkuliahan', [DokumenPerkuliahanController::class, 'index']);
 
+});
 
 
 
@@ -96,10 +104,6 @@ Route::get('/dokumen-sebelumnya', function () {
 // Route::get('/atur-pengingat-pengumpulan', function () {
 //     return view('user.atur-pengingat');
 // })->middleware('auth');
-
-Route::get('/riwayat', function () {
-    return view('admin.riwayat.index');
-})->middleware('auth');
 
 Route::get('/jumlah-kelas', function () {
     return view('user.jumlah-kelas');

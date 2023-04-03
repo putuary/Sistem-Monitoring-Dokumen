@@ -61,14 +61,13 @@
               <i class="fa fa-fw fa-angle-down"></i>
             </button>
             <div class="dropdown-menu dropdown-menu-end fs-sm" aria-labelledby="dropdown-analytics-overview">
-              <a class="dropdown-item fw-medium d-flex align-items-center justify-content-between" href="/progres-pengumpulan?filter=kelas">
+              <a class="dropdown-item fw-medium d-flex align-items-center justify-content-between">
                 <span>Kelas</span>
-                {!! (request('filter') == null || request('filter') == 'kelas') ? '<i class="fa fa-check">' : '' !!}</i>
+                <i class="fa fa-check"></i>
               </a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item fw-medium d-flex align-items-center justify-content-between" href="/progres-pengumpulan?filter=dokumen">
+              <a class="dropdown-item fw-medium d-flex align-items-center justify-content-between" href="{{ request('tahun_ajaran') ? '/progres-pengumpulan?filter=dokumen&tahun_ajaran='.request('tahun_ajaran') : '/progres-pengumpulan?filter=dokumen' }}">
                 <span>Dokumen</span>
-                {!! (request('filter') != null && request('filter') == 'dokumen') ? '<i class="fa fa-check">' : '' !!}</i>
               </a>
             </div>
           </div>
@@ -100,7 +99,7 @@
         @endphp
             <!-- Progres Mata Kuliah -->
         <div class="col-sm-6 col-xxl-3">
-          <a class="block block-rounded d-flex flex-column h-100 mb-0" href="/kelas-diampu/{{ $item->kode_kelas }}">
+          <a class="block block-rounded d-flex flex-column h-100 mb-0" href="/progres-pengumpulan/kelas?id={{ $item->kode_kelas }}">
             <div
               class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
               <dl class="mb-0">

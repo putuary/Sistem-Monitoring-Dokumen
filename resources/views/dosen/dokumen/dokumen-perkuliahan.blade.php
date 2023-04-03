@@ -30,31 +30,27 @@
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
-          <h3 class="block-title">Dokumen {{ $nama_kelas }} </h3>
+          <h3 class="block-title">Dokumen Perkuliahan</h3>
         </div>
         <div class="block-content block-content-full">
           <div class="block-content">
             <div class="row justify-content-center">
               <div class="col-md-2 col-lg-3">
+                <form action="/dokumen-perkuliahan">
                 <div class="mb-4 d-flex">
                   <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
                   <!-- For more info and examples you can check out https://github.com/select2/select2 -->
-                  <select class="js-select2 form-select" id="one-ecom-product-category" name="one-ecom-product-category" style="width: 100%;" data-placeholder="Choose one..">
+                  <select class="js-select2 form-select" name="tahun_ajaran" style="width: 100%;" data-placeholder="Choose one..">
                     <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-                    <option value="1">2020/2021 Genap</option>
-                    <option value="2" selected>Video Games</option>
-                    <option value="3">Tablets</option>
-                    <option value="4">Laptops</option>
-                    <option value="5">PC</option>
-                    <option value="6">Home Cinema</option>
-                    <option value="7">Sound</option>
-                    <option value="8">Office</option>
-                    <option value="9">Adapters</option>
+                    @foreach ($tahun_ajaran as $item)
+                    <option value="{{ $item->id_tahun_ajaran }}" @selected(($dokumen[0]->tahun_ajaran->id_tahun_ajaran ?? null) == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }}</option>
+                    @endforeach
                   </select>
                   <button class="input-group-text">
                     <i class="fa fa-fw fa-search"></i>
                   </button>                
                 </div>
+                </form>
               </div>
             </div>
           </div>
@@ -64,8 +60,8 @@
               <tr>
                 <th class="text-center">No.</th>
                 <th class="text-center" >Nama Dokumen</th>
-                <th class="text-center" >Tenggat Waktu</th>
-                <th class="text-center" >Status Pengumpulan</th>
+                <th class="text-center" >Mata Kuliah/Kelas</th>
+                <th class="text-center" >Dosen</th>
                 <th class="text-center" style="width: %;">Aksi</th>
               </tr>
             </thead>
@@ -75,17 +71,29 @@
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
                 <td class="fs-sm">{{ $item->dokumen_perkuliahan->nama_dokumen }}</td>
-                <td class="fs-sm">{{ showTenggat($item->tenggat_waktu) }}</td>
                 @if ($item->dokumen_perkuliahan->dikumpulkan_per==0)
-                <td class="text-center">
-                  <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->dokumen_matkul[0]->waktu_pengumpulan ? backgroundStatus($item->tenggat_waktu, $item->dokumen_matkul[0]->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->dokumen_matkul[0]->waktu_pengumpulan ? statusPengumpulan($item->tenggat_waktu, $item->dokumen_matkul[0]->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
+                <td class="fs-sm">{{ $item->dokumen_matkul->matkul->nama_matkul }}</td>
+                <td class="fs-sm">
+                  @php
+                      $dosen = dosenKelas($item->dokumen_matkul->kelas_dokumen_matkul);
+                  @endphp
+                  <ul>
+                  @foreach ($dosen as $nama_dosen)
+                      <li>{{ $nama_dosen }}</li>
+                  @endforeach
+                  </ul>
                 </td>
                 @else
-                <td class="text-center">
-                  <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->dokumen_kelas[0]->waktu_pengumpulan ? backgroundStatus($item->tenggat_waktu, $item->dokumen_kelas[0]->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->dokumen_kelas[0]->waktu_pengumpulan ? statusPengumpulan($item->tenggat_waktu, $item->dokumen_kelas[0]->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
+                <td class="fs-sm">{{ $item->dokumen_kelas->kelas->matkul->nama_matkul.' '.$item->dokumen_kelas->kelas->nama_kelas }}</td>
+                <td>
+                  <ul>
+                    @foreach ($item->dokumen_kelas->kelas->dosen_kelas as $dosen)
+                        <li>{{ $dosen->nama }}</li>
+                    @endforeach
+                    </ul>
                 </td>
                 @endif
-                <td class="text-center">
+                {{-- <td class="text-center">
                   <form action="/manajemen-pengguna/delete" method="POST">
                     @csrf
                   @if ($item->dokumen_perkuliahan->dikumpulkan_per==0)
@@ -140,7 +148,7 @@
                   
                   
                   </form>
-                </td>
+                </td> --}}
               </tr>
               @endforeach
               

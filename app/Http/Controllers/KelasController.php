@@ -3,26 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\DokumenDikumpul;
 use App\Models\DokumenDitugaskan;
 use App\Models\DokumenKelas;
 use App\Models\DokumenMatkul;
 use App\Models\DokumenPerkuliahan;
 use App\Models\Kelas;
-use App\Models\MataKuliah;
-use Illuminate\Support\Facades\Auth;
+use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
 
 class KelasController extends Controller
 {
     public function showKelasDiampu()
     {
-        $kelas = Kelas::with(['dosen_kelas', 'tahun_ajaran', 'dokumen_kelas', 'matkul','kelas_dokumen_matkul'])->kelasDiampu()->kelasAktif()->get();
+        $tahun_ajaran = TahunAjaran::orderBy('id_tahun_ajaran', 'desc')->get();
+        $kelas = Kelas::with(['dosen_kelas', 'tahun_ajaran', 'dokumen_kelas', 'matkul','kelas_dokumen_matkul'])->kelasDiampu()->kelasTahun(request('tahun_ajaran'))->get();
         // dd($kelas[0]->kelas_dokumen_matkul);
         // $kelas=User::with('dosen_kelas')->where('id', Auth::user()->id)->whereRelation('tahun_ajaran', 'status', '=', 1)->get();
         // dd($kelas[0]->dokumen_dikumpul[0]->dokumen_ditugaskan->dokumen_perkuliahan->nama_dokumen);
         
-        return view('dosen.kelas-diampu.index', ['kelas' => $kelas]);
+        return view('dosen.kelas-diampu.index', ['kelas' => $kelas, 'tahun_ajaran' => $tahun_ajaran]);
     }
 
     public function showDokumenDitugaskan($kode_kelas)
@@ -30,16 +29,13 @@ class KelasController extends Controller
         if(isKelasDiampu($kode_kelas)) {
             $kelas=Kelas::where('kode_kelas', $kode_kelas)->first();
             $nama_kelas=$kelas->matkul->nama_matkul.' '.$kelas->nama_kelas;
+            
             $dokumen=DokumenDitugaskan::with(['dokumen_perkuliahan', 'dokumen_matkul' => function($query) use ($kode_kelas) {
-                $query->whereHas('kelas_dokumen_matkul', function($query) use ($kode_kelas) {
-                    $query->where('kelas_dokumen_matkul.kode_kelas', $kode_kelas);
-                });
+                $query->dokumenKelas($kode_kelas);
             }, 'dokumen_kelas' => function($query) use ($kode_kelas) {
                 $query->where('kode_kelas', $kode_kelas);
             }])->whereHas('dokumen_matkul', function($query) use ($kode_kelas) {
-                $query->whereHas('kelas_dokumen_matkul', function($query) use ($kode_kelas) {
-                    $query->where('kelas_dokumen_matkul.kode_kelas', $kode_kelas);
-                });
+                $query->dokumenKelas($kode_kelas);
             })->orWhereHas('dokumen_kelas', function($query) use ($kode_kelas) {
                 $query->where('kode_kelas', $kode_kelas);
             })->get();
@@ -51,6 +47,13 @@ class KelasController extends Controller
     }
 
     public function downloadTemplate($id_dokumen)
+    {
+        $dokumen=DokumenPerkuliahan::find($id_dokumen);
+        
+        return response()->download(public_path('storage/template/'.$dokumen->template));
+    }
+
+    public function downloadDokumen($id_dokumen)
     {
         $dokumen=DokumenPerkuliahan::find($id_dokumen);
         
