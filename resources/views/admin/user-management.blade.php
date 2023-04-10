@@ -83,7 +83,7 @@
                                 required />
                             <label for="example-text-input">Email</label>
                             <input
-                                type="text"
+                                type="email"
                                 class="form-control"
                                 placeholder="Masukkan Email"
                                 name="email"
@@ -202,7 +202,7 @@
                                 required />
                             <label for="example-text-input">Email</label>
                             <input
-                                type="text"
+                                type="email"
                                 class="form-control"
                                 placeholder="Masukkan Email"
                                 id="email"

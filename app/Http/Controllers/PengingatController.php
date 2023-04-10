@@ -36,10 +36,7 @@ class PengingatController extends Controller
             'tenggat_waktu' => $request->tenggat_waktu,
         ]);
         
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Berhasil mengubah pengingat',
-        ]);
+        return redirect()->back()->with('success', 'Berhasil mengubah pengingat');
     }
 
     public function editPengumpulan(Request $request) {
@@ -53,9 +50,19 @@ class PengingatController extends Controller
             $dokumen->update([
                 'pengumpulan' => 0,
             ]);
+            return response()->json([
+                'pengumpulan' => false,
+                'status' => 'success',
+                'message' => 'Pengumpulan dimatikan!',
+            ]);
         } else {
             $dokumen->update([
                 'pengumpulan' => 1,
+            ]);
+            return response()->json([
+                'pengumpulan' => true,
+                'status' => 'success',
+                'message' => 'Pengumpulan dihidupkan!',
             ]);
         }
     }

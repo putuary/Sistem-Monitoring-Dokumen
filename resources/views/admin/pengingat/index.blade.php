@@ -157,10 +157,12 @@
      <!-- Page JS Plugins -->
      <script src="{{ URL::asset('assets/js/plugins/flatpickr/flatpickr.min.js') }}"></script>
      <script src={{  URL::asset("assets/js/plugins/select2/js/select2.full.min.js") }}></script>
+     <script src="{{ URL::asset('assets/js/plugins/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
 
     <!-- Page JS Helpers (Select2 + Bootstrap Maxlength + CKEditor plugins) -->
     <script>
       One.helpersOnLoad([
+        "jq-notify",
         "jq-select2",
         "js-flatpickr",
       ]);
@@ -185,8 +187,12 @@
             id_dokumen_ditugaskan: jsfiles[id].id_dokumen_ditugaskan,
             _token: '{{ csrf_token() }}'
           },
-          success: function (status) {
-            console.log(status);
+          success: function (data) {
+            if(data.pengumpulan) {
+              One.helpers('jq-notify', {type: 'success', icon: 'fa fa-check me-1', message: data.message});
+            } else{
+              One.helpers('jq-notify', {type: 'danger', icon: 'fa fa-times me-1', message: data.message});
+            }
           }
         });
       }

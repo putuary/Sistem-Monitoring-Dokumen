@@ -10,6 +10,8 @@ use App\Models\DokumenPerkuliahan;
 use App\Models\Kelas;
 use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Carbon\Carbon;
 
 class KelasController extends Controller
 {
@@ -65,6 +67,8 @@ class KelasController extends Controller
         $request->validate([
             'file_dokumen' => 'required|mimes:pdf|max:10240',
         ]);
+        $data=$request->file('file_dokumen')->move(storage_path('app/dokumen'), $request->file('file_dokumen')->getClientOriginalName());
+        dd($data);
         
         // dd($request->all());
         if(is_null($request->id_dokumen_kelas)) {
