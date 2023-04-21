@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\AktifRole;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
 
 
@@ -60,6 +63,19 @@ class UserAuthController extends Controller
         return view('dosen.dashboard-dosen');
     }
 
+    public function profile()
+    {
+        if(in_array(Auth::user()->role, ['kaprodi', 'gkmp'] )) {
+            if(Auth::user()->aktif_role->is_dosen != 0) {
+                return view('user.profile', [
+                    'user' => User::with('aktif_role')->where('id', Auth::user()->id)->first(),
+                ]);
+            }  
+        } return view('user.profile', [
+            'user'  => Auth::user(),
+        ]);
+    }
+
     public function changeDashboard()
     {
         if(in_array(Auth::user()->role, ['kaprodi', 'gkmp'] )) {
@@ -77,82 +93,67 @@ class UserAuthController extends Controller
         abort (403, 'Anda tidak memiliki hak mengakses laman tersebut!');
     }
 
-    public function user_management()
-    {
-        $data=User::get();
-        // dd($data);
-
-        return view('admin.user-management', ['data' => $data]);
-    }
-
-    public function add_user(Request $request)
+    public function updateProfile(Request $request)
     {
         $request->validate([
             'nama'      => 'required|max:255',
-            'email'     => 'required|email|unique:users|domain:itera.ac.id',
-            'password'  => 'required|min:5|max:255',
-            'role'      => 'required',
         ]);
 
-        //create user
-        $user=User::create([
-            'nama'      => $request->nama,
-            'email'     => $request->email,
-            'password'  => Hash::make($request->password),
-            'role'      => $request->role,
-            'avatar'    => 'default.png',
-        ]);
-
-        if(in_array($request->role, ['kaprodi', 'gkmp'])) {
-            $user->aktif_role()->create([
-                'is_dosen'  => 0,
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Data berhasil ditambahkan');
-    }
-
-    public function edit_user(Request $request)
-    {
-        $request->validate([
-            'nama'      => 'required|max:255',
-            'role'      => 'required',
-        ]);
-    
-        $pengguna=User::find($request->id);
-        if($pengguna->email != $request->email) {
+        if(Auth::user()->email != $request->email) {
             $request->validate([
                 'email'     => 'required|email|unique:users',
             ]);
         }
 
-        if(is_null($request->password)) {
-            User::where('id', $request->id)->update([
+        if($request->hasFile('avatar')) {
+            Storage::delete('public/avatar/' . Auth::user()->avatar);
+            $fileName = Auth::user()->nama.'-'.Auth::user()->id.'.' . $request->file('avatar')->getClientOriginalExtension();
+            $request->file('avatar')->storeAs('public/avatar/', $fileName);
+            User::where('id', Auth::user()->id)->update([
                 'nama'      => $request->nama,
                 'email'     => $request->email,
-                'role'      => $request->role,
+                'avatar'    => $fileName,
             ]);
-
-            CreateorDeleteAktifRole($request->id, $pengguna->role, $request->role);
 
         } else {
-            User::where('id', $request->id)->update([
+            User::where('id', Auth::user()->id)->update([
                 'nama'      => $request->nama,
                 'email'     => $request->email,
-                'password'  => Hash::make($request->password),
-                'role'      => $request->role,
             ]);
-
-            CreateorDeleteAktifRole($request->id, $pengguna->role, $request->role, $request->id);
         }
 
         return redirect()->back()->with('success', 'Data berhasil diubah');
     }
 
-    public function delete_user(Request $request)
+    public function updatePassword(Request $request)
     {
-        User::where('id', $request->id_pengguna)->delete();
-        return redirect()->back()->with('success', 'Data berhasil dihapus');
+        $validator=Validator::make($request->all(), [
+            'old_password'  => 'required|min:5|max:30',
+            'new_password'  => 'required|min:5|max:30',
+        ]);
+        
+        if($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first()
+            ]);
+        }
+
+        if(Hash::check($request->old_password, Auth::user()->password)) {
+            User::where('id', Auth::user()->id)->update([
+                'password'  => Hash::make($request->new_password),
+            ]);
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Password berhasil diubah'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password lama tidak sesuai'
+            ]);
+        }
     }
 
 }

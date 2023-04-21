@@ -15,28 +15,23 @@
 
 @section('content')
     <!-- Page Content -->
-     <!-- pop up success upload -->
-    @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
-          <strong>{{ session()->get('success') }}</strong>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
 
-    {{-- @error('kode_matkul')
-    <?= "<script type ='text/javascript'>window.onload = function() { errorAlert('Kode Mata Kuliah sudah digunakan');};  </script>"; ?>
-    @enderror --}}
-
-    {{-- @error('kode_matkul')
-    <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
-      <strong>Kode mata kuliah tidak boleh sama</strong>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @enderror --}}
     <div class="content">
-      {{-- <embed src="{{ URL::asset('/assets/media/avatars/test.pdf') }}" width=100% height=600 type="text/pdf" > --}}
-      {{-- <a href="{{ URL::asset("/assets/media/avatars/test.pdf") }}" target="_blank">Cerita.pdf</a> --}}
-      {{-- <object src={{ URL::asset("/assets/media/avatars/test.pdf") }} type="application/pdf" width=100% height=100%> </object> --}}
+      <!-- pop up success upload -->
+      @if (session()->has('success'))
+      <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+        <strong>{{ session()->get('success') }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      @endif
+
+      @if (session()->has('failed'))
+          <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <strong>{{ session()->get('failed') }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      @endif
+    
           <!-- Quick Overview -->
            <div class="row">
             <div class="col-6 col-lg-3">
@@ -279,11 +274,6 @@
 
      <script>
       let jsfiles = <?php echo json_encode($dokumen) ?>;
-      console.log(jsfiles);
-
-      function errorAlert(message) {
-        One.helpers('notify', {type: 'danger', icon: 'fa fa-times me-1', message: message});
-      }
 
       //modal
       function editDokumen(id) {
@@ -300,6 +290,9 @@
       }
 
       $(document).ready(function () {
+
+        $(".alert").delay(2000).fadeOut("slow");
+
         $('.modal-tambah-dokumen').modal({backdrop: 'static', keyboard: false});
         $(".button-tambah-dokumen").on("click", function () {
           $(".modal-tambah-dokumen").modal("show");

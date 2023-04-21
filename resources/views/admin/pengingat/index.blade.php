@@ -42,7 +42,7 @@
                   <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Choose one..">
                     <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                     @foreach ($tahun_ajaran as $item)
-                    <option value="{{ $item->id_tahun_ajaran }}"@selected($dokumen[0]->id_tahun_ajaran == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }}</option>
+                    <option value="{{ $item->id_tahun_ajaran }}"@selected((request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }}</option>
                     @endforeach
                   </select>
                   <button class="input-group-text">
@@ -61,7 +61,9 @@
                 <th class="text-center" >Nama Dokumen</th>
                 <th class="text-center" >Tenggat Waktu</th>
                 <th class="text-center"  style="width: 15%;">Pengumpulan</th>
+                @if (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true)
                 <th class="text-center" style="width: 15%;">Aksi</th>
+                @endif
               </tr>
             </thead>
             <tbody>
@@ -78,7 +80,7 @@
                   </div>
                 </td>
                 <td class="text-center">
-                  @if($item->tahun_ajaran->status == 1)
+                  @if (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true)
                   <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editPengingat({{ $key }})" data-bs-toggle="tooltip" title="Edit">
                     <i class="fa fa-fw fa-pencil-alt"></i>
                   </a>

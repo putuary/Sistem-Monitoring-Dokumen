@@ -12,11 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('dokumen_ditugaskan', function (Blueprint $table) {
-            $table->string('id_dokumen_ditugaskan')->primary();
-            $table->string('id_dokumen');
+            $table->string('id_dokumen_ditugaskan', 10)->primary();
+            $table->string('id_dokumen', 10);
             $table->bigInteger('id_tahun_ajaran')->unsigned();
             $table->dateTime('tenggat_waktu');
             $table->boolean('pengumpulan');
+            $table->tinyInteger('dikumpulkan_per');
+            $table->tinyInteger('dikumpul');
             $table->timestamps();
 
             $table->unique(['id_dokumen', 'id_tahun_ajaran']);

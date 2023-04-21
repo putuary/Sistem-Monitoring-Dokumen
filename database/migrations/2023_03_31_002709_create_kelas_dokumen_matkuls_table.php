@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('kelas_dokumen_matkul', function (Blueprint $table) {
             $table->bigInteger('kode_kelas')->unsigned();
-            $table->bigInteger('id_dokumen_matkul')->unsigned();
+            $table->string('id_dokumen_matkul', 10);
 
             $table->unique(['kode_kelas', 'id_dokumen_matkul']);
             $table->foreign('kode_kelas')->references('kode_kelas')->on('kelas');

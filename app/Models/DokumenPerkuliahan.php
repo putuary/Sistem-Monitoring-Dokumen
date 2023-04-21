@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DokumenDitugaskan;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class DokumenPerkuliahan extends Model
 {
@@ -20,6 +21,14 @@ class DokumenPerkuliahan extends Model
         'dikumpulkan_per',
         'template',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            $model->id_dokumen = IdGenerator::generate(['table' => 'dokumen_perkuliahan', 'field' => 'id_dokumen', 'length' => 10, 'prefix' => 'DP']);
+        });
+    }
 
     public function dokumen_ditugaskan()
     {

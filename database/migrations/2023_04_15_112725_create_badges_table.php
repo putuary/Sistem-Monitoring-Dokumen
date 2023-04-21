@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dokumen_perkuliahan', function (Blueprint $table) {
-            $table->string('id_dokumen', 10)->primary();
-            $table->string('nama_dokumen');
-            $table->integer('tenggat_waktu_default');
-            $table->tinyInteger('dikumpulkan_per');
-            $table->string('template')->nullable();
+        Schema::create('badges', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_badge');
+            $table->string('gambar');
+            $table->string('deskripsi');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dokumen_perkuliahan');
+        Schema::dropIfExists('badges');
     }
 };

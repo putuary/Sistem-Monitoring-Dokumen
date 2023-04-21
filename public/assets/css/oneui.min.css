@@ -29535,3 +29535,58 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 .dark-mode .flatpickr-months .flatpickr-prev-month:hover svg {
     fill: #4c78dd;
 }
+
+.progresses {
+    position: relative;
+    max-width: 70%;
+    margin: auto;
+}
+
+.progresses ul {
+    list-style: none;
+    /* border: 1px solid red; */
+    padding: 0;
+}
+
+.progresses ul li {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    z-index: 200;
+    position: relative;
+}
+
+.progresses ul li.blue {
+    color: #3268ff;
+    background-color: #3268ff;
+}
+
+.progresses ul li::after {
+    position: absolute;
+    top: 35px;
+    left: -15px;
+    font-size: 0.8rem;
+    width: 90px;
+}
+
+#step-1::after {
+    content: "Tahun Ajaran";
+}
+
+#step-2::after {
+    content: "Mata Kuliah";
+}
+
+#step-3::after {
+    content: "Kelas Dibuka";
+}
+
+.progresses .progress {
+    height: 0.8rem;
+    width: 100%;
+    top: 33px;
+    position: absolute;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+}

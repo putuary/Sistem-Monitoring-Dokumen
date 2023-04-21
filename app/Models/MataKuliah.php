@@ -21,6 +21,17 @@ class MataKuliah extends Model
         'praktikum',
     ];
 
+    public function scopeMatkulDibuka($query, $jenis)
+    {
+        if($jenis == 'Ganjil') {
+            return $query->whereRaw("SUBSTRING(kode_matkul, 4, 1) = '1'")->orWhereRaw("SUBSTRING(kode_matkul, 4, 1) = '0'");
+        } else if($jenis == 'Genap') {
+            return $query->whereRaw("SUBSTRING(kode_matkul, 4, 1) = '2'")->orWhereRaw("SUBSTRING(kode_matkul, 4, 1) = '0'");
+        } else {
+            return $query;
+        }
+    }
+
     public function scopeMatkulKelas($query, $kode_matkul, $id_tahun_ajaran)
     {
         return $query->whereHas('kelas', function($query) use ($kode_matkul, $id_tahun_ajaran) {

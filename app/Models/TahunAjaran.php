@@ -18,6 +18,11 @@ class TahunAjaran extends Model
         'status',
     ];
 
+    public function scopeTahunAktif($query)
+    {
+        return $query->where('status', 1);
+    }
+
     public function dokumen_ditugaskan()
     {
         return $this->hasMany(DokumenDitugaskan::class, 'id_tahun_ajaran');

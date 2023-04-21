@@ -2,12 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserAuthController;
+use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\DataManagementController;
 use App\Http\Controllers\PenugasanController;
 use App\Http\Controllers\ProgresController;
 use App\Http\Controllers\PengingatController;
 use App\Http\Controllers\KelasController;
+use App\Http\Controllers\KelasDiampuController;
 use App\Http\Controllers\DokumenPerkuliahanController;
+use App\Http\Controllers\DokumenDitugaskanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,36 +26,54 @@ use App\Http\Controllers\DokumenPerkuliahanController;
 Route::get('/user-login', [UserAuthController::class, 'index'])->name('login')->middleware('guest');
 Route::post('/user-login', [UserAuthController::class, 'authenticate'])->middleware('guest');
 
- // Ubah Dashboard
- Route::post('/change-dashboard', [UserAuthController::class, 'changeDashboard'])->middleware('auth');
+Route::middleware('auth')->group(function () {
+    // Ubah Dashboard Kaprodi/GKMP ke dosen pengampu
+    Route::post('/change-dashboard', [UserAuthController::class, 'changeDashboard']);
 
-Route::get('/', [UserAuthController::class, 'dashboard'])->name('dashboard')->middleware('auth');
+    Route::get('/', [UserAuthController::class, 'dashboard'])->name('dashboard');
+    
+    Route::get('/profil', [UserAuthController::class, 'profile']);
+    Route::post('/profil/update', [UserAuthController::class, 'updateProfile']);
+    Route::post('/profil/update-password', [UserAuthController::class, 'updatePassword']);
 
-Route::post('/user-logout', [UserAuthController::class, 'logout'])->middleware('auth');
+    Route::post('/user-logout', [UserAuthController::class, 'logout']);
+
+});
 
 Route::middleware(['auth', 'role:superAdmin'])->group(function () {
     // Penugasan
     Route::get('/penugasan', [PenugasanController::class, 'index']);
+
     Route::get('/penugasan/buat-penugasan-baru/form-pertama', [PenugasanController::class, 'stepOne']);
-    Route::post('/penugasan/buat-penugasan-baru/form-kedua', [PenugasanController::class, 'stepTwo']);
+    Route::post('/penugasan/buat-penugasan-baru/store-form-kedua', [PenugasanController::class, 'storeStepOne']);
+
+    Route::get('/penugasan/buat-penugasan-baru/form-kedua', [PenugasanController::class, 'stepTwo']);
+    Route::post('/penugasan/buat-penugasan-baru/store-form-ketiga', [PenugasanController::class, 'storeStepTwo']);
+
+    Route::get('/penugasan/buat-penugasan-baru/form-ketiga', [PenugasanController::class, 'stepThree']);
     Route::post('/penugasan/buat-penugasan-baru/store', [PenugasanController::class, 'storePenugasan'])->name('penugasan.store');
+    
     Route::get('/penugasan/daftar-jumlah-kelas', [PenugasanController::class, 'showJumlahKelas']);
-    Route::get('/penugasan/daftar-kelas', [PenugasanController::class, 'showKelas']);
+    
+    Route::resource('/penugasan/daftar-kelas', KelasController::class)->except(['create', 'show', 'edit']);
+    
+    Route::resource('/penugasan/dokumen-ditugaskan', DokumenDitugaskanController::class)->except(['create', 'show', 'edit']);
+    // Route::get('/penugasan/dokumen-ditugaskan', [PenugasanController::class, 'showDokumenDitugaskan']);
 
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/manajemen-pengguna', [UserAuthController::class, 'user_management']);
-    Route::post('/manajemen-pengguna/tambah', [UserAuthController::class, 'add_user']);
-    Route::post('/manajemen-pengguna/edit', [UserAuthController::class, 'edit_user']);
-    Route::post('/manajemen-pengguna/delete', [UserAuthController::class, 'delete_user']);
+    
+    Route::resource('/manajemen-pengguna', UserManagementController::class)->except(['create', 'show', 'edit']);
 
     // Manajemen Data
     Route::get('/manajemen-data', [DataManagementController::class, 'index']);
+    
     Route::get('/manajemen-data/mata-kuliah', [DataManagementController::class, 'showMatkul']);
     Route::post('/manajemen-data/mata-kuliah/tambah', [DataManagementController::class, 'storeMatkul']);
     Route::post('/manajemen-data/mata-kuliah/edit/{kode_matkul}', [DataManagementController::class, 'editMatkul']);
     Route::post('/manajemen-data/mata-kuliah/delete', [DataManagementController::class, 'deleteMatkul']);
+    
     Route::get('/manajemen-data/dokumen-perkuliahan', [DataManagementController::class, 'showDokumen']);
     Route::post('/manajemen-data/dokumen-perkuliahan/tambah', [DataManagementController::class, 'storeDokumen']);
     Route::post('/manajemen-data/dokumen-perkuliahan/edit', [DataManagementController::class, 'editDokumen']);
@@ -75,10 +96,18 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 Route::middleware(['auth', 'role:dosen'])->group(function () {
     // Kelas Diampu
-    Route::get('/kelas-diampu', [KelasController::class, 'showKelasDiampu']);
-    Route::get('/kelas-diampu/{kode_kelas}', [KelasController::class, 'showDokumenDitugaskan']);
-    Route::get('/kelas-diampu/download-template/{id_dokumen}', [KelasController::class, 'downloadTemplate']);
-    Route::post('/kelas-diampu/upload', [KelasController::class, 'uploadDokumen']);
+    Route::get('/kelas-diampu', [KelasDiampuController::class, 'showKelasDiampu']);
+    Route::get('/kelas-diampu/{kode_kelas}', [KelasDiampuController::class, 'showDokumenDitugaskan']);
+    Route::get('/kelas-diampu/download-template/{id_dokumen}', [KelasDiampuController::class, 'downloadTemplate']);
+    Route::post('/kelas-diampu/upload', [KelasDiampuController::class, 'uploadDokumen']);
+    Route::post('/kelas-diampu/multiple-upload', [KelasDiampuController::class, 'uploadDokumenMultiple'])->name('store.dokumen');
+
+    Route::get('/kelas-diampu/dokumen-single/show/{id_dokumen}', [KelasDiampuController::class, 'readDokumenSingle'])->name('dokumen-single.show');
+    Route::get('/kelas-diampu/dokumen-single/download/{id_dokumen}', [KelasDiampuController::class, 'downloadDokumenSingle'])->name('dokumen-single.download');
+    
+    Route::get('/kelas-diampu/dokumen-dikumpul/{id_dokumen}', [KelasDiampuController::class, 'showDokumenDikumpul']);
+    // Route::get('/kelas-diampu/dokumen-dikumpul/show', [KelasDiampuController::class, 'showDokumenDikumpul']);
+    Route::put('/kelas-diampu/dokumen-dikumpul/{id_dokumen}', [KelasDiampuController::class, 'renameDokumenDikumpul']);
 
     // Dokumen Perkuliahan
     Route::get('/dokumen-perkuliahan', [DokumenPerkuliahanController::class, 'index']);
@@ -113,6 +142,6 @@ Route::get('/dosen-pengampu', function () {
     return view('user.dosen-pengampu');
 })->middleware('auth');
 
-Route::get('/dokumen-dikumpul', function () {
-    return view('user.dokumen-dikumpul');
-})->middleware('auth');
+// Route::get('/dokumen-dikumpul', function () {
+//     return view('user.dokumen-dikumpul');
+// })->middleware('auth');

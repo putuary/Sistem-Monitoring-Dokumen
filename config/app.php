@@ -185,6 +185,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Haruncpi\LaravelIdGenerator\IdGeneratorServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -210,6 +211,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
+        'IdGenerator' => Haruncpi\LaravelIdGenerator\IdGeneratorFacade::class,
     ])->toArray(),
 
 ];

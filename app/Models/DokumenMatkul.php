@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Models\DokumenDitugaskan;
 use App\Models\MataKuliah;
 use App\Models\Kelas;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,14 +14,24 @@ class DokumenMatkul extends Model
     use HasFactory;
     protected $table = 'dokumen_matkul';
     protected $primaryKey = 'id_dokumen_matkul';
+    public $incrementing = false;
+    
     
     protected $fillable = [
-        // 'id_dokumen_dikumpul',
+        'id_dokumen_matkul',
         'id_dokumen_ditugaskan',
         'kode_matkul',
         'file_dokumen',
         'waktu_pengumpulan',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            $model->id_dokumen_matkul = IdGenerator::generate(['table' => 'dokumen_matkul', 'field' => 'id_dokumen_matkul', 'length' => 10, 'prefix' => 'DM']);
+        });
+    }
 
     public function scopeFilter($query, $filter)
     {

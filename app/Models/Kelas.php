@@ -10,6 +10,7 @@ use App\Models\MataKuliah;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DokumenKelas;
 use App\Models\DokumenMatkul;
+use App\Models\Score;
 
 class Kelas extends Model
 {
@@ -77,5 +78,10 @@ class Kelas extends Model
     public function dosen_kelas()
     {
         return $this->belongsToMany(User::class, 'dosen_kelas', 'kode_kelas', 'id_dosen');
+    }
+
+    public function score()
+    {
+        return $this->hasMany(Score::class, 'kode_kelas');
     }
 }

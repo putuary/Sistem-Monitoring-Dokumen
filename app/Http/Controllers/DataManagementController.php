@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\DokumenDitugaskan;
 use App\Models\MataKuliah;
 use App\Models\DokumenPerkuliahan;
+use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class DataManagementController extends Controller
@@ -61,7 +62,11 @@ class DataManagementController extends Controller
 
     public function deleteMatkul(Request $request)
     {
-        MataKuliah::where('kode_matkul', $request->kode_matkul)->delete();
+        try {
+            MataKuliah::where('kode_matkul', $request->kode_matkul)->delete();
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('failed', 'Tidak dapat menghapus parent data');
+        }
     
         return redirect()->back()->with('success', 'Data berhasil dihapus');
       
@@ -146,7 +151,11 @@ class DataManagementController extends Controller
 
     public function deleteDokumen(Request $request)
     {
-        DokumenPerkuliahan::where('id_dokumen', $request->id_dokumen)->delete();
+        try {
+            DokumenPerkuliahan::where('id_dokumen', $request->id_dokumen)->delete();
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('failed', 'Tidak dapat menghapus parent data');
+        }
 
         return redirect()->back()->with('success', 'Data berhasil dihapus');
     }

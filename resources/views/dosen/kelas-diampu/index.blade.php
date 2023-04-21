@@ -8,19 +8,11 @@
     <!-- Hero -->
     <div class="content">
       @if (session()->has('success'))
-      <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+      <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
         <strong>{{ session()->get('success') }}</strong>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       @endif
-
-      {{-- <?php dd($kelas); ?> --}}
-
-      {{-- <div class="row">
-        <div class="col-md mb-4 text-center">
-          <span class="p-2 btn-outline-dark bg-white rounded text-dark fw-semibold">TA : {{ $kelas[0]->tahun_ajaran->tahun_ajaran ?? '-' }}</span>
-        </div>
-      </div> --}}
 
       <form action="/kelas-diampu">
         <div class="block-content">
@@ -32,7 +24,7 @@
                 <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Pilih Tahun Ajaran ....">
                   <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                   @foreach ($tahun_ajaran as $item)
-                  <option value={{ $item->id_tahun_ajaran }} @selected($kelas[0]->tahun_ajaran->id_tahun_ajaran==$item->id_tahun_ajaran)>{{ $item->tahun_ajaran }} </option>
+                  <option value={{ $item->id_tahun_ajaran }} @selected((request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }} </option>
                   @endforeach
                 </select>
                 <button class="input-group-text" type="submit">
@@ -138,4 +130,9 @@
 
     <!-- Page JS Helpers (Easy Pie Chart + jQuery Sparkline Plugins) -->
     <script>One.helpersOnLoad(['jq-easy-pie-chart', 'jq-sparkline']);</script>
+    <script>
+      $(document).ready(function(){
+        $(".alert").delay(2000).fadeOut("slow");
+      });
+    </script>
 @endsection

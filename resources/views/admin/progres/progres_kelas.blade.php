@@ -34,7 +34,7 @@
                 <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Pilih Tahun Ajaran ....">
                   <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                   @foreach ($tahun_ajaran as $item)
-                  <option value={{ $item->id_tahun_ajaran }} @selected($kelas[0]->tahun_ajaran->id_tahun_ajaran==$item->id_tahun_ajaran)>{{ $item->tahun_ajaran }} </option>
+                  <option value={{ $item->id_tahun_ajaran }} @selected((request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran)==$item->id_tahun_ajaran)>{{ $item->tahun_ajaran }} </option>
                   @endforeach
                 </select>
                 <button class="input-group-text" type="submit">

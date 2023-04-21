@@ -6,20 +6,30 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DokumenDitugaskan;
 use App\Models\Kelas;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class DokumenKelas extends Model
 {
     use HasFactory;
     protected $table = 'dokumen_kelas';
     protected $primaryKey = 'id_dokumen_kelas';
+    public $incrementing = false;
     
     protected $fillable = [
-        // 'id_dokumen_dikumpul',
+        'id_dokumen_kelas',
         'id_dokumen_ditugaskan',
         'kode_kelas',
         'file_dokumen',
         'waktu_pengumpulan',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            $model->id_dokumen_kelas = IdGenerator::generate(['table' => 'dokumen_kelas', 'field' => 'id_dokumen_kelas', 'length' => 10, 'prefix' => 'DK']);
+        });
+    }
     
     public function scopeFilter($query, $filter)
     {

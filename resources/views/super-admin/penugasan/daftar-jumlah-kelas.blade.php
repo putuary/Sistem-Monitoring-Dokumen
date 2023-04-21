@@ -28,15 +28,27 @@
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
-          <h3 class="block-title">Daftar Kelas</h3>
+          <h3 class="block-title">Daftar Jumlah Kelas</h3>
         </div>
         <div class="block-content block-content-full">
           <div class="block-content">
             <div class="row justify-content-center">
               <div class="col-md-2 col-lg-3">
-                <div class="mb-4 d-flex">      
-                  <div class="form-control text-center">TA : {{ $kelas[0]->tahun_ajaran->tahun_ajaran ?? '-' }}</div>   
-                </div>
+                <form action="/penugasan/daftar-jumlah-kelas">
+                  <div class="mb-4 d-flex">
+                    <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
+                    <!-- For more info and examples you can check out https://github.com/select2/select2 -->
+                    <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Choose one..">
+                      <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+                      @foreach ($tahun_ajaran as $item)
+                      <option value="{{ $item->id_tahun_ajaran }}"@selected((request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }}</option>
+                      @endforeach
+                    </select>
+                    <button class="input-group-text">
+                      <i class="fa fa-fw fa-search"></i>
+                    </button>                
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -45,39 +57,23 @@
             <thead>
               <tr>
                 <th class="text-center">No.</th>
-                <th class="text-center" >Kelas</th>
-                <th class="text-center" >Mata Kuliah</th>
-                <th class="text-center" >Dosen Pengampu</th>
-                <th class="text-center" style="width: 15%;">Aksi</th>
+                <th class="text-center" >Nama Mata Kuliah</th>
+                <th class="text-center" >Kode Mata Kuliah</th>
+                <th class="text-center"  style="width: 15%;">Bobot SKS</th>
+                <th class="text-center"  style="width: 15%;">Jumlah Kelas</th>
               </tr>
             </thead>
             <tbody>
-              @foreach ($kelas as $key => $item)
+              @foreach ($matkul as $key => $item)
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="text-center fs-sm">{{ $item->nama_kelas }}</td>
-                <td class="fs-sm">{{ $item->matkul->nama_matkul }}</td>
-                <td class="fs-sm">
-                  <ul>
-                    @foreach ($item->dosen_kelas as $dosen)
-                    <li>{{ $dosen->nama }}</li>
-                    @endforeach
-                  </ul>
-                </td>
-                <td class="text-center">
-                  <form action="/manajemen-pengguna/delete" method="POST">
-                    @csrf
-                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Edit">
-                    <i class="fa fa-fw fa-pencil-alt"></i>
-                  </a>
-                    <input type="hidden" name="id_pengguna" value="">
-                    <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Delete">
-                      <i class="fa fa-fw fa-times"></i>
-                    </button>
-                  </form>
-                </td>
+                <td class="fs-sm">{{ $item->nama_matkul }}</td>
+                <td class="text-center fw-semibold fs-sm">{{ $item->kode_matkul }}</td>
+                <td class="text-center">{{ $item->bobot_sks.' SKS' }}</td>
+                <td class="text-center">{{ $item->banyak_kelas.' Kelas' }}</td>
               </tr>
               @endforeach
+              
             </tbody>
           </table>
           <div class="modal fade modal-edit" id="modal-block-fromleft" tabindex="-1" aria-labelledby="modal-block-fromleft" style="display: none;" aria-hidden="true">

@@ -3,6 +3,8 @@
 namespace App\Models;
 use App\Models\AktifRole;
 use App\Models\Kelas;
+use App\Models\Score;
+use App\Models\Badge;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -54,5 +56,15 @@ class User extends Authenticatable
     public function aktif_role()
     {
         return $this->hasOne(AktifRole::class, 'id_user');
+    }
+
+    public function score()
+    {
+        return $this->hasMany(Score::class, 'id_user');
+    }
+
+    public function user_badge()
+    {
+        return $this->belongsToMany(Badge::class, 'user_badge', 'id_user', 'id_badge');
     }
 }

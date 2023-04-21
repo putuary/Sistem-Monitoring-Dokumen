@@ -8,6 +8,7 @@ use App\Models\DokumenPerkuliahan;
 use App\Models\TahunAjaran;
 use App\Models\DokumenKelas;
 use App\Models\DokumenMatkul;
+use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class DokumenDitugaskan extends Model
 {
@@ -22,7 +23,17 @@ class DokumenDitugaskan extends Model
         'id_tahun_ajaran',
         'tenggat_waktu',
         'pengumpulan',
+        'dikumpulkan_per',
+        'dikumpul',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            $model->id_dokumen_ditugaskan = IdGenerator::generate(['table' => 'dokumen_ditugaskan', 'field' => 'id_dokumen_ditugaskan', 'length' => 10, 'prefix' => 'DT']);
+        });
+    }
 
     public function scopeDokumenAktif($query)
     {

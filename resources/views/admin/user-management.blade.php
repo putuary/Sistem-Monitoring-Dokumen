@@ -15,14 +15,24 @@
 
 @section('content')
     <!-- Page Content -->
-     <!-- pop up success upload -->
-    @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
-        <strong>{{ session()->get('success') }}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
+
     <div class="content">
+
+      <!-- pop up success upload -->
+      @if (session()->has('success'))
+          <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+          <strong>{{ session()->get('success') }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      @endif
+
+      @if (session()->has('failed'))
+          <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <strong>{{ session()->get('failed') }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      @endif
+
           <!-- Quick Overview -->
            <div class="row">
             <div class="col-6 col-lg-3">
@@ -66,7 +76,7 @@
                       <i class="fa fa-fw fa-times"></i>
                     </button>
                   </div>
-                  <form  action="/manajemen-pengguna/tambah"
+                  <form  action="{{ route('manajemen-pengguna.store') }}"
                   method="POST"
                   enctype="multipart/form-data">
                    @csrf
@@ -155,12 +165,12 @@
                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill <?php if($item->role=="kaprodi") {echo "bg-success-light text-success"; } else if ($item->role=="gkmp") {echo "bg-warning-light text-warning"; } else if($item->role=="dosen") {echo "bg-danger-light text-danger"; } else if($item->role=="admin") {echo "bg-primary-light text-primary"; } ?>">{{ NamaPeran($item->role) }}</span>
                 </td>
                 <td class="text-center">
-                  <form action="/manajemen-pengguna/delete" method="POST">
-                    @csrf
+                  <form action="{{ route('manajemen-pengguna.destroy', $item->id) }}" method="POST">
                   <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="edit_pengguna({{ $key }})" data-bs-toggle="tooltip" title="Edit">
                     <i class="fa fa-fw fa-pencil-alt"></i>
                   </a>
-                    <input type="hidden" name="id_pengguna" value="{{ $item->id }}">
+                    @csrf
+                    @method('DELETE')
                     <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Delete">
                       <i class="fa fa-fw fa-times"></i>
                     </button>
@@ -183,15 +193,15 @@
                     </div>
                   </div>
                   
-                  <form  action="/manajemen-pengguna/edit"
+                  <form  id="form_edit"
                   method="POST"
                   enctype="multipart/form-data">
                    @csrf
+                    @method('PUT')
                     <div class="block-content fs-sm mb-3">
                       <div class="row">
                         <div class="col-lg-12">
                           <div class="form-group">
-                            <input type="hidden" name="id" id="id_pengguna">
                             <label for="example-text-input">Nama</label>
                             <input
                                 type="text"
@@ -208,13 +218,18 @@
                                 id="email"
                                 name="email"
                                 required />
-                            <label for="example-text-input">Password</label>
-                            <input
-                                type="password"
-                                class="form-control"
-                                placeholder="Kosongkan Password Jika Tidak Diubah"
-                                name="password"
-                                />
+                            <label class="form-label">Ubah Password</label>
+                            <div class="space-x-2 mb-3">
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="ubah-password" id="ubah-password1" value=1>
+                                <label class="form-check-label" for="example-radios-inline1">Ya</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="ubah-password" id="ubah-password2" value=0 checked>
+                                <label class="form-check-label" for="example-radios-inline2">Tidak</label>
+                              </div>
+                            </div>
+                            <div id="ubah-password"></div>
                             <label for="example-text-input">Peran</label>
                             <select
                                 class="js-select2 form-select"
@@ -260,10 +275,6 @@
     <script src={{  URL::asset("assets/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons/dataTables.buttons.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-jszip/jszip.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons/buttons.print.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons/buttons.html5.min.js") }}></script>
 
      <!-- Page JS Code -->
@@ -271,12 +282,12 @@
 
      <script>
       let jsfiles = <?php echo json_encode($data) ?>;
-      console.log(jsfiles);
+      
       //modal
       function edit_pengguna(id) {
         $('.modal-edit').modal({backdrop: 'static', keyboard: false});
         $('.modal-edit').modal("show");
-        $('#id_pengguna').val(jsfiles[id].id);
+        $('#form_edit').attr('action', `manajemen-pengguna/${jsfiles[id].id}` );
         $('#nama').val(jsfiles[id].nama);
         $('#email').val(jsfiles[id].email);
         
@@ -292,12 +303,22 @@
       }
 
       $(document).ready(function () {
+        $(".alert").delay(2000).fadeOut("slow");
+
         $('#modal-tambah-pengguna').modal({backdrop: 'static', keyboard: false});
         $(".button-tambah-pengguna").on("click", function () {
           $("#modal-tambah-pengguna").modal("show");
         });
 
-        $(".modal-edit").attr("id", "modal-edit");
+        $("#ubah-password1").click(function () {
+          $("#ubah-password").html(
+            `<label for="example-text-input">Password</label>
+            <input type="password" class="form-control" placeholder="Kosongkan Password Jika Tidak Diubah" name="password" />`
+          );
+        });
+        $("#ubah-password2").click(function () {
+          $("#ubah-password").html('');
+        });
       });
     </script>
 @endsection

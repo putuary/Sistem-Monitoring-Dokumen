@@ -8,28 +8,18 @@
 @endsection
 
 @section('content')
-    <!-- Progres -->
-    <div class="bg-body-light">
+     <!-- Progres -->
+     <div class="bg-body-light">
       <div class="content content-full">
-        <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center py-2">
-          <div class="flex-grow-1">
-            <h1 class="h3 fw-bold mb-2">
-              Buttons
-            </h1>
-            <h2 class="fs-base lh-base fw-medium text-muted mb-0">
-              Custom buttons styles to fulfill any design approach.
-            </h2>
-          </div>
-          <nav class="flex-shrink-0 mt-3 mt-sm-0 ms-sm-3" aria-label="breadcrumb">
-            <ol class="breadcrumb breadcrumb-alt">
-              <li class="breadcrumb-item">
-                <a class="link-fx" href="javascript:void(0)">Elements</a>
-              </li>
-              <li class="breadcrumb-item" aria-current="page">
-                Buttons
-              </li>
-            </ol>
-          </nav>
+          <div class="progresses py-4">
+            <ul class="d-flex align-items-center justify-content-between">
+                <li id="step-1" class="blue"></li>
+                <li id="step-2" class="blue"></li>
+                <li id="step-3" class="blue"></li>
+            </ul>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
         </div>
       </div>
     </div>
@@ -48,11 +38,10 @@
               <!-- Form Horizontal - Default Style -->
               <form class="space-y-1" action="{{ route('penugasan.store') }}" method="POST">
                 @csrf
-                <input type="hidden" name="tahun_ajaran" value="{{ $data['tahun_ajaran'] }}">
                 <h4 class="border-bottom pb-2">Kelas</h4>
                 <div class="mb-4">
                   <?php $jumlah=0; ?>
-                @foreach ($nama_matkul as $key => $kelas)
+                @foreach ($data['nama_matkul'] as $key => $kelas)
                 <?php $a='A'; ?>
                   @for ($i = 0; $i < $data['jumlah'][$key]; $i++)
                   <div class="row row-cols-lg-auto g-3 align-items-center mb-3">
@@ -77,39 +66,30 @@
                   <?php $jumlah=$jumlah+$data['jumlah'][$key]; ?>
                 @endforeach
               </div>
-                <div class="row">
-                  <h4 class="border-bottom pb-2">Perkuliahan</h4>
-                  <div class="col-lg-3">
-                    <label class="form-label" for="example-flatpickr-custom">Tanggal Mulai Perkuliahan</label>
-                  </div>
-                  <div class="col-lg-8 col-xl-5">
-                    <div class="mb-3">
-                      <input type="text" class="js-flatpickr form-control @error('tanggal_mulai_kuliah') is-invalid @enderror"  name="tanggal_mulai_kuliah" placeholder="Masukkan tanggal mulai perkuliahan" data-date-format="j F Y" required>
-                      @error('tanggal_mulai_kuliah')
-                          <div class="alert alert-danger">{{ $message }}</div>
-                      @enderror
+              <div class="row">
+                <h4 class="border-bottom pb-2">Dokumen Perkuliahan</h4>
+                <div class="mb-4">
+                @foreach ($data['dokumen'] as $key => $dokumen)
+                  <div class="row row-cols-lg-auto g-3 align-items-center mb-3">
+                    <input type="hidden" name="id_dokumen[]" value="{{ unserialize($dokumen)[0] }}">
+                    <label class="col-sm-4 col-form-label">Dokumen</label>
+                    <div class="col-md-2 col-lg-4">
+                      <div class="form-control">{{ unserialize($dokumen)[1] }}</div>
+                    </div> 
+                    <label class="col-sm-4 col-form-label" >Dikumpul</label>
+                    <div class="space-x-2">
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="example-radios-inline1" name="dikumpul[{{ $key }}]" value=0 checked>
+                        <label class="form-check-label" for="example-radios-inline1">Single</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="example-radios-inline2" name="dikumpul[{{ $key }}]" value=1>
+                        <label class="form-check-label" for="example-radios-inline2">Multiple</label>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="row">
-                  <h4 class="border-bottom pb-2">Dokumen</h4>
-                  <div class="col-lg-3">
-                    <label class="form-label" for="example-select2-multiple">Dokumen Di Kumpulkan</label>
-                  </div>
-                  <div class="col-lg-8 col-xl-5">
-                    <div class="mb-3">
-                      <select class="js-select2 form-select @error('id_dokumen') is-invalid @enderror" id="example-select2-multiple" name="id_dokumen[]" style="width: 100%;" data-placeholder="Masukkan dokumen yang akan dikumpulkan" multiple required>
-                        <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-                        @foreach ($dokumen as $item)
-                        <option value="{{ $item->id_dokumen }}">{{ $item->nama_dokumen }}</option>
-                        @endforeach
-                      </select>
-                      @error('id_dokumen')
-                          <div class="alert alert-danger">{{ $message }}</div>
-                      @enderror
-                    </div>
-                  </div>
-                </div>
+                @endforeach
+                
                 <div class="row">
                   <div class="col text-center">
                     <button type="submit" id="btn-submit" class="btn btn-success">Submit</button>
@@ -129,9 +109,7 @@
      <!-- Page JS Plugins -->
      <script src={{  URL::asset("assets/js/plugins/select2/js/select2.full.min.js") }}></script>
      <script src="{{ URL::asset('assets/js/plugins/flatpickr/flatpickr.min.js') }}"></script>
-
-     <!-- Page JS Plugins -->
-    <script src="https://unpkg.com/sweetalert@2.1.2/dist/sweetalert.min.js"></script>
+     <script src="{{ URL::asset('assets/js/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 
      <!-- Page JS Helpers (Select2 + Bootstrap Maxlength + CKEditor plugins) -->
  
@@ -141,16 +119,19 @@
       $('#btn-submit').click(function (e){
            e.preventDefault();
            let form = $(this).parents('form');
-           swal({
-               title: 'Apakah anda sudah yakin ?',
-               text: 'Anda tidak akan bisa mengubah data ini lagi!',
-               icon: 'warning',
-               buttons: ["Buat Perubahan", "Ya!"],
-           }).then(function(value) {
-               if(value){
-                   form.submit();
-               }
-           });
-       });
+           Swal.fire({
+            title: 'Apakah anda sudah yakin ?',
+            text: 'Anda tidak akan bisa mengubah data ini lagi!',
+            icon: 'warning',
+            showDenyButton: true,
+            confirmButtonText: 'Yakin',
+            denyButtonText: `Batal`,
+            }).then((result) => {
+              /* Read more about isConfirmed, isDenied below */
+              if (result.isConfirmed) {
+                form.submit();
+              }
+          });
+      });
      </script>
 @endsection

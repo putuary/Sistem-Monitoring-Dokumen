@@ -46,6 +46,13 @@ function isPraktikum($data) {
     return 'Tidak';
 }
 
+function dikumpul($data) {
+    if($data == 1) {
+        return 'Mulltiple Dokumen';
+    }
+    return 'Single Dokumen';
+}
+
 function createTenggat($date, $default) {
     $tenggat=Carbon::createFromLocaleIsoFormat('D MMMM YYYY', 'id', $date, 'Asia/Jakarta')->addWeek($default)->format('Y-m-d');
     $dt=Carbon::parse($tenggat);
@@ -141,8 +148,11 @@ function kelasSummary($dokumen_kelas, $dokumen_matkul) {
         
         $ditugaskan++;
     }
-    
-    $persentase_dikumpul=round(($terkumpul/$ditugaskan)*100, 1);
+    try {
+        $persentase_dikumpul=round(($terkumpul/$ditugaskan)*100, 1);
+    } catch (\Throwable $th) {
+        $persentase_dikumpul=0;
+    }
 
     return (object) [
         'terlewat' => $terlewat,
@@ -184,7 +194,11 @@ function dokumenSummary($dokumen_ditugaskan) {
         $ditugaskan++;
     }
     
-    $persentase_dikumpul=round(($terkumpul/$ditugaskan)*100, 1);
+    try {
+        $persentase_dikumpul=round(($terkumpul/$ditugaskan)*100, 1);
+    } catch (\Throwable $th) {
+        $persentase_dikumpul=0;
+    }
 
     return (object) [
         'terlewat' => $terlewat,
@@ -204,9 +218,9 @@ function isMatkul($type) {
 
 function pathDokumen($tahun_ajaran, $isMatkul, $matkul, $kelas=null) {
     if($isMatkul) {
-        return '/Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/';
+        return 'Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/';
     }
-    return '/Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/'.$kelas;
+    return 'Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/'.$kelas;
 }
 
 function countStatusDokumen($filter=null, $tahun_ajaran=null) {
@@ -230,6 +244,12 @@ function dosenKelas($kelas_dokumen_matkul) {
         }
     }
     return $dosen;
+}
+
+function like_match($pattern, $subject) {
+    $pattern = str_replace('%', '.*', preg_quote($pattern, '/'));
+    
+    return (bool) preg_match("/^{$pattern}$/i", $subject);
 }
 
 function showProfilDokumen($id_dokumen) {

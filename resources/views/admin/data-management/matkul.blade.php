@@ -15,28 +15,30 @@
 
 @section('content')
     <!-- Page Content -->
-     <!-- pop up success upload -->
-    @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+
+    <div class="content">
+      
+      <!-- pop up success upload -->
+      @if (session()->has('success'))
+          <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
           <strong>{{ session()->get('success') }}</strong>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
+          </div>
+      @endif
 
-    {{-- @error('kode_matkul')
-    <?= "<script type ='text/javascript'>window.onload = function() { errorAlert('Kode Mata Kuliah sudah digunakan');};  </script>"; ?>
-    @enderror --}}
+      @if (session()->has('failed'))
+          <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <strong>{{ session()->get('failed') }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      @endif
 
-    @error('kode_matkul')
-    <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
-      <strong>Kode mata kuliah tidak boleh sama</strong>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @enderror
-    <div class="content">
-      {{-- <embed src="{{ URL::asset('/assets/media/avatars/test.pdf') }}" width=100% height=600 type="text/pdf" > --}}
-      {{-- <a href="{{ URL::asset("/assets/media/avatars/test.pdf") }}" target="_blank">Cerita.pdf</a> --}}
-      {{-- <object src={{ URL::asset("/assets/media/avatars/test.pdf") }} type="application/pdf" width=100% height=100%> </object> --}}
+      @error('kode_matkul')
+      <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+        <strong>Kode mata kuliah tidak boleh sama</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      @enderror
           <!-- Quick Overview -->
            <div class="row">
             <div class="col-6 col-lg-3">
@@ -163,7 +165,7 @@
               @foreach ($matkul as $key => $item)
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="text-center fs-sm">{{ $item->nama_matkul }}</td>
+                <td class="fs-sm">{{ $item->nama_matkul }}</td>
                 <td class="text-center fw-semibold fs-sm">{{ $item->kode_matkul }}</td>
                 <td class="text-center fw-semibold fs-sm">{{ $item->bobot_sks }}</td>
                 <td class="text-center">
@@ -213,7 +215,7 @@
                                 placeholder="Masukkan Kode Mata Kuliah"
                                 id="kode_matkul"
                                 name="kode_matkul"
-                                required />
+                                required readonly />
                                 @error('kode_matkul')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
@@ -277,25 +279,13 @@
     <script src={{  URL::asset("assets/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons/dataTables.buttons.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-jszip/jszip.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons/buttons.print.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons/buttons.html5.min.js") }}></script>
-    <script src={{ URL::asset("assets/js/plugins/bootstrap-notify/bootstrap-notify.min.js") }}></script>
 
      <!-- Page JS Code -->
      <script src={{  URL::asset("assets/js/pages/be_tables_datatables.min.js") }}></script>
-     <!-- Page JS Helpers (BS Notify Plugin) -->
-    <script>One.helpersOnLoad(['jq-notify']);</script>
 
      <script>
       let jsfiles = <?php echo json_encode($matkul) ?>;
-      console.log(jsfiles);
-
-      function errorAlert(message) {
-        One.helpers('notify', {type: 'danger', icon: 'fa fa-times me-1', message: message});
-      }
 
       //modal
       function editMatkul(id) {
@@ -313,6 +303,8 @@
       }
 
       $(document).ready(function () {
+        $(".alert").delay(2000).fadeOut("slow");
+
         $('.modal-tambah-matkul').modal({backdrop: 'static', keyboard: false});
         $(".button-tambah-matkul").on("click", function () {
           $(".modal-tambah-matkul").modal("show");
