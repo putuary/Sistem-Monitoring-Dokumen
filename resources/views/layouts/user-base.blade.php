@@ -104,7 +104,7 @@
           <div class="content-side">
             <ul class="nav-main">
               <li class="nav-main-item">
-                <a class="nav-main-link {{ URL::to("/") ? 'active' : '' }}" href="/">
+                <a class="nav-main-link {{ Request::is('/') ? 'active' : '' }}" href="/">
                   <i class="nav-main-link-icon si si-speedometer"></i>
                   <span class="nav-main-link-name">Dashboard</span>
                 </a>
@@ -182,6 +182,30 @@
                       {{ namaPeran(Auth()->user()->role) }}
                     @endif
                   </p>
+
+                  <?php $badges=auth()->user()->aktifBadge()->first()->user_badge ?? []; ?>
+                  @if (in_array(Auth()->user()->role, ['kaprodi', 'gkmp']))
+                    @if (Auth()->user()->aktif_role->is_dosen == 1)
+                    <div class="row mt-3">
+                     
+                      @foreach ($badges as $badge)
+                      <div class="col-4">
+                        <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ asset('storage/badges/'.$badge->gambar) }}" alt="">
+                      </div>
+                      @endforeach
+                    </div>
+                    @endif
+                  @elseif(Auth()->user()->role == 'dosen')
+                  <div class="row mt-3">
+                    @foreach ($badges as $badge)
+                    <div class="col-4">
+                      <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ asset('storage/badges/'.$badge->gambar) }}" alt="">
+                    </div>
+                    @endforeach
+                  </div>
+                  @endif
+                  
+                  
                 </div>
                 <div class="p-2">
                   <a class="dropdown-item d-flex align-items-center justify-content-between" href="/profil">
@@ -245,6 +269,7 @@
 
       <!-- Main Container -->
       <main id="main-container">
+
         @yield('content')
       </main>
       <!-- END Main Container -->

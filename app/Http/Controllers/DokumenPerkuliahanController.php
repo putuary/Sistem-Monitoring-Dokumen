@@ -19,7 +19,7 @@ class DokumenPerkuliahanController extends Controller
             $query->whereNotNull('file_dokumen');
         }])->dokumenTahun(request('tahun_ajaran'))->get();
         
-        // dd($dokumen);
+        dd($dokumen);
 
         return view('dosen.dokumen.dokumen-perkuliahan', ['tahun_ajaran' => $tahun_ajaran, 'dokumen' => $dokumen]);
     }

@@ -8,9 +8,11 @@ use App\Models\DokumenKelas;
 use App\Models\DokumenMatkul;
 use App\Models\DokumenPerkuliahan;
 use App\Models\Kelas;
+use App\Models\Score;
 use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use PhpParser\Node\Stmt\TryCatch;
 
 class KelasDiampuController extends Controller
 {
@@ -52,7 +54,7 @@ class KelasDiampuController extends Controller
             'nama_dokumen' => $nama_dokumen,
             'real_name'    => $real_name,
             'folder_path'  => $folder_path,
-            'path'         => $path,
+            'path_multiple'=> $path,
             'path_dokumen' => $path_dokumen,
         ];
 
@@ -99,7 +101,7 @@ class KelasDiampuController extends Controller
     public function readDokumenSingle($id_dokumen)
     {
         $dokumen=$this->showProfilDokumen($id_dokumen);
-        
+
         return response()->file($dokumen->path_dokumen);
     }
 
@@ -117,13 +119,39 @@ class KelasDiampuController extends Controller
         ]);
 
         $dokumen=$this->showProfilDokumen($request->id_dokumen);
+        
         $filename=$dokumen->real_name.'.'.$request->file('file_dokumen')->extension();
         $request->file('file_dokumen')->move($dokumen->folder_path, $filename);
 
         $dokumen->dokumen_dikumpul->update([
-            'file_dokumen' => $filename,
+            'file_dokumen'      => $filename,
             'waktu_pengumpulan' => date('Y-m-d H:i:s'),
         ]);
+
+        if($dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per == 0) {
+            $dokumen_matkul=DokumenMatkul::with(['kelas_dokumen_matkul' => function($query) {
+                $query->with('dosen_kelas');
+            }])->find($dokumen->dokumen_dikumpul->id_dokumen_matkul);
+
+            $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+              
+            $dokumen_matkul->scores()->update([
+                'score'       => $data['poin'],
+                'status'      => $data['status'],
+            ]);
+        
+        } else {
+            $dokumen_kelas=DokumenKelas::with(['kelas' => function($query) {
+                $query->with('dosen_kelas');
+            }])->find($dokumen->dokumen_dikumpul->id_dokumen_kelas);
+            
+            $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+
+            $dokumen_kelas->scores()->update([
+                'score'     => $data['poin'],
+                'status'    => $data['status'],
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Dokumen berhasil dikumpulkan');
     }
@@ -135,58 +163,54 @@ class KelasDiampuController extends Controller
         // ]);
         // $data=$request->file('file_dokumen')->move(storage_path('app/dokumen'), $request->file('file_dokumen')->getClientOriginalName());
         // dd($data);
+
+        $dokumen=$this->showProfilDokumen($request->id_dokumen);
+        foreach ($request->file('file_dokumen') as $file) {
+            $nama_dokumen= $file->getClientOriginalName();
+            $file->move($dokumen->path_multiple, $nama_dokumen);
+        }
         
-        // dd($request->all());
-        if(is_null($request->id_dokumen_kelas)) {
-            $dokumen=DokumenMatkul::with(['matkul','dokumen_ditugaskan' => function($query) {
-                $query->with(['dokumen_perkuliahan', 'tahun_ajaran']);
-            },
-            ])->where('id_dokumen_matkul', $request->id_dokumen_matkul)->first();
+        $dokumen->dokumen_dikumpul->update([
+            'file_dokumen'      => $dokumen->real_name,
+            'waktu_pengumpulan' => date('Y-m-d H:i:s'),
+        ]);
 
-            $tahun_ajaran=$dokumen->dokumen_ditugaskan->tahun_ajaran->tahun_ajaran;
-            $matkul=$dokumen->matkul->nama_matkul;
+        if($dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per == 0) {
+            $dokumen_matkul=DokumenMatkul::with(['kelas_dokumen_matkul' => function($query) {
+                $query->with('dosen_kelas');
+            }])->find($dokumen->dokumen_dikumpul->id_dokumen_matkul);
 
-            $real_name= $dokumen->dokumen_ditugaskan->dokumen_perkuliahan->nama_dokumen.'_'.$matkul;
-            foreach ($request->file('file_dokumen') as $file) {
-                $nama_dokumen= $file->getClientOriginalName();
-                $file->move(storage_path('app/'.pathDokumen($tahun_ajaran, true, $matkul).'/'.$real_name), $nama_dokumen);
-            }
-
-            $dokumen->update([
-                'file_dokumen' => $real_name,
-                'waktu_pengumpulan' => date('Y-m-d H:i:s'),
+            $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+              
+            $dokumen_matkul->scores()->update([
+                'score'       => $data['poin'],
+                'status'      => $data['status'],
             ]);
+
         } else {
-            $dokumen=DokumenKelas::with(['kelas' => function($query) {
-                $query->with(['matkul']);
-            },'dokumen_ditugaskan' => function($query) {
-                $query->with(['dokumen_perkuliahan', 'tahun_ajaran']);
-            },
-            ])->where('id_dokumen_kelas', $request->id_dokumen_kelas)->first();
+            $dokumen_kelas=DokumenKelas::with(['kelas' => function($query) {
+                $query->with('dosen_kelas');
+            }])->find($dokumen->dokumen_dikumpul->id_dokumen_kelas);
 
-            $tahun_ajaran=$dokumen->dokumen_ditugaskan->tahun_ajaran->tahun_ajaran;
-            $matkul=$dokumen->kelas->matkul->nama_matkul;
-            $kelas=$dokumen->kelas->nama_kelas;
+            $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
 
-            $real_name= $dokumen->dokumen_ditugaskan->dokumen_perkuliahan->nama_dokumen.'_'.$matkul.'_'.$kelas;
-            foreach ($request->file('file_dokumen') as $file) {
-                $nama_dokumen= $file->getClientOriginalName();
-                $file->move(storage_path('app/'.pathDokumen($tahun_ajaran, false, $matkul, $kelas).'/'.$real_name), $nama_dokumen);
-            }
-
-            $dokumen->update([
-                'file_dokumen' => $real_name,
-                'waktu_pengumpulan' => date('Y-m-d H:i:s'),
+            $dokumen_kelas->scores()->update([
+                'score'           => $data['poin'],
+                'status'          => $data['status'],
             ]);
         }
+
+
         return redirect()->back()->with('success', 'Dokumen berhasil dikumpulkan');
     }
 
     public function showDokumenDikumpul($id_dokumen) {
        
         $dokumen=$this->showProfilDokumen($id_dokumen);
+        // $data=scandir('D:\Kuliah\TA\Program\scele-if - Copy\storage\app/Dokumen_Perkuliahan/2023-2024 Ganjil/Teori Bahasa Formal dan Otomata/Portofolio Perkuliahan_Teori Bahasa Formal dan Otomata', SCANDIR_SORT_ASCENDING);
+        // dd($data);
 
-        $storage = array_diff(scandir($dokumen->path, SCANDIR_SORT_ASCENDING), array('.', '..'));
+        $storage = array_diff(scandir($dokumen->path_multiple, SCANDIR_SORT_ASCENDING), array('.', '..'));
 
         return view('dosen.kelas-diampu.tampil-dokumen-multiple', [
             'title'      => $dokumen->nama_dokumen,
@@ -200,9 +224,9 @@ class KelasDiampuController extends Controller
         $dokumen=$this->showProfilDokumen($id_dokumen);
 
         // Cek apakah file lama ada di dalam folder
-        if (file_exists($dokumen->path . '/' . $request->old_name)) {
+        if (file_exists($dokumen->path_multiple . '/' . $request->old_name)) {
             // Lakukan rename file
-            rename($dokumen->path . '/' . $request->old_name, $dokumen->path . '/' . $request->new_name);
+            rename($dokumen->path_multiple . '/' . $request->old_name, $dokumen->path_multiple . '/' . $request->new_name);
         
             return redirect()->back()->with('success', 'Nama file dokumen berhasil diubah');
         } else{

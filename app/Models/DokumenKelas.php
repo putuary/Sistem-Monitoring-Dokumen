@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DokumenDitugaskan;
 use App\Models\Kelas;
+use App\Models\Score;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class DokumenKelas extends Model
@@ -59,5 +60,10 @@ class DokumenKelas extends Model
     public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'kode_kelas');
+    }
+
+    public function scores()
+    {
+        return $this->morphMany(Score::class, 'scoreable');
     }
 }

@@ -37,19 +37,19 @@
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-ecom-filters">
                 <a class="dropdown-item d-flex align-items-center justify-content-between" href="?filter=terkumpul{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
                   Terkumpul
-                  <span class="badge bg-black-50 rounded-pill">{{ $terkumpul }}</span>
+                  {{-- <span class="badge bg-black-50 rounded-pill">{{ $terkumpul }}</span> --}}
                 </a>
                 <a class="dropdown-item d-flex align-items-center justify-content-between" href="?filter=tepat_waktu{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
                   Tepat Waktu
-                  <span class="badge bg-warning rounded-pill">{{ $tepat_waktu }}</span>
+                  {{-- <span class="badge bg-warning rounded-pill">{{ $tepat_waktu }}</span> --}}
                 </a>
                 <a class="dropdown-item d-flex align-items-center justify-content-between" href="?filter=terlambat{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
                   Terlambat
-                  <span class="badge bg-info rounded-pill">{{ $terlambat }}</span>
+                  {{-- <span class="badge bg-info rounded-pill">{{ $terlambat }}</span> --}}
                 </a>
                 <a class="dropdown-item d-flex align-items-center justify-content-between" href="?filter=belum_terkumpul{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
-                  Kosong
-                  <span class="badge bg-danger rounded-pill">{{ $belum_terkumpul }}</span>
+                  Belum Dikumpulkan
+                  {{-- <span class="badge bg-danger rounded-pill">{{ $belum_terkumpul }}</span> --}}
                 </a>
               </div>
             </div>
@@ -69,7 +69,7 @@
                   <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Choose one..">
                     <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                     @foreach ($tahun_ajaran as $item)
-                    <option value={{ $item->id_tahun_ajaran }} @selected(($dokumen[0]->dokumen_ditugaskan->id_tahun_ajaran ?? null) == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }}</option>
+                    <option value={{ $item->id_tahun_ajaran }} @selected((request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }}</option>
                     @endforeach
                   </select>
                   <button type="submit" class="input-group-text">
@@ -86,45 +86,31 @@
               <tr>
                 <th class="text-center">No.</th>
                 <th class="text-center" >Dokumen</th>
-                <th class="text-center" >Kelas</th>
+                <th class="text-center" >Matkul/Kelas</th>
                 <th class="text-center" >Dosen</th>
                 <th class="text-center" >Waktu Pengumpulan</th>
                 <th class="text-center" >Status</th>
               </tr>
             </thead>
             <tbody>
+
               @foreach ($dokumen as $key => $item)
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="fs-sm">{{ $item->dokumen_ditugaskan->dokumen_perkuliahan->nama_dokumen }}</td>
-                @if($item->dokumen_ditugaskan->dokumen_perkuliahan->dikumpulkan_per == 1)
-                <td class="fs-sm">{{ $item->kelas->matkul->nama_matkul.' '.$item->kelas->nama_kelas }}</td>
+                <td class="fs-sm">{{ $item->nama_dokumen }}</td>
+                <td class="fs-sm">{{ $item->matkul_kelas }}</td>
                 <td class="fs-sm">
                   <ul>
-                    @foreach ($item->kelas->dosen_kelas as $dosen)
-                    <li>{{ $dosen->nama }}</li>
+                    @foreach ($item->dosen as $dosen)
+                    <li>{{ $dosen }}</li>
                     @endforeach
                   </ul>
                 </td>
-                @else
-                  @php
-                      $dokumen_matkul=showProfilDokumen($item->id_dokumen_kelas)
-                  @endphp
-                 
-                <td class="fs-sm">{{ $dokumen_matkul->nama_matkul }}</td>
-                <td class="fs-sm">
-                  <ul>
-                    @foreach ($dokumen_matkul->dosen as $dosen)
-                      <li>{{ $dosen }}</li>
-                    @endforeach
-                  </ul>
-                </td>
-                @endif
-                <td class="text-center">
+                <td class="text-center fs-sm">
                   {{ showWaktu($item->waktu_pengumpulan) }}
                 </td>
                 <td class="text-center">
-                  <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->waktu_pengumpulan ? backgroundStatus($item->dokumen_ditugaskan->tenggat_waktu, $item->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->waktu_pengumpulan ? statusPengumpulan($item->dokumen_ditugaskan->tenggat_waktu, $item->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
+                  <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->waktu_pengumpulan ? backgroundStatus($item->tenggat_waktu, $item->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->waktu_pengumpulan ? statusPengumpulan($item->tenggat_waktu, $item->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
                 </td>
               </tr>
               @endforeach

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Kelas;
 use App\Models\DokumenDitugaskan;
+use App\Models\Score;
+use App\Models\UserBadge;
 
 class TahunAjaran extends Model
 {
@@ -32,5 +34,15 @@ class TahunAjaran extends Model
     public function kelas()
     {
         return $this->hasMany(Kelas::class, 'id_tahun_ajaran');
+    }
+
+    public function score()
+    {
+        return $this->hasMany(Score::class, 'id_tahun_ajaran');
+    }
+
+    public function user_badge()
+    {
+        return $this->hasMany(UserBadge::class, 'id_tahun_ajaran');
     }
 }

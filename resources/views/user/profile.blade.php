@@ -16,35 +16,20 @@
     <!-- END Hero -->
 
     <!-- Stats -->
+    @if (isset($user_badges))
     <div class="bg-body-extra-light">
       <div class="content content-boxed">
         <div class="row items-push text-center">
+        @foreach ($user_badges as $badge)
           <div class="col-6 col-md-3">
-            <div class="fs-sm fw-semibold text-muted text-uppercase">Sales</div>
-            <a class="link-fx fs-3" href="javascript:void(0)">17980</a>
+            <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ asset('storage/badges/'.$badge->gambar) }}" alt="">
+            <p class="mb-0 text-muted fs-sm fw-medium">{{ $badge->total.'x' }}</p>
           </div>
-          <div class="col-6 col-md-3">
-            <div class="fs-sm fw-semibold text-muted text-uppercase">Products</div>
-            <a class="link-fx fs-3" href="javascript:void(0)">27</a>
-          </div>
-          <div class="col-6 col-md-3">
-            <div class="fs-sm fw-semibold text-muted text-uppercase">Followers</div>
-            <a class="link-fx fs-3" href="javascript:void(0)">1360</a>
-          </div>
-          <div class="col-6 col-md-3">
-            <div class="fs-sm fw-semibold text-muted text-uppercase mb-2">739 Ratings</div>
-            <span class="text-warning">
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star-half"></i>
-            </span>
-            <span class="fs-sm text-muted">(4.9)</span>
-          </div>
+        @endforeach
         </div>
       </div>
     </div>
+    @endif
     <!-- END Stats -->
 
     <!-- Page Content -->

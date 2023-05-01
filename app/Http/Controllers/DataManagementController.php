@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Badge;
 use App\Models\DokumenDitugaskan;
 use App\Models\MataKuliah;
 use App\Models\DokumenPerkuliahan;
@@ -159,5 +160,4 @@ class DataManagementController extends Controller
 
         return redirect()->back()->with('success', 'Data berhasil dihapus');
     }
-
 }

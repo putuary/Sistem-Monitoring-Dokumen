@@ -11,6 +11,8 @@ use App\Http\Controllers\KelasController;
 use App\Http\Controllers\KelasDiampuController;
 use App\Http\Controllers\DokumenPerkuliahanController;
 use App\Http\Controllers\DokumenDitugaskanController;
+use App\Http\Controllers\BadgeController;
+use App\Http\Controllers\LeaderBoardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,10 +81,16 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/manajemen-data/dokumen-perkuliahan/edit', [DataManagementController::class, 'editDokumen']);
     Route::post('/manajemen-data/dokumen-perkuliahan/delete', [DataManagementController::class, 'deleteDokumen']);
 
+    Route::resource('/manajemen-data/badge', BadgeController::class)->except(['create', 'store', 'show', 'edit']);
+
     // Progres Pengumpulan
     Route::get('/progres-pengumpulan', [ProgresController::class, 'index']);
+    Route::post('/progres-pengumpulan/unduh-semua-dokumen', [ProgresController::class, 'downloadArchiveDokumen']);
     Route::get('/progres-pengumpulan/kelas', [ProgresController::class, 'showProgresKelas']);
     Route::get('/progres-pengumpulan/dokumen', [ProgresController::class, 'showProgresDokumen']);
+    Route::post('/progres-pengumpulan/dokumen', [ProgresController::class, 'downloadDokumen']);
+    Route::post('/progres-pengumpulan/kelas', [ProgresController::class, 'downloadDokumenKelas']);
+
 
     // Riwayat Pengumpulan
     Route::get('/riwayat-pengumpulan', [ProgresController::class, 'showRiwayat']);
@@ -92,6 +100,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/atur-pengingat-pengumpulan/edit', [PengingatController::class, 'editPengingat']);
     Route::post('/atur-pengingat-pengumpulan/edit_pengumpulan', [PengingatController::class, 'editPengumpulan']);
 
+    Route::get('/leaderboard', [LeaderBoardController::class, 'index']);
+    Route::post('/leaderboard/badge', [LeaderBoardController::class, 'resultBadge']);
+    Route::get('/badge', [LeaderBoardController::class, 'showResultBadge']);
 });
 
 Route::middleware(['auth', 'role:dosen'])->group(function () {

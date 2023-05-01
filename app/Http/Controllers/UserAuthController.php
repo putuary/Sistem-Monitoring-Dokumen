@@ -66,11 +66,21 @@ class UserAuthController extends Controller
     public function profile()
     {
         if(in_array(Auth::user()->role, ['kaprodi', 'gkmp'] )) {
-            if(Auth::user()->aktif_role->is_dosen != 0) {
+            if(Auth::user()->aktif_role->is_dosen == 1) {
                 return view('user.profile', [
-                    'user' => User::with('aktif_role')->where('id', Auth::user()->id)->first(),
+                    'user'         => User::with('aktif_role')->where('id', Auth::user()->id)->first(),
+                    'user_badges'  => auth()->user()->user_badge()->selectRaw('user_badges.id_user, user_badges.id_badge, nama_badge, gambar, COUNT(*) as total')
+                                    ->groupBy('user_badges.id_user', 'user_badges.id_badge', 'nama_badge', 'gambar')
+                                    ->get(),
                 ]);
-            }  
+            } 
+        } else if(Auth::user()->role == "dosen") {
+            return view('user.profile', [
+                'user'         => Auth::user(),
+                'user_badges'  => auth()->user()->user_badge()->selectRaw('user_badges.id_user, user_badges.id_badge, nama_badge, gambar, COUNT(*) as total')
+                                ->groupBy('user_badges.id_user', 'user_badges.id_badge', 'nama_badge', 'gambar')
+                                ->get(),
+            ]);
         } return view('user.profile', [
             'user'  => Auth::user(),
         ]);

@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Models\DokumenDitugaskan;
 use App\Models\MataKuliah;
 use App\Models\Kelas;
+use App\Models\Score;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -73,5 +74,10 @@ class DokumenMatkul extends Model
     public function matkul()
     {
         return $this->belongsTo(MataKuliah::class, 'kode_matkul');
+    }
+
+    public function scores()
+    {
+        return $this->morphMany(Score::class, 'scoreable');
     }
 }

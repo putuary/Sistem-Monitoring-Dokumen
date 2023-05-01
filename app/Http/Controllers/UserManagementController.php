@@ -83,11 +83,7 @@ class UserManagementController extends Controller
     public function destroy($id)
     {
         try {
-            $user=User::with('dosen_kelas')->find($id);
-            if(in_array($user->role, ['kaprodi', 'gkmp']) && count($user->dosen_kelas) == 0) {
-                $user->aktif_role()->delete();
-            }
-            $user->delete();
+            $user=User::with('dosen_kelas')->find($id)->delete();
         } catch (\Throwable $th) {
             return redirect()->back()->with('failed', 'Tidak dapat menghapus parent data');
         }

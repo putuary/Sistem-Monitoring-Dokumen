@@ -99,10 +99,10 @@ class PenugasanController extends Controller
             }
         }
 
-        $kelas=Kelas::KelasAktif()->get();
+        $kelas=Kelas::with('dosen_kelas')->KelasAktif()->get();
 
         $matkul=MataKuliah::with(['kelas' => function($query) {
-                $query->KelasAktif();
+                $query->with('dosen_kelas')->KelasAktif();
             }])->whereHas('kelas', function($query) {
                 $query->KelasAktif();
             })->get();
@@ -123,11 +123,19 @@ class PenugasanController extends Controller
 
             if($dokumen_ditugaskan->dikumpulkan_per == 1) {
                 foreach($kelas as $kls) {
-                    $kls->dokumen_kelas()->create([
+                    $dokumen_kelas = $kls->dokumen_kelas()->create([
                         'id_dokumen_ditugaskan' => $dokumen_ditugaskan->id_dokumen_ditugaskan,
                         'file_dokumen' => null,
                         'waktu_pengumpulan' => null,
                     ]);
+                    foreach($kls->dosen_kelas as $dsn) {
+                        $dokumen_kelas->scores()->create([
+                            'id_dosen'        => $dsn->id,
+                            'id_tahun_ajaran' => $kls->id_tahun_ajaran,
+                            'score'           => 0,
+                            'status'          => 0,
+                        ]);
+                    }
                 }
             } else {
                 foreach($matkul as $mkl) {
@@ -140,8 +148,23 @@ class PenugasanController extends Controller
                         'file_dokumen' => null,
                         'waktu_pengumpulan' => null,
                     ]);
+                    $dosen_id = array();
                     foreach($mkl->kelas as $kls) {
                         $kls->kelas_dokumen_matkul()->attach($dokumen_matkul->id_dokumen_matkul);
+
+                        foreach($kls->dosen_kelas as $dsn) {
+                            if(!in_array($dsn->id, $dosen_id)) {
+                                
+                               $dokumen_matkul->scores()->create([
+                                    'id_dosen'        => $dsn->id,
+                                    'id_tahun_ajaran' => $kls->id_tahun_ajaran,
+                                    'score'           => 0,
+                                    'status'          => 0,
+                                ]);
+        
+                                array_push($dosen_id, $dsn->id);
+                            }
+                        }
                     }
                 }
             }

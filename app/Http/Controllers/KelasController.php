@@ -17,12 +17,14 @@ class KelasController extends Controller
         $tahun_ajaran=TahunAjaran::orderBy('id_tahun_ajaran', 'desc')->get();
 
         $tahun_aktif=TahunAjaran::tahunAktif()->first();
-        if(like_match('%Ganjil', $tahun_aktif->tahun_ajaran)) {
-            $matkul= MataKuliah::matkulDibuka('Ganjil')->get();
-        } else if(like_match('%Genap', $tahun_aktif->tahun_ajaran)) {
-            $matkul= MataKuliah::matkulDibuka('Genap')->get();
-        } else {
-            $matkul= MataKuliah::matkulDibuka('Pendek')->get();
+        if(isset($tahun_aktif)) {
+            if(like_match('%Ganjil', $tahun_aktif->tahun_ajaran)) {
+                $matkul= MataKuliah::matkulDibuka('Ganjil')->get();
+            } else if(like_match('%Genap', $tahun_aktif->tahun_ajaran)) {
+                $matkul= MataKuliah::matkulDibuka('Genap')->get();
+            } else {
+                $matkul= MataKuliah::matkulDibuka('Pendek')->get();
+            }
         }
 
         
@@ -32,7 +34,7 @@ class KelasController extends Controller
         $kelas= Kelas::with(['tahun_ajaran', 'matkul', 'dosen_kelas'])->kelasTahun(request('tahun_ajaran'))->orderBy('kode_matkul', 'asc')->get();
         // dd($kelas);
 
-        return view('super-admin.penugasan.daftar-kelas', ['tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif, 'matkul' => $matkul, 'dosen' => $dosen, 'kelas' => $kelas,]);
+        return view('super-admin.penugasan.daftar-kelas', ['tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif, 'matkul' => ($matkul ?? [] ), 'dosen' => $dosen, 'kelas' => $kelas,]);
     }
 
     public function store(Request $request)

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->bigInteger('id_user')->unsigned();
             $table->boolean('is_dosen')->default(false);
 
-            $table->foreign('id_user')->references('id')->on('users');
+            $table->foreign('id_user')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

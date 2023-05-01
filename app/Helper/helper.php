@@ -5,6 +5,7 @@ use App\Models\AktifRole;
 use App\Models\DokumenKelas;
 use App\Models\DokumenMatkul;
 use App\Models\Kelas;
+use App\Models\User;
 
 function NamaPeran($peran){
     switch($peran){
@@ -94,7 +95,58 @@ function statusPengumpulan($tenggat, $waktu_pengumpulan) {
     }
     return 'Terlambat Dikumpulkan';
 }
-   
+
+function submitScore($tenggat, $waktu_pengumpulan, $isDokumenMatkul, $id_dokumen_terkumpul, $id_dokumen_ditugaskan) {
+    $tenggat=Carbon::parse($tenggat);
+    $waktu_pengumpulan=Carbon::parse($waktu_pengumpulan);
+    
+    if($waktu_pengumpulan->isBefore($tenggat)) {
+        $status=2;
+        $poin=100;
+    } else {
+        $status=1;
+        $poin=-25;
+    }
+
+    if($isDokumenMatkul) {
+        $dokumen_matkul_terkumpul=DokumenMatkul::where('id_dokumen_ditugaskan', $id_dokumen_ditugaskan)->wherenotnull('waktu_pengumpulan')->orderBy('waktu_pengumpulan', 'asc')->get();
+        foreach ($dokumen_matkul_terkumpul as $key => $item) {
+            if($id_dokumen_terkumpul == $item->id_dokumen_matkul) {
+                if($key+1 == 1) {
+                    $poin+=50;
+                } else if ($key+1 == 2) {
+                    $poin+=25;
+                } else if ($key+1 == 3) {
+                    $poin+=10;
+                } else {
+                    $poin+=0;
+                }
+                break;
+            }
+        }
+    } else {
+        $dokumen_kelas_terkumpul=DokumenKelas::where('id_dokumen_ditugaskan', $id_dokumen_ditugaskan)->wherenotnull('waktu_pengumpulan')->orderBy('waktu_pengumpulan', 'asc')->get();
+        foreach ($dokumen_kelas_terkumpul as $key => $item) {
+            if($id_dokumen_terkumpul == $item->id_dokumen_kelas) {
+                if($key+1 == 1) {
+                    $poin+=50;
+                } else if ($key+1 == 2) {
+                    $poin+=25;
+                } else if ($key+1 == 3) {
+                    $poin+=10;
+                } else {
+                    $poin+=0;
+                }
+                break;
+            }
+        }
+    }
+
+    return [
+        'status'  => $status,
+        'poin'      => $poin,
+    ];
+}
 
 function isKelasDiampu($kode_kelas) {
     $kelas=Kelas::where('kode_kelas', $kode_kelas)->kelasDiampu()->first();
@@ -218,13 +270,13 @@ function isMatkul($type) {
 
 function pathDokumen($tahun_ajaran, $isMatkul, $matkul, $kelas=null) {
     if($isMatkul) {
-        return 'Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/';
+        return 'dokumen-perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/dokumen-matkul';
     }
-    return 'Dokumen_Perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/'.$kelas;
+    return 'dokumen-perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/'.$kelas;
 }
 
 function countStatusDokumen($filter=null, $tahun_ajaran=null) {
-    $dokumen_kelas=DokumenKelas::with(['dokumen_ditugaskan', 'kelas'])->whereHas('dokumen_ditugaskan', function($query) use ($tahun_ajaran) {
+    $dokumen_kelas=DokumenKelas::whereHas('dokumen_ditugaskan', function($query) use ($tahun_ajaran) {
         $query->dokumenTahun($tahun_ajaran);
     })->filter($filter);
     $dokumen_all=DokumenMatkul::with(['dokumen_ditugaskan', 'kelas_dokumen_matkul'])->whereHas('dokumen_ditugaskan', function($query) use ($tahun_ajaran) {
@@ -259,4 +311,67 @@ function showProfilDokumen($id_dokumen) {
         'nama_matkul' => $dokumen->matkul->nama_matkul,
         'dosen'       => dosenKelas($dokumen->kelas_dokumen_matkul),
     ];
+}
+
+function showRank($users) {
+    $leaderboard=array();
+    foreach($users as $user) {
+        $late=$onTime=$sum_submited=$empty=$sum_score=0;
+        $task=count($user->score);
+        // dd($user->score);
+        foreach ($user->score as $score) {
+                
+            if($score->status === 0) {
+                $empty++;
+            } else if($score->status == 1){
+                $late++;
+            } else if($score->status == 2){
+                $onTime++;
+            }
+
+            if($score->scoreable->file_dokumen != null) {
+                $sum_submited++;
+            }
+            
+            $sum_score+=$score->score;
+        }
+        try {
+            $percent=round(($sum_submited/$task)*100, 1);
+        } catch (\Throwable $th) {
+            $percent=0;
+        }
+        
+        try {
+            $point=round($sum_score/$task, 1);
+        } catch (\Throwable $th) {
+            $point=0;
+        }
+
+        $leaderboard[]=(object) [
+            'user' => $user,
+            'late'  => $late,
+            'onTime'=> $onTime,
+            'empty' => $empty,
+            'task'  => $task,
+            'percent' => $percent,
+            'point' => $point,
+        ];
+        
+    }
+    // dd($leaderboard);
+
+    usort($leaderboard, function($a, $b) {
+        return $b->point <=> $a->point;
+    });
+
+    // dd($leaderboard);
+    
+    return $leaderboard;
+}
+
+function giveBadge($id_user, $id_badge, $id_tahun_ajaran) {
+    $user=User::find($id_user);
+    $user->user_badge()->attach($id_badge,['is_aktif' => 1, 'id_tahun_ajaran' => $id_tahun_ajaran]);
+
+    return true;
 }

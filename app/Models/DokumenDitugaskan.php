@@ -35,6 +35,13 @@ class DokumenDitugaskan extends Model
         });
     }
 
+    public function scopeSearchDokumen($query, $search)
+    {
+        return $query->whereHas('dokumen_perkuliahan', function($query) use ($search) {
+            $query->where('nama_dokumen', 'like', '%'.$search.'%');
+        });
+    }
+
     public function scopeDokumenAktif($query)
     {
         return $query->whereHas('tahun_ajaran', function($query) {

@@ -3,13 +3,22 @@
   <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/select2/css/select2.min.css') }}">
 @endsection
 @section('content')
-    <!-- Hero -->
+    <!-- Page Content -->
     <div class="content">
+
+       <!-- pop up success upload -->
       @if (session()->has('success'))
-      <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
-        <strong>{{ session()->get('success') }}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
+          <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+          <strong>{{ session()->get('success') }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      @endif
+
+      @if (session()->has('failed'))
+          <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <strong>{{ session()->get('failed') }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
       @endif
 
       {{-- <div class="row">
@@ -47,11 +56,14 @@
       </form>
 
       <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
-          <div class="mt-3 mt-md-0">
-            <button type="button" class="btn btn-info">
-              <i class="fa fa-fw fa-download me-1"></i> Unduh Semua Dokumen
-            </button>
-          </div>
+        <form class="mt-3 mt-md-0" action="/progres-pengumpulan/unduh-semua-dokumen" method="POST">
+          @csrf
+          <input type="hidden" name="id_tahun_ajaran" value="{{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}">
+
+          <button type="submit" class="btn btn-info">
+            <i class="fa fa-fw fa-download me-1"></i> Unduh Semua Dokumen
+          </button>
+        </form>
         
         <div class="mt-md-0 ms-md-3 space-x-1">
           <div class="dropdown d-inline-block">
@@ -75,20 +87,18 @@
             <i class="fa fa-cogs opacity-50"></i>
             <span>Settings</span>
           </a> --}}
-          <div class="btn btn-sm space-x-1">
+          <form class="btn btn-sm space-x-1" id="search-form" method="GET">
             <div class="input-group input-group-sm">
-              <input type="text" class="form-control form-control-alt" placeholder="Search.." id="page-header-search-input2" name="page-header-search-input2">
-              <button class="input-group-text border-0">
+              <input type="text" class="form-control form-control-alt" placeholder="Search.." id="page-header-search-input2" name="search">
+              <button type="submit" class="input-group-text border-0">
                 <i class="fa fa-fw fa-search"></i>
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
-    </div>
-    <!-- END Hero -->
-    <!-- Page Content -->
-    <div class="content">
+    
+
       <!-- Overview -->
       <div class="row items-push">
 
@@ -156,4 +166,39 @@
 
     <!-- Page JS Helpers (Easy Pie Chart + jQuery Sparkline Plugins) -->
     <script>One.helpersOnLoad(['jq-easy-pie-chart', 'jq-sparkline']);</script>
+
+    <script>
+      $(document).ready(function () {
+        $(".alert").delay(2000).fadeOut("slow");
+
+        $('#search-form').submit(function(e) {
+            // Mencegah aksi default dari form
+            e.preventDefault();
+
+            // Mengambil nilai query dari input
+            var search = $('input[name="search"]').val();
+            var tahun_ajaran={{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}
+            var filter='{{ request('filter') ?? '' }}';
+
+            // Melakukan request Ajax ke server
+            $.ajax({
+                url: '/progres-pengumpulan',
+                method: 'GET',
+                data: {
+                    tahun_ajaran: tahun_ajaran,
+                    filter: filter,
+                    search: search 
+                  },
+                success: function(response) {
+                    // Menampilkan hasil pencarian pada halaman
+                    $('body').html(response);
+                    // $('#search-results').html(response);
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+            });
+          });
+      });
+    </script>
 @endsection

@@ -5,8 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
-use App\Models\DokumenDitugaskan;
-use App\Models\Kelas;
 use App\Models\TahunAjaran;
 
 class Score extends Model
@@ -14,32 +12,40 @@ class Score extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id_user',
-        'id_dokumen_ditugaskan',
-        'kode_kelas',
+        'id_dosen',
         'id_tahun_ajaran',
-        'poin',
-        'tepat_waktu',
-        'terlambat',
+        'scoreable_id',
+        'scoreable_type',
+        'score',
+        'status',
     ];
+
+    public function scopeScoreTahunAktif($query)
+    { 
+        return $query->whereHas('tahun_ajaran', function($query) {
+            $query->tahunAktif();
+        });
+    }
+
+    public function scopeScoreTahun($query, $id_tahun_ajaran)
+    {
+        if(isset($id_tahun_ajaran)) {
+            return $query->where('id_tahun_ajaran', $id_tahun_ajaran);
+        } return $query->scoreTahunAktif();
+    }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'id_user');
-    }
-
-    public function dokumen_ditugaskan()
-    {
-        return $this->belongsTo(DokumenDitugaskan::class, 'id_dokumen_ditugaskan');
-    }
-
-    public function kelas()
-    {
-        return $this->belongsTo(Kelas::class, 'kode_kelas');
+        return $this->belongsTo(User::class, 'id_dosen');
     }
 
     public function tahun_ajaran()
     {
         return $this->belongsTo(TahunAjaran::class, 'id_tahun_ajaran');
+    }
+
+    public function scoreable()
+    {
+        return $this->morphTo();
     }
 }

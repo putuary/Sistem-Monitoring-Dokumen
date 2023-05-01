@@ -24,6 +24,13 @@ class Kelas extends Model
         'id_tahun_ajaran',
     ];
 
+    public function scopeSearchKelas($query, $search)
+    {
+        return $query->whereHas('matkul', function($query) use ($search) {
+            $query->where('nama_matkul', 'like', '%'.$search.'%');
+        })->orWhere('nama_kelas', 'like', '%'.$search.'%');
+    }
+
     public function scopeKelasAktif($query)
     {
         return $query->whereHas('tahun_ajaran', function($query) {
@@ -78,10 +85,5 @@ class Kelas extends Model
     public function dosen_kelas()
     {
         return $this->belongsToMany(User::class, 'dosen_kelas', 'kode_kelas', 'id_dosen');
-    }
-
-    public function score()
-    {
-        return $this->hasMany(Score::class, 'kode_kelas');
     }
 }

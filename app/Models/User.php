@@ -10,6 +10,7 @@ use App\Models\Badge;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -39,14 +40,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function scopeAktifBadge($query) {
+        return $query->with(['user_badge' => function($query) {
+            $query->where('is_aktif', 1);
+        }])->where('id', Auth::user()->id);
+    }
 
     public function dosen_kelas()
     {
@@ -60,11 +58,11 @@ class User extends Authenticatable
 
     public function score()
     {
-        return $this->hasMany(Score::class, 'id_user');
+        return $this->hasMany(Score::class, 'id_dosen');
     }
 
     public function user_badge()
     {
-        return $this->belongsToMany(Badge::class, 'user_badge', 'id_user', 'id_badge');
+        return $this->belongsToMany(Badge::class, 'user_badges', 'id_user', 'id_badge');
     }
 }

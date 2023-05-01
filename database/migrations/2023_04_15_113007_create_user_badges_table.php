@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('user_badges', function (Blueprint $table) {
             $table->bigInteger('id_user')->unsigned();
             $table->bigInteger('id_badge')->unsigned();
-            $table->tinyInteger('status');
+            $table->boolean('is_aktif');
+            $table->bigInteger('id_tahun_ajaran')->unsigned();
             $table->timestamps();
 
             $table->foreign('id_user')->references('id')->on('users');
             $table->foreign('id_badge')->references('id')->on('badges');
+            $table->foreign('id_tahun_ajaran')->references('id_tahun_ajaran')->on('tahun_ajaran');
         });
     }
 

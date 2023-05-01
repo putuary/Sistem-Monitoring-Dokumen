@@ -18,6 +18,6 @@ class Badge extends Model
 
     public function user_badge()
     {
-        return $this->belongsToMany(User::class, 'user_badge', 'id_badge', 'id_user');
+        return $this->belongsToMany(User::class, 'user_badges', 'id_badge', 'id_user');
     }
 }

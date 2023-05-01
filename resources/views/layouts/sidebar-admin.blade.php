@@ -1,14 +1,14 @@
 <li class="nav-main-heading">Data</li>
 
 <li class="nav-main-item">
-  <a class="nav-main-link" href="/manajemen-pengguna">
+  <a class="nav-main-link {{ Request::is('manajemen-pengguna') ? 'active' : '' }}" href="/manajemen-pengguna">
     <i class="nav-main-link-icon si si-user"></i>
     <span class="nav-main-link-name">Manajemen Pengguna</span>
   </a>
 </li>
 
 <li class="nav-main-item">
-  <a class="nav-main-link" href="/manajemen-data">
+  <a class="nav-main-link {{ Request::is('manajemen-data') ? 'active' : '' }}" href="/manajemen-data">
     <i class="nav-main-link-icon si si-user"></i>
     <span class="nav-main-link-name">Manajemen Data</span>
   </a>
@@ -17,14 +17,14 @@
 <li class="nav-main-heading">DOKUMEN PERKULIAHAN</li>
 
 <li class="nav-main-item">
-  <a class="nav-main-link" href="/penugasan">
+  <a class="nav-main-link {{ (Request::is('penugasan') || Request::is('penugasan/*')) ? 'active' : '' }}" href="/penugasan">
     <i class="nav-main-link-icon si si-wrench"></i>
     <span class="nav-main-link-name">Penugasan</span>
   </a>
 </li>
 
 <li class="nav-main-item">
-  <a class="nav-main-link" href="/progres-pengumpulan">
+  <a class="nav-main-link {{ (Request::is('progres-pengumpulan') || Request::is('progres-pengumpulan/*')) ? 'active' : '' }}" href="/progres-pengumpulan">
     <i class="nav-main-link-icon si si-wrench"></i>
     <span class="nav-main-link-name">Progres Pengumpulan</span>
   </a>
@@ -49,8 +49,14 @@
 <li class="nav-main-heading">MANAJEMEN PERINGKAT</li>
 
 <li class="nav-main-item">
-  <a class="nav-main-link" href="/atur-pengingat-pengumpulan">
+  <a class="nav-main-link" href="/leaderboard">
     <i class="nav-main-link-icon si si-wrench"></i>
-    <span class="nav-main-link-name">Atur Pengingat dan Pengumpulan</span>
+    <span class="nav-main-link-name">Leaderboard</span>
+  </a>
+</li>
+<li class="nav-main-item">
+  <a class="nav-main-link" href="/badge">
+    <i class="nav-main-link-icon si si-wrench"></i>
+    <span class="nav-main-link-name">Badge</span>
   </a>
 </li>

@@ -50,6 +50,23 @@
         </div>
         <!-- END Dokumen Pengajaran -->
 
+        <!-- Badge -->
+        <div class="col-md-6 col-lg-4 col-xl-3">
+          <a class="block block-rounded block-link-pop h-100 mb-0" href="/manajemen-data/badge">
+            <div class="block-content block-content-full text-center bg-smooth">
+              <div class="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
+                <i class="fab fa-html5 fa-2x text-white-75"></i>
+              </div>
+            </div>
+            <div class="bg-body-light rounded-bottom">
+              <div class="block-content block-content-full block-content-sm text-center fs-sm fw-medium">
+                <span>Badge</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <!-- Badge -->
+
       </div>
       <!-- END Overview -->
     </div>

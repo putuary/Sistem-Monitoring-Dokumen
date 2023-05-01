@@ -281,7 +281,7 @@
      <script src={{  URL::asset("assets/js/pages/be_tables_datatables.min.js") }}></script>
 
      <script>
-      let jsfiles = <?php echo json_encode($data) ?>;
+      let jsfiles = <?php echo json_encode($data); ?>;
       
       //modal
       function edit_pengguna(id) {

@@ -13,18 +13,15 @@ return new class extends Migration
     {
         Schema::create('scores', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('id_user')->unsigned();
-            $table->string('id_dokumen_ditugaskan', 10);
-            $table->bigInteger('kode_kelas')->unsigned();
+            $table->bigInteger('id_dosen')->unsigned();
             $table->bigInteger('id_tahun_ajaran')->unsigned();
-            $table->float('poin');
-            $table->tinyInteger('tepat_waktu');
-            $table->tinyInteger('terlambat');
+            $table->string('scoreable_id', 10);
+            $table->string('scoreable_type');
+            $table->integer('score');
+            $table->tinyInteger('status')->nullable();
             $table->timestamps();
-
-            $table->foreign('id_user')->references('id')->on('users');
-            $table->foreign('id_dokumen_ditugaskan')->references('id_dokumen_ditugaskan')->on('dokumen_ditugaskan');
-            $table->foreign('kode_kelas')->references('kode_kelas')->on('kelas');
+            
+            $table->foreign('id_dosen')->references('id')->on('users');
             $table->foreign('id_tahun_ajaran')->references('id_tahun_ajaran')->on('tahun_ajaran');
         });
     }
