@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\TahunAjaran;
-use App\Models\MataKuliah;
+use App\Models\MatkulDibuka;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DokumenKelas;
 use App\Models\DokumenMatkul;
@@ -20,7 +20,7 @@ class Kelas extends Model
     
     protected $fillable = [
         'nama_kelas',
-        'kode_matkul',
+        'id_matkul_dibuka',
         'id_tahun_ajaran',
     ];
 
@@ -34,7 +34,7 @@ class Kelas extends Model
     public function scopeKelasAktif($query)
     {
         return $query->whereHas('tahun_ajaran', function($query) {
-            $query->where('status', 1);
+            $query->where('is_aktif', 1);
         });
     }
 
@@ -74,7 +74,7 @@ class Kelas extends Model
 
     public function matkul()
     {
-        return $this->belongsTo(MataKuliah::class, 'kode_matkul');
+        return $this->belongsTo(MatkulDibuka::class, 'id_matkul_dibuka');
     }
 
     public function tahun_ajaran()

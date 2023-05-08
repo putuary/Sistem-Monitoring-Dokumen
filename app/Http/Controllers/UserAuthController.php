@@ -4,7 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\AktifRole;
+use App\Models\DokumenDitugaskan;
+use App\Models\DokumenKelas;
+use App\Models\DokumenMatkul;
+use App\Models\Kelas;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
@@ -50,17 +55,77 @@ class UserAuthController extends Controller
         return redirect('/user-login');
     }
 
+    public function adminDashboard()
+    {
+        $dokumen_ditugaskan= DokumenDitugaskan::dokumenAktif()->orderBy('id_dokumen_ditugaskan', 'asc')->get();
+
+        $kelas=Kelas::with(['dosen_kelas', 'matkul','dokumen_kelas' => function($query) {
+            $query->with('dokumen_ditugaskan');
+            }, 'kelas_dokumen_matkul' => function($query) {
+                $query->with('dokumen_ditugaskan');
+            }])->kelasAktif()->orderBy('id_matkul_dibuka', 'asc')->get();
+
+        // dd(count($kelas));
+        $report=showReport($dokumen_ditugaskan, $kelas);
+
+        try {
+            $persentase_dikumpulkan=round(($report->total_dikumpul/$report->total_ditugaskan)*100, 2);
+        } catch (\Throwable $th) {
+            $persentase_dikumpulkan=0;
+        }
+
+        $jumlahKelas=count($kelas);
+
+        $jumlahDosen=User::where('role', '!=', 'admin')->count();
+        
+
+        return view('admin.dashboard', [
+            'report' => $report,
+            'persentase_dikumpulkan' => $persentase_dikumpulkan,
+            'jumlahKelas' => $jumlahKelas,
+            'jumlahDosen' => $jumlahDosen,
+        ]);
+    }
+
+    public function dosenDashboard()
+    {
+        $dokumen_ditugaskan= DokumenDitugaskan::dokumenAktif()->orderBy('id_dokumen_ditugaskan', 'asc')->get();
+        
+        $kelas = Kelas::with(['dokumen_kelas' => function($query) {
+            $query->with('dokumen_ditugaskan');
+        }, 'matkul','kelas_dokumen_matkul' => function($query) {
+            $query->with('dokumen_ditugaskan');
+        }])->kelasDiampu()->kelasAktif()->orderBy('id_matkul_dibuka', 'asc')->get();
+
+        $report=showReport($dokumen_ditugaskan, $kelas);
+
+        try {
+            $persentase_dikumpulkan=round(($report->total_dikumpul/$report->total_ditugaskan)*100, 2);
+        } catch (\Throwable $th) {
+            $persentase_dikumpulkan=0;
+        }
+        // dd($report);
+        
+        $jumlahKelas=count($kelas);
+
+        return view('dosen.dashboard-dosen', [
+            'persentase_dikumpulkan' => $persentase_dikumpulkan,
+            'report' => $report,
+            'jumlahKelas' => $jumlahKelas,
+        ]);
+    }
+
     public function dashboard()
     {
         if(in_array(Auth::user()->role, ['kaprodi', 'gkmp'] )) {
             if(Auth::user()->aktif_role->is_dosen == 0) {
-                return view('admin.dashboard');
+                return $this->adminDashboard();
             }
-            return view('dosen.dashboard-dosen');
+            return $this->dosenDashboard();
         } else if(Auth::user()->role == "admin") {
-            return view('admin.dashboard');
+            return $this->adminDashboard();
         }
-        return view('dosen.dashboard-dosen');
+        return $this->dosenDashboard();
     }
 
     public function profile()

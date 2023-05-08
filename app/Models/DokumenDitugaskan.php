@@ -19,8 +19,9 @@ class DokumenDitugaskan extends Model
     
     protected $fillable = [
         'id_dokumen_ditugaskan',
-        'id_dokumen',
         'id_tahun_ajaran',
+        'id_dokumen',
+        'nama_dokumen',
         'tenggat_waktu',
         'pengumpulan',
         'dikumpulkan_per',
@@ -45,7 +46,7 @@ class DokumenDitugaskan extends Model
     public function scopeDokumenAktif($query)
     {
         return $query->whereHas('tahun_ajaran', function($query) {
-            $query->where('status', 1);
+            $query->where('is_aktif', 1);
         });
     }
 

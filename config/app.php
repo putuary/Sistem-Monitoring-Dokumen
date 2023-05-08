@@ -186,6 +186,8 @@ return [
          * Package Service Providers...
          */
         Haruncpi\LaravelIdGenerator\IdGeneratorServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
+
 
         /*
          * Application Service Providers...
@@ -212,6 +214,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
         'IdGenerator' => Haruncpi\LaravelIdGenerator\IdGeneratorFacade::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
     ])->toArray(),
 
 ];

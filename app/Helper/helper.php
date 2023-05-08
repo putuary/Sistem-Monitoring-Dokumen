@@ -101,10 +101,8 @@ function submitScore($tenggat, $waktu_pengumpulan, $isDokumenMatkul, $id_dokumen
     $waktu_pengumpulan=Carbon::parse($waktu_pengumpulan);
     
     if($waktu_pengumpulan->isBefore($tenggat)) {
-        $status=2;
         $poin=100;
     } else {
-        $status=1;
         $poin=-25;
     }
 
@@ -118,8 +116,6 @@ function submitScore($tenggat, $waktu_pengumpulan, $isDokumenMatkul, $id_dokumen
                     $poin+=25;
                 } else if ($key+1 == 3) {
                     $poin+=10;
-                } else {
-                    $poin+=0;
                 }
                 break;
             }
@@ -134,8 +130,6 @@ function submitScore($tenggat, $waktu_pengumpulan, $isDokumenMatkul, $id_dokumen
                     $poin+=25;
                 } else if ($key+1 == 3) {
                     $poin+=10;
-                } else {
-                    $poin+=0;
                 }
                 break;
             }
@@ -143,7 +137,6 @@ function submitScore($tenggat, $waktu_pengumpulan, $isDokumenMatkul, $id_dokumen
     }
 
     return [
-        'status'  => $status,
         'poin'      => $poin,
     ];
 }
@@ -275,17 +268,6 @@ function pathDokumen($tahun_ajaran, $isMatkul, $matkul, $kelas=null) {
     return 'dokumen-perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/'.$kelas;
 }
 
-function countStatusDokumen($filter=null, $tahun_ajaran=null) {
-    $dokumen_kelas=DokumenKelas::whereHas('dokumen_ditugaskan', function($query) use ($tahun_ajaran) {
-        $query->dokumenTahun($tahun_ajaran);
-    })->filter($filter);
-    $dokumen_all=DokumenMatkul::with(['dokumen_ditugaskan', 'kelas_dokumen_matkul'])->whereHas('dokumen_ditugaskan', function($query) use ($tahun_ajaran) {
-        $query->dokumenTahun($tahun_ajaran);
-    })->filter($filter)->union($dokumen_kelas)->orderBy('waktu_pengumpulan', 'desc')->get();
-
-    return count($dokumen_all);
-}
-
 function dosenKelas($kelas_dokumen_matkul) {
     $dosen=array();
     foreach ($kelas_dokumen_matkul as $kelas) {
@@ -304,15 +286,6 @@ function like_match($pattern, $subject) {
     return (bool) preg_match("/^{$pattern}$/i", $subject);
 }
 
-function showProfilDokumen($id_dokumen) {
-    $dokumen=DokumenMatkul::where('id_dokumen_matkul', $id_dokumen)->first();
-
-    return (object) [
-        'nama_matkul' => $dokumen->matkul->nama_matkul,
-        'dosen'       => dosenKelas($dokumen->kelas_dokumen_matkul),
-    ];
-}
-
 function showRank($users) {
     $leaderboard=array();
     foreach($users as $user) {
@@ -320,17 +293,18 @@ function showRank($users) {
         $task=count($user->score);
         // dd($user->score);
         foreach ($user->score as $score) {
-                
-            if($score->status === 0) {
-                $empty++;
-            } else if($score->status == 1){
-                $late++;
-            } else if($score->status == 2){
-                $onTime++;
-            }
-
-            if($score->scoreable->file_dokumen != null) {
+            if(isset($score->scoreable->file_dokumen) && $score->scoreable->file_dokumen != null) {
                 $sum_submited++;
+                $waktu_pengumpulan=Carbon::parse($score->scoreable->waktu_pengumpulan);
+                $tenggat=Carbon::parse($score->scoreable->dokumen_ditugaskan->tenggat_waktu);
+
+                if($waktu_pengumpulan->isAfter($tenggat)) {
+                    $late++;
+                } else {
+                    $onTime++;
+                }
+            } else {
+                $empty++;
             }
             
             $sum_score+=$score->score;
@@ -374,4 +348,172 @@ function giveBadge($id_user, $id_badge, $id_tahun_ajaran) {
     $user->user_badge()->attach($id_badge,['is_aktif' => 1, 'id_tahun_ajaran' => $id_tahun_ajaran]);
 
     return true;
+}
+
+function mergeDokumen($dokumen_kelas, $dokumen_matkul)
+{
+    $dokumen_all = [];
+    foreach($dokumen_kelas as $dokumen) {
+        $dosen=[];
+        foreach($dokumen->kelas->dosen_kelas as $dsn) {
+            $dosen[] = $dsn->nama;
+        }
+        $dokumen_all[] = (object) [
+            'id_dokumen'        => $dokumen->id_dokumen_kelas,
+            'nama_dokumen'      => $dokumen->dokumen_ditugaskan->nama_dokumen,
+            'matkul_kelas'      => $dokumen->kelas->matkul->nama_matkul.' '.$dokumen->kelas->nama_kelas,
+            'dosen'             => $dosen,
+            'dikumpul'          => $dokumen->dokumen_ditugaskan->dikumpul,
+            'waktu_pengumpulan' => $dokumen->waktu_pengumpulan,
+            'tenggat_waktu'     => $dokumen->dokumen_ditugaskan->tenggat_waktu,
+        ];
+    }
+    // dd($dokumen_all);
+    
+    foreach($dokumen_matkul as $dokumen) {
+        $dokumen_all[] = (object) [
+            'id_dokumen'        => $dokumen->id_dokumen_matkul,
+            'nama_dokumen'      => $dokumen->dokumen_ditugaskan->nama_dokumen,
+            'matkul_kelas'      => $dokumen->matkul->nama_matkul,
+            'dosen'             => dosenKelas($dokumen->kelas_dokumen_matkul),
+            'dikumpul'          => $dokumen->dokumen_ditugaskan->dikumpul,
+            'waktu_pengumpulan' => $dokumen->waktu_pengumpulan,
+            'tenggat_waktu'     => $dokumen->dokumen_ditugaskan->tenggat_waktu,
+        ];
+    }
+    
+    // Panggil usort() dengan array dokumen beserta fungsi pengurutannya sebagai parameter
+    usort($dokumen_all, function($a, $b) {
+        $timeA = strtotime($a->waktu_pengumpulan);
+        $timeB = strtotime($b->waktu_pengumpulan);
+    
+        if ($timeA == $timeB) {
+            return 0;
+        }
+        return ($timeA > $timeB) ? -1 : 1;
+    });
+    
+    return $dokumen_all;
+}
+
+function showReport($dokumen_ditugaskan, $kelas) {
+    $total_dikumpul=$total_belum_dikumpul=$total_tepat_waktu=$total_terlambat=$total_ditugaskan=$total_mendekati_dedline=$total_terlewat=0;
+    $report=(object) [
+        'kelas' => [],
+    ];
+    foreach($kelas as $key => $kls) {
+        $submit=$late=$ontime=$empty=$mendekati_dedline=$terlewat=0;
+        $report->kelas[$key] = (object) [
+            'nama_kelas' => $kls->matkul->nama_matkul. ' ' .$kls->nama_kelas,
+        ];
+        foreach($kls->dosen_kelas as $dosen) {
+            $report->kelas[$key]->dosen[] = $dosen->nama;
+        }
+       foreach($dokumen_ditugaskan as $idx => $dokumen) {
+            if($dokumen->dikumpulkan_per ==0) {
+                foreach($kls->kelas_dokumen_matkul as $index => $dokumen_matkul) {
+                    if($dokumen_matkul->id_dokumen_ditugaskan == $dokumen->id_dokumen_ditugaskan) {
+                        $report->kelas[$key]->dokumen[$idx] = (object) [
+                            'id_dokumen_ditugaskan' => $dokumen_matkul->id_dokumen_ditugaskan,
+                            'nama_dokumen'         => $dokumen->nama_dokumen,
+                        ];
+                        if($dokumen_matkul->file_dokumen != null) {
+                            $report->kelas[$key]->dokumen[$idx]->status = 1;
+                            $submit++;
+
+                            $tenggat_waktu=Carbon::parse($dokumen->tenggat_waktu);
+                            $waktu_pengumpulan=Carbon::parse($dokumen_matkul->waktu_pengumpulan);
+
+                            if($waktu_pengumpulan->isAfter($tenggat_waktu)) {
+                                $report->kelas[$key]->dokumen[$idx]->is_late = 1;
+                                $late++;
+                            } else {
+                                $report->kelas[$key]->dokumen[$idx]->is_late = 0;
+                                $ontime++;
+                            }
+                        } else {
+                            $tenggat_waktu=Carbon::parse($dokumen->tenggat_waktu);
+                            if(Carbon::now()->isAfter($tenggat_waktu)) {
+                                $terlewat++;
+                            } else if(Carbon::now()->diffInDays($tenggat_waktu) > 0 && Carbon::now()->diffInDays($tenggat_waktu) <= 7) {
+                                $mendekati_dedline++;
+                            }
+                            $report->kelas[$key]->dokumen[$idx]->status = 0;
+                            $empty++;
+                        }
+                        break;
+                    } else {
+                        if ($index == count($kls->kelas_dokumen_matkul)-1) {
+                            $report->kelas[$key]->dokumen[$idx] = (object) [
+                                'id_dokumen_ditugaskan' => $dokumen->id_dokumen_ditugaskan,
+                                'nama_dokumen'          => $dokumen->nama_dokumen,
+                                'status'                => 2,
+                            ];
+                        }
+                    }
+                }
+            } else {
+                foreach($kls->dokumen_kelas as $index => $dokumen_kelas) {
+                    if($dokumen_kelas->id_dokumen_ditugaskan == $dokumen->id_dokumen_ditugaskan) {
+                        $report->kelas[$key]->dokumen[$idx] = (object) [
+                            'id_dokumen_ditugaskan' => $dokumen_kelas->id_dokumen_ditugaskan,
+                            'nama_dokumen'         => $dokumen->nama_dokumen,
+                        ];
+
+                        if($dokumen_kelas->file_dokumen != null) {
+                            $report->kelas[$key]->dokumen[$idx]->status = 1;
+                            
+                            $submit++;
+                            
+                            $tenggat_waktu=Carbon::parse($dokumen->tenggat_waktu);
+                            $waktu_pengumpulan=Carbon::parse($dokumen_kelas->waktu_pengumpulan);
+
+                            if($waktu_pengumpulan->isAfter($tenggat_waktu)) {
+                                $report->kelas[$key]->dokumen[$idx]->is_late = 1;
+                                $late++;
+                            } else {
+                                $report->kelas[$key]->dokumen[$idx]->is_late = 0;
+                                $ontime++;
+                            }
+                        } else {
+                            $report->kelas[$key]->dokumen[$idx]->status = 0;
+                            $empty++;
+                        }
+                        break;
+                    } else {
+                        if ($index == count($kls->dokumen_kelas)-1) {
+                            $report->kelas[$key]->dokumen[$idx] = (object) [
+                                'id_dokumen_ditugaskan' => $dokumen->id_dokumen_ditugaskan,
+                                'nama_dokumen'          => $dokumen->nama_dokumen,
+                                'status'                => 2,
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+        $report->kelas[$key]->terkumpul = $submit;
+        $report->kelas[$key]->belum_terkumpul = $empty;
+        $report->kelas[$key]->tepat_waktu = $ontime;
+        $report->kelas[$key]->terlambat = $late;
+        $report->kelas[$key]->ditugaskan = count($kls->kelas_dokumen_matkul)+count($kls->dokumen_kelas);
+        $total_dikumpul += $submit;
+        $total_belum_dikumpul += $empty;
+        $total_tepat_waktu += $ontime;
+        $total_terlambat += $late;
+        $total_mendekati_dedline += $mendekati_dedline;
+        $total_terlewat += $terlewat;
+        $total_ditugaskan += count($kls->kelas_dokumen_matkul)+count($kls->dokumen_kelas);
+    }
+
+    $report->total_dikumpul = $total_dikumpul;
+    $report->total_belum_dikumpul = $total_belum_dikumpul;
+    $report->total_tepat_waktu = $total_tepat_waktu;
+    $report->total_terlambat = $total_terlambat;
+    $report->total_mendekati_dedline = $total_mendekati_dedline;
+    $report->total_terlewat = $total_terlewat;
+    $report->total_ditugaskan = $total_ditugaskan;
+
+    
+    return $report;
 }

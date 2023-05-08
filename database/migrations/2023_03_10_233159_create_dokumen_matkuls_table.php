@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('dokumen_matkul', function (Blueprint $table) {
             $table->string('id_dokumen_matkul', 10)->primary();
             $table->string('id_dokumen_ditugaskan', 10);
-            $table->string('kode_matkul');
+            $table->string('id_matkul_dibuka', 10);
             $table->string('file_dokumen')->nullable();
             $table->dateTime('waktu_pengumpulan')->nullable();
             $table->timestamps();
 
-            $table->unique(['id_dokumen_ditugaskan', 'kode_matkul']);
-            $table->foreign('id_dokumen_ditugaskan')->references('id_dokumen_ditugaskan')->on('dokumen_ditugaskan');
-            $table->foreign('kode_matkul')->references('kode_matkul')->on('mata_kuliah');
+            $table->unique(['id_dokumen_ditugaskan', 'id_matkul_dibuka']);
+            $table->foreign('id_dokumen_ditugaskan')->references('id_dokumen_ditugaskan')->on('dokumen_ditugaskan')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_matkul_dibuka')->references('id_matkul_dibuka')->on('matkul_dibuka')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

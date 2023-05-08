@@ -20,8 +20,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['id_dokumen_ditugaskan', 'kode_kelas']);
-            $table->foreign('id_dokumen_ditugaskan')->references('id_dokumen_ditugaskan')->on('dokumen_ditugaskan');
-            $table->foreign('kode_kelas')->references('kode_kelas')->on('kelas');
+            $table->foreign('id_dokumen_ditugaskan')->references('id_dokumen_ditugaskan')->on('dokumen_ditugaskan')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('kode_kelas')->references('kode_kelas')->on('kelas')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

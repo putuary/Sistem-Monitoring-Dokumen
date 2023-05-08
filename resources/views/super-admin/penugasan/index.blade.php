@@ -32,7 +32,7 @@
           <a class="block block-rounded block-link-pop h-100 mb-0 btn-penugasan" href="/penugasan/buat-penugasan-baru/form-pertama">
             <div class="block-content block-content-full text-center bg-smooth">
               <div class="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
-                <i class="fab fa-html5 fa-2x text-white-75"></i>
+                <i class="fa fa-user-plus fa-2x text-white-75"></i>
               </div>
             </div>
             <div class="bg-body-light rounded-bottom">
@@ -49,7 +49,7 @@
           <a class="block block-rounded block-link-pop h-100 mb-0" href="/penugasan/daftar-jumlah-kelas">
             <div class="block-content block-content-full text-center bg-smooth">
               <div class="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
-                <i class="fab fa-html5 fa-2x text-white-75"></i>
+                <i class="fa fa-users-between-lines fa-2x text-white-75"></i>
               </div>
             </div>
             <div class="bg-body-light rounded-bottom">
@@ -66,7 +66,7 @@
           <a class="block block-rounded block-link-pop h-100 mb-0" href="/penugasan/daftar-kelas">
             <div class="block-content block-content-full text-center bg-smooth">
               <div class="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
-                <i class="fab fa-html5 fa-2x text-white-75"></i>
+                <i class="fa fa-users-rectangle fa-2x text-white-75"></i>
               </div>
             </div>
             <div class="bg-body-light rounded-bottom">
@@ -83,7 +83,7 @@
           <a class="block block-rounded block-link-pop h-100 mb-0" href="/penugasan/dokumen-ditugaskan">
             <div class="block-content block-content-full text-center bg-smooth">
               <div class="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
-                <i class="fab fa-html5 fa-2x text-white-75"></i>
+                <i class="fa fa-file-lines fa-2x text-white-75"></i>
               </div>
             </div>
             <div class="bg-body-light rounded-bottom">

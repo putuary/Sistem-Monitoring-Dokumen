@@ -174,7 +174,7 @@
               @foreach ($dokumen as $key => $item)
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="fs-sm">{{ $item->dokumen_perkuliahan->nama_dokumen }}</td>
+                <td class="fs-sm">{{ $item->nama_dokumen }}</td>
                 <td class="text-center fs-sm">{{ showWaktu($item->tenggat_waktu) }}</td>
                 <td class="text-center fs-sm">
                   {{ dikumpul($item->dikumpul) }}
@@ -182,7 +182,7 @@
                 @if (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true)
                 <td class="text-center">
                   <form action="{{ route('dokumen-ditugaskan.destroy', $item->id_dokumen_ditugaskan) }}" method="POST">
-                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="edit_pengguna({{ $key }})" data-bs-toggle="tooltip" title="Edit">
+                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editDokumen({{ $key }})" data-bs-toggle="tooltip" title="Edit">
                     <i class="fa fa-fw fa-pencil-alt"></i>
                   </a>
                   @csrf
@@ -289,7 +289,7 @@
       let jsfiles = @json($dokumen);
       console.log(jsfiles);
       //modal
-      function edit_pengguna(id) {
+      function editDokumen(id) {
         $('.modal-edit').modal({backdrop: 'static', keyboard: false});
         $('.modal-edit').modal("show");
         $('#form-edit').attr('action', '/penugasan/dokumen-ditugaskan/' + jsfiles[id].id_dokumen_ditugaskan);

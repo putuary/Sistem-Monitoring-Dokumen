@@ -59,18 +59,25 @@
                   </td>
                   <td class="text-center">
                     <!-- Form Delete Dokumen Matkul -->
-                    <form action="/manajemen-pengguna/delete" method="POST">
+                    <form action="{{ route('dokumen.delete', $item->dokumen_matkul[0]->id_dokumen_matkul) }}" method="POST">
                       @csrf
+                      @method('delete')
                       <!-- Button Download Template -->
                     @if (isset($item->dokumen_perkuliahan->template) && !isset($item->dokumen_matkul[0]->file_dokumen))
                       <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" href='/kelas-diampu/download/{{ $item->dokumen_perkuliahan->id_dokumen }}' data-bs-toggle="tooltip" title="Template Dokumen">
                         <i class="fa fa-file-lines fa-fw"></i>
                       </a>
                     @endif
+                    @if ($item->pengumpulan != 0 && $item->dikumpul==1)
+                      <!-- Button Upload dokumen Matkul Multiple -->
+                      <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" onclick="uploadDokumenMultiple({{ $key }})" data-bs-toggle="tooltip" title="Unggah Dokumen">
+                        <i class="fa fa-fw fa-upload"></i>
+                      </a>
+                    @endif
                     @if (isset($item->dokumen_matkul[0]->file_dokumen))
                       @if($item->dikumpul==1)
                         <!-- Button Show dokumen Matkul Multiple -->
-                        <a href="/kelas-diampu/dokumen-dikumpul/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen">
+                        <a href="/kelas-diampu/dokumen-multiple/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen">
                           <i class="fa fa-fw fa-eye"></i>
                         </a>
                       @else
@@ -78,29 +85,22 @@
                         <a href="{{ route('dokumen-single.show', $item->dokumen_matkul[0]->id_dokumen_matkul) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
                           <i class="fa fa-fw fa-eye"></i>
                         </a>
+                        
+                      @endif
                         <!-- Button Unduh Dokumen matkul-->
                         <a type="button" href="{{ route('dokumen-single.download', $item->dokumen_matkul[0]->id_dokumen_matkul) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
                           <i class="fa fa-fw fa-download"></i>
                         </a>
                         <!-- Button delete dokumen Matkul -->
-                        <input type="hidden" name="id_pengguna" value="">
                         <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus">
                           <i class="fa fa-fw fa-times"></i>
                         </button>
-                      @endif
                     @else
-                      @if ($item->pengumpulan != 0)
-                        @if ($item->dikumpul==0)
-                          <!-- Button Upload dokumen Matkul single -->
-                          <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" onclick="uploadDokumen({{ $key }})" data-bs-toggle="tooltip" title="Unggah Dokumen">
-                            <i class="fa fa-fw fa-upload"></i>
-                          </a>
-                        @else
-                          <!-- Button Upload dokumen Matkul Multiple -->
-                          <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" onclick="uploadDokumenMultiple({{ $key }})" data-bs-toggle="tooltip" title="Unggah Dokumen">
-                            <i class="fa fa-fw fa-upload"></i>
-                          </a>
-                        @endif
+                      @if ($item->pengumpulan != 0 && $item->dikumpul==0)
+                        <!-- Button Upload dokumen Matkul single -->
+                        <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" onclick="uploadDokumen({{ $key }})" data-bs-toggle="tooltip" title="Unggah Dokumen">
+                          <i class="fa fa-fw fa-upload"></i>
+                        </a>
                       @endif
                     @endif
                     </form>
@@ -112,19 +112,26 @@
                   </td>
                   <td class="text-center">
                     <!-- Form Delete dokumen kelas -->
-                    <form action="/manajemen-pengguna/delete" method="POST">
+                    <form action="{{ route('dokumen.delete', $item->dokumen_kelas[0]->id_dokumen_kelas) }}" method="POST">
                       @csrf
+                      @method('delete')
                       @if (isset($item->dokumen_perkuliahan->template) && !isset($item->dokumen_kelas[0]->file_dokumen))
                         <!-- Button Download Template -->
                         <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" href='/kelas-diampu/download-template/{{ $item->dokumen_perkuliahan->id_dokumen }}' data-bs-toggle="tooltip" title="Template Dokumen">
                           <i class="fa fa-file-lines fa-fw"></i>
                         </a>
                       @endif
+                      @if ($item->pengumpulan != 0 && $item->dikumpul==1)
+                        <!-- Button Upload dokumen kelas Multiple -->
+                        <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" onclick="uploadDokumenMultiple({{ $key }})" data-bs-toggle="tooltip" title="Unggah Dokumen">
+                          <i class="fa fa-fw fa-upload"></i>
+                        </a>
+                      @endif
                       @if (isset($item->dokumen_kelas[0]->file_dokumen))
                         <!-- Button Show dokumen kelas -->
                         @if($item->dikumpul==1)
                           <!-- Button Show dokumen kelas Multiple -->
-                          <a href="/kelas-diampu/dokumen-dikumpul/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen">
+                          <a href="/kelas-diampu/dokumen-multiple/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen">
                             <i class="fa fa-fw fa-eye"></i>
                           </a>
                         @else
@@ -133,28 +140,20 @@
                             <i class="fa fa-fw fa-eye"></i>
                           </a>
                           <!-- Button download dokumen kelas single -->
+                        @endif
                           <a type="button" href="{{ route('dokumen-single.download', $item->dokumen_kelas[0]->id_dokumen_kelas) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
                             <i class="fa fa-fw fa-download"></i>
                           </a>
                           <!-- Button delete dokumen kelas single -->
-                          <input type="hidden" name="id_pengguna" value="">
                           <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus">
                             <i class="fa fa-fw fa-times"></i>
                           </button>
-                        @endif
                       @else
-                        @if ($item->pengumpulan != 0)
-                          @if ($item->dikumpul==0)
-                            <!-- Button Upload dokumen kelas single -->
-                            <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" onclick="uploadDokumen({{ $key }})" data-bs-toggle="tooltip" title="Unggah Dokumen">
-                              <i class="fa fa-fw fa-upload"></i>
-                            </a>
-                          @else
-                            <!-- Button Upload dokumen kelas Multiple -->
-                            <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" onclick="uploadDokumenMultiple({{ $key }})" data-bs-toggle="tooltip" title="Unggah Dokumen">
-                              <i class="fa fa-fw fa-upload"></i>
-                            </a>
-                          @endif
+                        @if ($item->pengumpulan != 0 && $item->dikumpul==0)
+                          <!-- Button Upload dokumen kelas single -->
+                          <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" onclick="uploadDokumen({{ $key }})" data-bs-toggle="tooltip" title="Unggah Dokumen">
+                            <i class="fa fa-fw fa-upload"></i>
+                          </a>
                         @endif
                       @endif
                     </form>

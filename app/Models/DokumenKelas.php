@@ -45,8 +45,12 @@ class DokumenKelas extends Model
                 return $query->whereNotNull('file_dokumen')->where('waktu_pengumpulan', '>', function($query) {
                     $query->select('tenggat_waktu')->from('dokumen_ditugaskan')->whereColumn('id_dokumen_ditugaskan', 'dokumen_kelas.id_dokumen_ditugaskan');
                 });
-            } else if( $filter == 'belum_terkumpul') {
+            } else if($filter == 'belum_terkumpul') {
                 return $query->whereNull('file_dokumen');
+            } else if($filter == 'terlewat') {
+                return $query->whereNull('file_dokumen')->whereHas('dokumen_ditugaskan', function($query) {
+                    $query->where('tenggat_waktu', '<', now());
+                });
             }
         }
         return $query->whereNotNull('file_dokumen');

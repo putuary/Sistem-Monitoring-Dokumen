@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('id_dokumen_matkul', 10);
 
             $table->unique(['kode_kelas', 'id_dokumen_matkul']);
-            $table->foreign('kode_kelas')->references('kode_kelas')->on('kelas');
-            $table->foreign('id_dokumen_matkul')->references('id_dokumen_matkul')->on('dokumen_matkul');
+            $table->foreign('kode_kelas')->references('kode_kelas')->on('kelas')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_dokumen_matkul')->references('id_dokumen_matkul')->on('dokumen_matkul')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

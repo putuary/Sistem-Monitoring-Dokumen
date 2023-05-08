@@ -20,7 +20,7 @@ class PengingatController extends Controller
     {
         $tahun_ajaran = TahunAjaran::orderBy('id_tahun_ajaran', 'desc')->get();
         $tahun_aktif=TahunAjaran::tahunAktif()->first();
-        $dokumen=DokumenDitugaskan::with(['dokumen_perkuliahan', 'tahun_ajaran'])->dokumenTahun(request('tahun_ajaran'))->get();
+        $dokumen=DokumenDitugaskan::dokumenTahun(request('tahun_ajaran'))->get();
         
         return view('admin.pengingat.index', ['tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif,'dokumen' => $dokumen]);
     }

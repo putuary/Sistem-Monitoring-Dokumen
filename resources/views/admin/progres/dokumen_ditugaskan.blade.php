@@ -38,12 +38,12 @@
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
-          <h3 class="block-title">Dokumen {{ $dokumen->dokumen_perkuliahan->nama_dokumen ?? 'Undefine' }} </h3>
+          <h3 class="block-title">Dokumen {{ $dokumen->nama_dokumen ?? 'Undefine' }} </h3>
         </div>
         <div class="block-content block-content-full">
           <form class="block-content" action="/progres-pengumpulan/dokumen" method="POST">
             @csrf
-            <input type="hidden" name="nama_dokumen" value="{{ $dokumen->dokumen_perkuliahan->nama_dokumen }}">
+            <input type="hidden" name="nama_dokumen" value="{{ $dokumen->nama_dokumen }}">
             <input type="hidden" name="id_tahun_ajaran" value="{{ $dokumen->id_tahun_ajaran }}">
             <div class="row justify-content-center">
               <div class="col-md-2 col-lg-4">
@@ -87,7 +87,7 @@
                     <form action="/manajemen-pengguna/delete" method="POST">
                       @csrf
                       @if (isset($item->file_dokumen))
-                        <a href="{{ asset('/storage'.pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, ismatkul($dokumen->dokumen_perkuliahan->dikumpulkan_per), $item->matkul->nama_matkul ).'/'.$item->file_dokumen ) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
+                        <a href="{{ asset('/storage'.pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, ismatkul($dokumen->dikumpulkan_per), $item->matkul->nama_matkul ).'/'.$item->file_dokumen ) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
                           <i class="fa fa-fw fa-eye"></i>
                         </a>
                         <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
@@ -120,7 +120,7 @@
                     <form action="/manajemen-pengguna/delete" method="POST">
                       @csrf
                       @if (isset($item->file_dokumen))
-                        <a href="{{ asset('/storage/'.pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, ismatkul($dokumen->dokumen_perkuliahan->dikumpulkan_per), $item->kelas->matkul->nama_matkul, $item->kelas->nama_kelas).'/'.$item->file_dokumen ) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
+                        <a href="{{ asset('/storage/'.pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, ismatkul($dokumen->dikumpulkan_per), $item->kelas->matkul->nama_matkul, $item->kelas->nama_kelas).'/'.$item->file_dokumen ) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
                           <i class="fa fa-fw fa-eye"></i>
                         </a>
                         <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">

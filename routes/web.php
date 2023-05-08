@@ -9,6 +9,7 @@ use App\Http\Controllers\ProgresController;
 use App\Http\Controllers\PengingatController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\KelasDiampuController;
+use App\Http\Controllers\DokumenDikumpulController;
 use App\Http\Controllers\DokumenPerkuliahanController;
 use App\Http\Controllers\DokumenDitugaskanController;
 use App\Http\Controllers\BadgeController;
@@ -40,6 +41,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/user-logout', [UserAuthController::class, 'logout']);
 
+    Route::get('/leaderboard', [LeaderBoardController::class, 'index']);
+    Route::get('/badge', [LeaderBoardController::class, 'showResultBadge']);
 });
 
 Route::middleware(['auth', 'role:superAdmin'])->group(function () {
@@ -86,6 +89,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Progres Pengumpulan
     Route::get('/progres-pengumpulan', [ProgresController::class, 'index']);
     Route::post('/progres-pengumpulan/unduh-semua-dokumen', [ProgresController::class, 'downloadArchiveDokumen']);
+    Route::get('/progres-pengumpulan/resume-pengumpulan', [ProgresController::class, 'showReport']);
+    Route::post('/progres-pengumpulan/resume-pengumpulan/unduh', [ProgresController::class, 'generateReport']);
     Route::get('/progres-pengumpulan/kelas', [ProgresController::class, 'showProgresKelas']);
     Route::get('/progres-pengumpulan/dokumen', [ProgresController::class, 'showProgresDokumen']);
     Route::post('/progres-pengumpulan/dokumen', [ProgresController::class, 'downloadDokumen']);
@@ -100,28 +105,34 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/atur-pengingat-pengumpulan/edit', [PengingatController::class, 'editPengingat']);
     Route::post('/atur-pengingat-pengumpulan/edit_pengumpulan', [PengingatController::class, 'editPengumpulan']);
 
-    Route::get('/leaderboard', [LeaderBoardController::class, 'index']);
+    
     Route::post('/leaderboard/badge', [LeaderBoardController::class, 'resultBadge']);
-    Route::get('/badge', [LeaderBoardController::class, 'showResultBadge']);
+
 });
 
 Route::middleware(['auth', 'role:dosen'])->group(function () {
     // Kelas Diampu
     Route::get('/kelas-diampu', [KelasDiampuController::class, 'showKelasDiampu']);
     Route::get('/kelas-diampu/{kode_kelas}', [KelasDiampuController::class, 'showDokumenDitugaskan']);
-    Route::get('/kelas-diampu/download-template/{id_dokumen}', [KelasDiampuController::class, 'downloadTemplate']);
-    Route::post('/kelas-diampu/upload', [KelasDiampuController::class, 'uploadDokumen']);
-    Route::post('/kelas-diampu/multiple-upload', [KelasDiampuController::class, 'uploadDokumenMultiple'])->name('store.dokumen');
+    Route::get('/kelas-diampu/download-template/{id_dokumen}', [DokumenDikumpulController::class, 'downloadTemplate']);
+    Route::post('/kelas-diampu/upload', [DokumenDikumpulController::class, 'uploadDokumen']);
+    Route::post('/kelas-diampu/multiple-upload', [DokumenDikumpulController::class, 'uploadDokumenMultiple'])->name('store.dokumen');
 
-    Route::get('/kelas-diampu/dokumen-single/show/{id_dokumen}', [KelasDiampuController::class, 'readDokumenSingle'])->name('dokumen-single.show');
-    Route::get('/kelas-diampu/dokumen-single/download/{id_dokumen}', [KelasDiampuController::class, 'downloadDokumenSingle'])->name('dokumen-single.download');
+    Route::get('/kelas-diampu/dokumen/{id_dokumen}', [DokumenDikumpulController::class, 'readDokumenSingle'])->name('dokumen-single.show');
+    Route::get('/kelas-diampu/dokumen/download/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenSingle'])->name('dokumen-single.download');
+    Route::delete('/kelas-diampu/dokumen/{id_dokumen}', [DokumenDikumpulController::class, 'deleteDokumen'])->name('dokumen.delete');
     
-    Route::get('/kelas-diampu/dokumen-dikumpul/{id_dokumen}', [KelasDiampuController::class, 'showDokumenDikumpul']);
-    // Route::get('/kelas-diampu/dokumen-dikumpul/show', [KelasDiampuController::class, 'showDokumenDikumpul']);
-    Route::put('/kelas-diampu/dokumen-dikumpul/{id_dokumen}', [KelasDiampuController::class, 'renameDokumenDikumpul']);
+    Route::get('/kelas-diampu/dokumen-multiple/{id_dokumen}', [DokumenDikumpulController::class, 'showDokumenMultiple']);
+    Route::get('/kelas-diampu/dokumen-multiple/show/{id_dokumen}', [DokumenDikumpulController::class, 'readDokumenDikumpulMultiple']);
+    Route::put('/kelas-diampu/dokumen-multiple/{id_dokumen}', [DokumenDikumpulController::class, 'renameDokumenDikumpulMultiple']);
+    Route::delete('/kelas-diampu/dokumen-multiple/{id_dokumen}', [DokumenDikumpulController::class, 'deleteDokumenDikumpulMultiple']);
 
     // Dokumen Perkuliahan
     Route::get('/dokumen-perkuliahan', [DokumenPerkuliahanController::class, 'index']);
+    Route::get('/dokumen-perkuliahan/show/{id_dokumen}', [DokumenDikumpulController::class, 'readDokumenSingle']);
+    Route::get('/dokumen-perkuliahan/show-multiple/{id_dokumen}', [DokumenPerkuliahanController::class, 'showDokumenMultiple']);
+    Route::get('/dokumen-perkuliahan/show-multiple/show/{id_dokumen}', [DokumenDikumpulController::class, 'readDokumenDikumpulMultiple']);
+    Route::get('/dokumen-perkuliahan/download/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenSingle']);
 
 });
 

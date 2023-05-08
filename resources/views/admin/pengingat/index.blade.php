@@ -70,7 +70,7 @@
               @foreach ($dokumen as $key => $item)
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="fs-sm">{{ $item->dokumen_perkuliahan->nama_dokumen }}</td>
+                <td class="fs-sm">{{ $item->nama_dokumen }}</td>
                 <td class="fs-sm">{{ showTenggat($item->tenggat_waktu) }}</td>
                 <td class="text-center">
                   <div class="ms-5">

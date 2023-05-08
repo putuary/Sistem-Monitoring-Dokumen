@@ -55,20 +55,12 @@
                 <td class="text-center fs-sm">{{ $no }}</td>
                 <td class="fs-sm">{{ $file }}</td>
                 <td class="text-center">
-                  <form action="/kelas-diampu/dokumen-multiple/{{ $id_dokumen }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <a href="/kelas-diampu/dokumen-multiple/show/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
-                      <i class="fa fa-fw fa-eye"></i>
-                    </a>
-                    <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editNamaFile({{ $key }})" data-bs-toggle="tooltip" title="Rename">
-                      <i class="fa fa-fw fa-pencil-alt"></i>
-                    </a>
-                    <input type="hidden" name="nama_dokumen" value="{{ $file }}">
-                    <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus">
-                      <i class="fa fa-fw fa-times"></i>
-                    </button>
-                  </form>
+                  <a href="/dokumen-perkuliahan/show-multiple/show/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
+                    <i class="fa fa-fw fa-eye"></i>
+                  </a>
+                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editNamaFile({{ $key }})" data-bs-toggle="tooltip" title="Rename">
+                    <i class="fa fa-fw fa-pencil-alt"></i>
+                  </a>
                 </td>
               </tr>
               @php

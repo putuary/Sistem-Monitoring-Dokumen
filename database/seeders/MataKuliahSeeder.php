@@ -6,7 +6,6 @@ use App\Models\MataKuliah;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-use function Ramsey\Uuid\v1;
 
 class MataKuliahSeeder extends Seeder
 {

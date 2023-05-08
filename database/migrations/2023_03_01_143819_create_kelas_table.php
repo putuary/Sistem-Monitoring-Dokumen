@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('kelas', function (Blueprint $table) {
             $table->id('kode_kelas');
             $table->string('nama_kelas');
-            $table->string('kode_matkul');
+            $table->string('id_matkul_dibuka', 10);
             $table->bigInteger('id_tahun_ajaran')->unsigned();
             $table->timestamps();
 
-            $table->foreign('kode_matkul')->references('kode_matkul')->on('mata_kuliah');
-            $table->foreign('id_tahun_ajaran')->references('id_tahun_ajaran')->on('tahun_ajaran');
+            $table->foreign('id_matkul_dibuka')->references('id_matkul_dibuka')->on('matkul_dibuka')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_tahun_ajaran')->references('id_tahun_ajaran')->on('tahun_ajaran')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

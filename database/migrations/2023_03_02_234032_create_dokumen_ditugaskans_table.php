@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('dokumen_ditugaskan', function (Blueprint $table) {
             $table->string('id_dokumen_ditugaskan', 10)->primary();
-            $table->string('id_dokumen', 10);
+            $table->string('id_dokumen', 10)->nullable();
+            $table->string('nama_dokumen');
             $table->bigInteger('id_tahun_ajaran')->unsigned();
             $table->dateTime('tenggat_waktu');
             $table->boolean('pengumpulan');
@@ -22,8 +23,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['id_dokumen', 'id_tahun_ajaran']);
-            $table->foreign('id_dokumen')->references('id_dokumen')->on('dokumen_perkuliahan');
-            $table->foreign('id_tahun_ajaran')->references('id_tahun_ajaran')->on('tahun_ajaran');
+            $table->foreign('id_dokumen')->references('id_dokumen')->on('dokumen_perkuliahan')->onUpdate('cascade')->onDelete('set null');
+            $table->foreign('id_tahun_ajaran')->references('id_tahun_ajaran')->on('tahun_ajaran')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

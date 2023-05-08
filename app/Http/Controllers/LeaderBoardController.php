@@ -20,7 +20,9 @@ class LeaderBoardController extends Controller
         $tahun_aktif=TahunAjaran::tahunAktif()->first();
 
         $users=User::with(['score' => function($query) {
-            $query->whereHas('tahun_ajaran', function($query) {
+            $query->with(['scoreable' => function($query) {
+                $query->with('dokumen_ditugaskan');
+            }])->whereHas('tahun_ajaran', function($query) {
                 $query->tahunAktif();
             });
         }])->whereHas('dosen_kelas', function($query) {
@@ -37,10 +39,7 @@ class LeaderBoardController extends Controller
 
     public function resultBadge(Request $request) {
 
-        Score::where('score', 0)->where('id_tahun_ajaran', $request->id_tahun_ajaran)->update([
-            'score'  => -100,
-            'status' => 0,
-        ]);
+        Score::where('score', 0)->where('id_tahun_ajaran', $request->id_tahun_ajaran)->update(['score'  => -100]);
 
         $users=User::with(['score' => function($query) {
             $query->with('scoreable')->whereHas('tahun_ajaran', function($query) {

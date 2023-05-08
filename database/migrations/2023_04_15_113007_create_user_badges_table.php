@@ -18,9 +18,9 @@ return new class extends Migration
             $table->bigInteger('id_tahun_ajaran')->unsigned();
             $table->timestamps();
 
-            $table->foreign('id_user')->references('id')->on('users');
-            $table->foreign('id_badge')->references('id')->on('badges');
-            $table->foreign('id_tahun_ajaran')->references('id_tahun_ajaran')->on('tahun_ajaran');
+            $table->foreign('id_user')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_badge')->references('id')->on('badges')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_tahun_ajaran')->references('id_tahun_ajaran')->on('tahun_ajaran')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

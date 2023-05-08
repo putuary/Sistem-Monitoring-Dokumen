@@ -5,13 +5,15 @@
 @endsection
 
 @section('content')
-    <!-- Hero -->
+    
+    <!-- Page Content -->
     <div class="content">
+
       @if (session()->has('success'))
-      <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
-        <strong>{{ session()->get('success') }}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
+        <div class="alert alert-success alert-dismissible fade show mb-3 alert-notification" role="alert">
+          <strong>{{ session()->get('success') }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
       @endif
 
       <form action="/kelas-diampu">
@@ -49,20 +51,24 @@
             <i class="fa fa-cogs opacity-50"></i>
             <span>Settings</span>
           </a> --}}
-          <div class="btn btn-sm space-x-1">
+          <form class="btn btn-sm space-x-1" id="search-form" method="GET">
             <div class="input-group input-group-sm">
-              <input type="text" class="form-control form-control-alt" placeholder="Search.." id="page-header-search-input2" name="page-header-search-input2">
-              <button class="input-group-text border-0">
+              <input type="text" class="form-control form-control-alt" placeholder="Search.." id="page-header-search-input2" name="search">
+              <button type="submit" class="input-group-text border-0">
                 <i class="fa fa-fw fa-search"></i>
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
-    </div>
-    <!-- END Hero -->
-    <!-- Page Content -->
-    <div class="content">
+
+      @if (count($kelas) == 0)
+        <div class="alert alert-danger" role="alert">
+          <h4 class="alert-heading">Kelas tidak ditemukan!</h4>
+          <p>Maaf, Kelas tidak ada di dalam database.</p>
+        </div>
+      @endif
+
       <!-- Overview -->
       <div class="row items-push">
 
@@ -131,8 +137,35 @@
     <!-- Page JS Helpers (Easy Pie Chart + jQuery Sparkline Plugins) -->
     <script>One.helpersOnLoad(['jq-easy-pie-chart', 'jq-sparkline']);</script>
     <script>
-      $(document).ready(function(){
-        $(".alert").delay(2000).fadeOut("slow");
+      $(document).ready(function () {
+        $(".alert-notification").delay(2000).fadeOut("slow");
+
+        $('#search-form').submit(function(e) {
+            // Mencegah aksi default dari form
+            e.preventDefault();
+
+            // Mengambil nilai query dari input
+            var search = $('input[name="search"]').val();
+            var tahun_ajaran={{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}
+
+            // Melakukan request Ajax ke server
+            $.ajax({
+                url: '/kelas-diampu',
+                method: 'GET',
+                data: {
+                    tahun_ajaran: tahun_ajaran, 
+                    search: search 
+                  },
+                success: function(response) {
+                    // Menampilkan hasil pencarian pada halaman
+                    $('body').html(response);
+                    // $('#search-results').html(response);
+                },
+                error: function(response) {
+                    console.log(response);
+                }
+            });
+          });
       });
     </script>
 @endsection

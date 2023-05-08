@@ -4,58 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\DokumenDitugaskan;
-use App\Models\User;
 use App\Models\Kelas;
 use App\Models\TahunAjaran;
 use App\Models\DokumenMatkul;
 use App\Models\DokumenKelas;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class ProgresController extends Controller
 {
-    protected function mergeDokumen($dokumen_kelas, $dokumen_matkul)
-    {
-        $dokumen_all = [];
-        foreach($dokumen_kelas as $dokumen) {
-            $dosen=[];
-            foreach($dokumen->kelas->dosen_kelas as $dsn) {
-                $dosen[] = $dsn->nama;
-            }
-            $dokumen_all[] = (object) [
-                'nama_dokumen'      => $dokumen->dokumen_ditugaskan->dokumen_perkuliahan->nama_dokumen,
-                'matkul_kelas'      => $dokumen->kelas->matkul->nama_matkul.' '.$dokumen->kelas->nama_kelas,
-                'dosen'             => $dosen,
-                'waktu_pengumpulan' => $dokumen->waktu_pengumpulan,
-                'tenggat_waktu'     => $dokumen->dokumen_ditugaskan->tenggat_waktu,
-            ];
-        }
-        // dd($dokumen_all);
-        
-        foreach($dokumen_matkul as $dokumen) {
-            $dokumen_all[] = (object) [
-                'nama_dokumen'      => $dokumen->dokumen_ditugaskan->dokumen_perkuliahan->nama_dokumen,
-                'matkul_kelas'      => $dokumen->matkul->nama_matkul,
-                'dosen'             => dosenKelas($dokumen->kelas_dokumen_matkul),
-                'waktu_pengumpulan' => $dokumen->waktu_pengumpulan,
-                'tenggat_waktu'     => $dokumen->dokumen_ditugaskan->tenggat_waktu,
-            ];
-        }
-        
-        // Panggil usort() dengan array dokumen beserta fungsi pengurutannya sebagai parameter
-        usort($dokumen_all, function($a, $b) {
-            $timeA = strtotime($a->waktu_pengumpulan);
-            $timeB = strtotime($b->waktu_pengumpulan);
-        
-            if ($timeA == $timeB) {
-                return 0;
-            }
-            return ($timeA > $timeB) ? -1 : 1;
-        });
-        
-        return $dokumen_all;
-    }
-
     public function index()
     {
         $tahun_ajaran = TahunAjaran::orderBy('id_tahun_ajaran', 'desc')->get();
@@ -66,11 +24,11 @@ class ProgresController extends Controller
                 $query->with('dokumen_ditugaskan');
             }, 'kelas_dokumen_matkul' => function($query) {
                 $query->with('dokumen_ditugaskan');
-            }])->kelasTahun(request('tahun_ajaran'))->searchKelas(request('search'))->orderBy('kode_matkul', 'asc')->get();
+            }])->kelasTahun(request('tahun_ajaran'))->searchKelas(request('search'))->orderBy('id_matkul_dibuka', 'asc')->get();
             // dd($kelas);
             return view('admin.progres.progres_kelas', ['kelas' => $kelas, 'tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif]);
         } else if(request('filter') == 'dokumen') {
-            $dokumen = DokumenDitugaskan::with(['dokumen_perkuliahan', 'dokumen_matkul', 'dokumen_kelas'])
+            $dokumen = DokumenDitugaskan::with(['dokumen_matkul', 'dokumen_kelas'])
             ->dokumenTahun(request('tahun_ajaran'))->searchDokumen(request('search'))->get();
             // dd($dokumen);
             return view('admin.progres.progres_dokumen', ['dokumen' => $dokumen, 'tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif]);
@@ -82,7 +40,7 @@ class ProgresController extends Controller
         $kode_kelas = request('id');
         $kelas=Kelas::with('matkul')->find($kode_kelas);
             
-        $dokumen=DokumenDitugaskan::with(['dokumen_perkuliahan', 'dokumen_matkul' => function($query) use ($kode_kelas) {
+        $dokumen=DokumenDitugaskan::with(['dokumen_matkul' => function($query) use ($kode_kelas) {
             $query->dokumenKelas($kode_kelas);
         }, 'dokumen_kelas' => function($query) use ($kode_kelas) {
             $query->where('kode_kelas', $kode_kelas);
@@ -98,7 +56,7 @@ class ProgresController extends Controller
     public function showProgresDokumen()
     {
         $id_dokumen = request('id');
-        $dokumen=DokumenDitugaskan::with(['tahun_ajaran', 'dokumen_perkuliahan', 'dokumen_matkul' => function($query) {
+        $dokumen=DokumenDitugaskan::with(['tahun_ajaran', 'dokumen_matkul' => function($query) {
             $query->with('matkul');
         }, 'dokumen_kelas' => function($query) {
             $query->with(['kelas' => function($query) {
@@ -118,30 +76,22 @@ class ProgresController extends Controller
 
         $dokumen_kelas=DokumenKelas::with(['kelas' => function($query) {
             $query->with(['matkul', 'dosen_kelas']);
-        },'dokumen_ditugaskan' => function($query) {
-            $query->with('dokumen_perkuliahan');
-        }])->whereHas('dokumen_ditugaskan', function($query) {
+        },'dokumen_ditugaskan'])->whereHas('dokumen_ditugaskan', function($query) {
             $query->dokumenTahun(request('tahun_ajaran'));
         })->filter(request('filter'))->get();
         
-        $dokumen_matkul=DokumenMatkul::with(['matkul', 'dokumen_ditugaskan' => function($query) {
-            $query->with('dokumen_perkuliahan');
-        }, 'kelas_dokumen_matkul' => function($query) {
+        $dokumen_matkul=DokumenMatkul::with(['matkul', 'dokumen_ditugaskan', 'kelas_dokumen_matkul' => function($query) {
             $query->with('dosen_kelas');
         }])->whereHas('dokumen_ditugaskan', function($query) {
             $query->dokumenTahun(request('tahun_ajaran'));
         })->filter(request('filter'))->get();
         
-        $dokumen_all=$this->mergeDokumen($dokumen_kelas, $dokumen_matkul);
+        $dokumen_all=mergeDokumen($dokumen_kelas, $dokumen_matkul);
 
         return view('admin.riwayat.index', [
             'tahun_ajaran' => $tahun_ajaran,
             'tahun_aktif' => $tahun_aktif,
             'dokumen' => $dokumen_all,
-            // 'terkumpul' => countStatusDokumen('terkumpul', request('tahun_ajaran') ?? null),
-            // 'tepat_waktu' => countStatusDokumen('tepat_waktu', request('tahun_ajaran') ?? null),
-            // 'terlambat' => countStatusDokumen('terlambat', request('tahun_ajaran') ?? null),
-            // 'belum_terkumpul' => countStatusDokumen('belum_terkumpul', request('tahun_ajaran') ?? null),
         ]);
     }
 
@@ -345,5 +295,55 @@ class ProgresController extends Controller
 
         
         return response()->download(storage_path('app/zip/'.$fileName));
+    }
+
+    public function showReport() {
+        $id_tahun_ajaran=request('tahun_ajaran');
+        $tahun_ajaran=TahunAjaran::find($id_tahun_ajaran);
+        $dokumen_ditugaskan= DokumenDitugaskan::dokumenTahun($id_tahun_ajaran)->orderBy('id_dokumen_ditugaskan', 'asc')->get();
+
+        $kelas=Kelas::with(['dosen_kelas', 'matkul','dokumen_kelas' => function($query) use($id_tahun_ajaran) {
+            $query->with(['dokumen_ditugaskan' => function($query) use($id_tahun_ajaran) {
+                $query->dokumenTahun($id_tahun_ajaran);
+                }]);
+            }, 'kelas_dokumen_matkul' => function($query) use($id_tahun_ajaran) {
+                $query->with(['dokumen_ditugaskan' => function($query) use($id_tahun_ajaran) {
+                    $query->dokumenTahun($id_tahun_ajaran);
+                    }]);
+                }])->kelasTahun($id_tahun_ajaran)->orderBy('id_matkul_dibuka', 'asc')->get();
+
+        // dd($kelas);
+        $report=showReport($dokumen_ditugaskan, $kelas);
+
+        // dd($report);
+        // $pdf = Pdf::loadView('admin.progres.report', ['dokumen' => $dokumen_ditugaskan, 'report' => $report]);
+        // return $pdf->download('laporan.pdf');
+
+        return view('admin.progres.tampil-resume', ['tahun_ajaran' => $tahun_ajaran, 'dokumen' => $dokumen_ditugaskan, 'report' => $report]);
+    }
+
+    public function generateReport(Request $request) {
+        $id_tahun_ajaran=$request->id_tahun_ajaran;
+        $tahun_ajaran=TahunAjaran::find($id_tahun_ajaran);
+        $dokumen_ditugaskan= DokumenDitugaskan::dokumenTahun($id_tahun_ajaran)->orderBy('id_dokumen_ditugaskan', 'asc')->get();
+
+        $kelas=Kelas::with(['dosen_kelas', 'matkul','dokumen_kelas' => function($query) use($id_tahun_ajaran) {
+            $query->with(['dokumen_ditugaskan' => function($query) use($id_tahun_ajaran) {
+                $query->dokumenTahun($id_tahun_ajaran);
+                }]);
+            }, 'kelas_dokumen_matkul' => function($query) use($id_tahun_ajaran) {
+                $query->with(['dokumen_ditugaskan' => function($query) use($id_tahun_ajaran) {
+                    $query->dokumenTahun($id_tahun_ajaran);
+                    }]);
+                }])->kelasTahun($id_tahun_ajaran)->orderBy('id_matkul_dibuka', 'asc')->get();
+
+        // dd($kelas);
+        $report=showReport($dokumen_ditugaskan, $kelas);
+
+        // dd($report);
+        $pdf = Pdf::loadView('admin.progres.report', ['tahun_ajaran' => $tahun_ajaran, 'dokumen' => $dokumen_ditugaskan, 'report' => $report]);
+        return $pdf->download('laporan.pdf');
+
+        return view('admin.progres.report', ['tahun_ajaran' => $tahun_ajaran, 'dokumen' => $dokumen_ditugaskan, 'report' => $report]);
     }
 }

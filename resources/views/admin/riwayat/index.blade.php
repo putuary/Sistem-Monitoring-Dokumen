@@ -31,25 +31,24 @@
           <h3 class="block-title">Riwayat Pengumpulan</h3>
           <div class="block-options">
             <div class="dropdown">
-              <button type="button" class="btn-block-option" id="dropdown-ecom-filters" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Filters <i class="fa fa-angle-down ms-1"></i>
+              <button type="button" class="btn-block-option" id="dropdown-ecom-filters" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Filter">
+                <i class="fa fa-filter"></i>
               </button>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-ecom-filters">
-                <a class="dropdown-item d-flex align-items-center justify-content-between" href="?filter=terkumpul{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
+                <a class="dropdown-item d-flex align-items-center justify-content-between {{ (request('filter') == null || request('filter') == 'terkumpul') ? 'active' : ''  }}" href="?filter=terkumpul{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
                   Terkumpul
-                  {{-- <span class="badge bg-black-50 rounded-pill">{{ $terkumpul }}</span> --}}
                 </a>
-                <a class="dropdown-item d-flex align-items-center justify-content-between" href="?filter=tepat_waktu{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
+                <a class="dropdown-item d-flex align-items-center justify-content-between {{ request('filter') == 'tepat_waktu' ? 'active' : ''  }}" href="?filter=tepat_waktu{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
                   Tepat Waktu
-                  {{-- <span class="badge bg-warning rounded-pill">{{ $tepat_waktu }}</span> --}}
                 </a>
-                <a class="dropdown-item d-flex align-items-center justify-content-between" href="?filter=terlambat{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
+                <a class="dropdown-item d-flex align-items-center justify-content-between {{ request('filter') == 'terlambat' ? 'active' : ''  }}" href="?filter=terlambat{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
                   Terlambat
-                  {{-- <span class="badge bg-info rounded-pill">{{ $terlambat }}</span> --}}
                 </a>
-                <a class="dropdown-item d-flex align-items-center justify-content-between" href="?filter=belum_terkumpul{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
+                <a class="dropdown-item d-flex align-items-center justify-content-between {{ request('filter') == 'belum_terkumpul' ? 'active' : ''  }}" href="?filter=belum_terkumpul{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
                   Belum Dikumpulkan
-                  {{-- <span class="badge bg-danger rounded-pill">{{ $belum_terkumpul }}</span> --}}
+                </a>
+                <a class="dropdown-item d-flex align-items-center justify-content-between {{ request('filter') == 'terlewat' ? 'active' : ''  }}" href="?filter=terlewat{{ request('tahun_ajaran') ? '&tahun_ajaran='.request('tahun_ajaran') : '' }}">
+                  Terlewat
                 </a>
               </div>
             </div>

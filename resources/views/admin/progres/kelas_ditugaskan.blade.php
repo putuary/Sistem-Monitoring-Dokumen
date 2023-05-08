@@ -73,15 +73,15 @@
               @foreach ($dokumen as $key => $item)
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="fs-sm">{{ $item->dokumen_perkuliahan->nama_dokumen }}</td>
+                <td class="fs-sm">{{ $item->nama_dokumen }}</td>
                 <td class="fs-sm text-center">
-                  @if ($item->dokumen_perkuliahan->dikumpulkan_per==0)
+                  @if ($item->dikumpulkan_per==0)
                   {{ showWaktu($item->dokumen_matkul[0]->waktu_pengumpulan) }}
                   @else
                   {{ showWaktu($item->dokumen_kelas[0]->waktu_pengumpulan) }}
                   @endif
                 </td>
-                @if ($item->dokumen_perkuliahan->dikumpulkan_per==0)
+                @if ($item->dikumpulkan_per==0)
                 <td class="text-center fw-semibold fs-sm">
                   <div class="btn-sm btn-alt-{{ isset($item->dokumen_matkul[0]->file_dokumen) ? 'success' : 'danger' }} bg-{{ isset($item->dokumen_matkul[0]->file_dokumen) ? 'success' : 'danger' }}-light">
                     <i class="far fa-fw fa-{{ isset($item->dokumen_matkul[0]->file_dokumen) ? 'square-check' : 'rectangle-xmark' }}"></i>
@@ -103,9 +103,9 @@
                 <td class="text-center">
                   <form action="/manajemen-pengguna/delete" method="POST">
                     @csrf
-                  @if ($item->dokumen_perkuliahan->dikumpulkan_per==0)
+                  @if ($item->dikumpulkan_per==0)
                     @if (isset($item->dokumen_matkul[0]->file_dokumen))
-                    <a href="{{ asset('/storage'.pathDokumen($item->tahun_ajaran->tahun_ajaran, ismatkul($item->dokumen_perkuliahan->dikumpulkan_per), $item->dokumen_matkul[0]->matkul->nama_matkul ).'/'.$item->dokumen_matkul[0]->file_dokumen ) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
+                    <a href="{{ asset('/storage'.pathDokumen($item->tahun_ajaran->tahun_ajaran, ismatkul($item->dikumpulkan_per), $item->dokumen_matkul[0]->matkul->nama_matkul ).'/'.$item->dokumen_matkul[0]->file_dokumen ) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
                       <i class="fa fa-fw fa-eye"></i>
                     </a>
                     <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
@@ -118,7 +118,7 @@
                     @endif
                   @else
                     @if (isset($item->dokumen_kelas[0]->file_dokumen))
-                    <a href="{{ asset('/storage/'.pathDokumen($item->tahun_ajaran->tahun_ajaran, ismatkul($item->dokumen_perkuliahan->dikumpulkan_per), $item->dokumen_kelas[0]->kelas->matkul->nama_matkul, $item->dokumen_kelas[0]->kelas->nama_kelas).'/'.$item->dokumen_kelas[0]->file_dokumen ) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
+                    <a href="{{ asset('/storage/'.pathDokumen($item->tahun_ajaran->tahun_ajaran, ismatkul($item->dikumpulkan_per), $item->dokumen_kelas[0]->kelas->matkul->nama_matkul, $item->dokumen_kelas[0]->kelas->nama_kelas).'/'.$item->dokumen_kelas[0]->file_dokumen ) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
                       <i class="fa fa-fw fa-eye"></i>
                     </a>
                     <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
@@ -232,8 +232,8 @@
       //modal
       function uploadDokumen(id) {
         $('.modal-upload').modal("show");
-        $('.title').html('Unggah Dokumen '+jsfiles[id].dokumen_perkuliahan.nama_dokumen);
-        if(jsfiles[id].dokumen_perkuliahan.dikumpulkan_per === 0) {
+        $('.title').html('Unggah Dokumen '+jsfiles[id].nama_dokumen);
+        if(jsfiles[id].dikumpulkan_per === 0) {
           $('#id_dokumen_matkul').val(jsfiles[id].dokumen_matkul[0].id_dokumen_matkul);
         } else {
           $('#id_dokumen_kelas').val(jsfiles[id].dokumen_kelas[0].id_dokumen_kelas); 

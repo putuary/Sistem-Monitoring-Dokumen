@@ -6,6 +6,7 @@ use App\Models\DokumenDitugaskan;
 use App\Models\DokumenMatkul;
 use App\Models\Kelas;
 use App\Models\MataKuliah;
+use App\Models\MatkulDibuka;
 use App\Models\TahunAjaran;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -31,7 +32,7 @@ class KelasController extends Controller
         $dosen=User::where('role', '!=', 'admin')->get();
         // dd($dosen);
 
-        $kelas= Kelas::with(['tahun_ajaran', 'matkul', 'dosen_kelas'])->kelasTahun(request('tahun_ajaran'))->orderBy('kode_matkul', 'asc')->get();
+        $kelas= Kelas::with(['tahun_ajaran', 'matkul', 'dosen_kelas'])->kelasTahun(request('tahun_ajaran'))->orderBy('id_matkul_dibuka', 'asc')->get();
         // dd($kelas);
 
         return view('super-admin.penugasan.daftar-kelas', ['tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif, 'matkul' => ($matkul ?? [] ), 'dosen' => $dosen, 'kelas' => $kelas,]);
@@ -47,10 +48,24 @@ class KelasController extends Controller
 
         $tahun_aktif=TahunAjaran::tahunAktif()->first();
 
+        $matkul_dibuka= MatkulDibuka::where('kode_matkul', $request->kode_matkul)->where('id_tahun_ajaran', $tahun_aktif->id_tahun_ajaran)->first();
+        if(!isset($matkul_dibuka)) {
+            $matkul=MataKuliah::where('kode_matkul', $request->kode_matkul)->first();
+            $matkul_dibuka=MatkulDibuka::create([
+                'kode_matkul'       => $request->kode_matkul,
+                'id_tahun_ajaran'   => $tahun_aktif->id_tahun_ajaran,
+                'nama_matkul'       => $matkul->nama_matkul,
+                'bobot_sks'         => $matkul->bobot_sks,
+                'praktikum'         => $matkul->praktikum,
+            ]);
+        }
+        
+        // dd($matkul_dibuka);
+
         $kelas=Kelas::create([
-            'nama_kelas'     => $request->nama_kelas,
-            'kode_matkul'    => $request->kode_matkul,
-            'id_tahun_ajaran'=> $tahun_aktif->id_tahun_ajaran,
+            'nama_kelas'        => $request->nama_kelas,
+            'id_matkul_dibuka'  => $matkul_dibuka->id_matkul_dibuka,
+            'id_tahun_ajaran'   => $tahun_aktif->id_tahun_ajaran,
         ]);
 
         for($i=0; $i<count($request->id_dosen); $i++) {
@@ -58,8 +73,9 @@ class KelasController extends Controller
         }
         
         $dokumen_ditugaskan=DokumenDitugaskan::with(['dokumen_perkuliahan', 'dokumen_matkul' => function($query) use ($kelas) {
-            $query->with('matkul')->where('dokumen_matkul.kode_matkul', $kelas->kode_matkul);
+            $query->with('matkul')->where('dokumen_matkul.id_matkul_dibuka', $kelas->id_matkul_dibuka);
         }])->dokumenAktif()->get();
+        // dd($dokumen_ditugaskan);
 
 
         foreach($dokumen_ditugaskan as $key => $dokumen) {
@@ -72,13 +88,14 @@ class KelasController extends Controller
                     'waktu_pengumpulan' => null,
                 ]);
             } else {
-                if($dokumen->dokumen_matkul[0]->matkul->praktikum == 0  && $dokumen->dokumen_perkuliahan->id_dokumen == 'DP0003') {
+                if($matkul_dibuka->praktikum == 0  && $dokumen->dokumen_perkuliahan->id_dokumen == 'DP0003') {
                     continue; 
                 }
 
                 if(count($dokumen->dokumen_matkul) == 0) {
                     $dokumen_matkul=$dokumen->dokumen_matkul()->create([
                         'id_dokumen_ditugaskan' => $dokumen->id_dokumen_ditugaskan,
+                        'id_matkul_dibuka' => $kelas->id_matkul_dibuka,
                         'file_dokumen' => null,
                         'waktu_pengumpulan' => null,
                     ]);
@@ -119,23 +136,7 @@ class KelasController extends Controller
 
     public function destroy($id)
     {
-        $kelas=Kelas::with(['kelas_dokumen_matkul', 'dokumen_kelas'])->find($id);
-        // dd($kelas);
-        $id_dokumen=array();
-        foreach($kelas->kelas_dokumen_matkul as $dokumen_matkul) {
-            $id_dokumen[]=$dokumen_matkul->id_dokumen_matkul;
-        }
-
-        $kelas->dosen_kelas()->detach();
-        $matkul=MataKuliah::with(['kelas' => function($query) {
-            $query->KelasAktif();
-        }])->find($kelas->kode_matkul);
-        $kelas->dokumen_kelas()->delete();
-        $kelas->kelas_dokumen_matkul()->detach();
-        if(count($matkul->kelas) == 1) {
-            DokumenMatkul::whereIn('id_dokumen_matkul', $id_dokumen)->delete();
-        }
-        $kelas->delete();
+        $kelas=Kelas::find($id)->delete();
 
         return redirect()->back()->with('success', 'Data berhasil dihapus');
     }

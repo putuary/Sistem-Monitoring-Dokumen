@@ -21,7 +21,7 @@ class DokumenMatkul extends Model
     protected $fillable = [
         'id_dokumen_matkul',
         'id_dokumen_ditugaskan',
-        'kode_matkul',
+        'id_matkul_dibuka',
         'file_dokumen',
         'waktu_pengumpulan',
     ];
@@ -49,6 +49,10 @@ class DokumenMatkul extends Model
                 });
             } else if( $filter == 'belum_terkumpul') {
                 return $query->whereNull('file_dokumen');
+            } else if( $filter == 'terlewat') {
+                return $query->whereNull('file_dokumen')->whereHas('dokumen_ditugaskan', function($query) {
+                    $query->where('tenggat_waktu', '<', now());
+                });
             }
         }
         return $query->whereNotNull('file_dokumen');
@@ -73,7 +77,7 @@ class DokumenMatkul extends Model
 
     public function matkul()
     {
-        return $this->belongsTo(MataKuliah::class, 'kode_matkul');
+        return $this->belongsTo(MatkulDibuka::class, 'id_matkul_dibuka');
     }
 
     public function scores()

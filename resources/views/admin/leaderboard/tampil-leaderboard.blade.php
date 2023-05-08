@@ -31,21 +31,39 @@
           <h3 class="block-title">Leaderboards</h3>
         </div>
         <div class="block-content block-content-full">
-          <form class="block-content" action="/leaderboard/badge" method="POST">
-            @csrf
-            <input type="hidden" name="id_tahun_ajaran" value="{{ $tahun_aktif->id_tahun_ajaran ?? null }}">
-            <div class="row justify-content-center">
-              <div class="col-md-2 col-lg-4">
-                <div class="mb-4 text-center">
-                  @if(isset($tahun_aktif))
-                  <button type="submit" class="btn btn-alt-info" id="btn-submit">
-                    <i class="fa fa-fw fa-download me-1"></i> Tampilkan Perolehan Badge Final
-                  </button>
-                  @endif      
+          @if(isset($tahun_aktif) && auth()->user()->role != 'dosen')
+            @if(in_array(auth()->user()->role, ['kaprodi', 'gkmp'])) 
+              @if(auth()->user()->aktif_role->is_dosen==0)
+              <form class="block-content" action="/leaderboard/badge" method="POST">
+                @csrf
+                <input type="hidden" name="id_tahun_ajaran" value="{{ $tahun_aktif->id_tahun_ajaran }}">
+                <div class="row justify-content-center">
+                  <div class="col-md-2 col-lg-4">
+                    <div class="mb-4 text-center">
+                      <button type="submit" class="btn btn-alt-info" id="btn-submit">
+                        <i class="fa fa-fw fa-download me-1"></i> Tampilkan Perolehan Badge Final
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              @endif
+            @else
+            <form class="block-content" action="/leaderboard/badge" method="POST">
+              @csrf
+              <input type="hidden" name="id_tahun_ajaran" value="{{ $tahun_aktif->id_tahun_ajaran }}">
+              <div class="row justify-content-center">
+                <div class="col-md-2 col-lg-4">
+                  <div class="mb-4 text-center">
+                    <button type="submit" class="btn btn-alt-info" id="btn-submit">
+                      <i class="fa fa-fw fa-download me-1"></i> Tampilkan Perolehan Badge Final
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </form>
+            </form>
+            @endif
+          @endif
           <!-- DataTables init on table by adding .js-dataTable-responsive class, functionality is initialized in js/pages/be_tables_datatables.min.js which was auto compiled from _js/pages/be_tables_datatables.js -->
           <table class="table table-bordered table-striped table-vcenter js-dataTable-responsive">
             <thead>
@@ -69,7 +87,13 @@
                 <td class="text-center fs-sm">{{ $item->late }}</td>
                 <td class="text-center fs-sm">{{ $item->empty }}</td>
                 <td class="text-center fs-sm">{{ $item->task }}</td>
-                <td class="text-center fs-sm">{{ $item->percent. ' %' }}</td>
+                <td class="text-center fs-sm">
+                  <div class="progress mb-1" style="height: 5px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ $item->percent. '%' }};" aria-valuenow="{{ $item->percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <p class="fs-xs fw-semibold mb-0">{{ $item->percent. ' %' }}</p>
+                </td>
+                {{-- <td class="text-center fs-sm">{{ $item->percent. ' %' }}</td> --}}
                 <td class="text-center fs-sm">{{ $item->point }}</td>
               </tr>
               @endforeach

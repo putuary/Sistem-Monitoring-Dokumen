@@ -40,20 +40,19 @@
                 @csrf
                 <h4 class="border-bottom pb-2">Kelas</h4>
                 <div class="mb-4">
-                  <?php $jumlah=0; ?>
+
                 @foreach ($data['nama_matkul'] as $key => $kelas)
+                  <h5 class="pb-2 mt-3">{{ $kelas }}</h5>
                 <?php $a='A'; ?>
                   @for ($i = 0; $i < $data['jumlah'][$key]; $i++)
                   <div class="row row-cols-lg-auto g-3 align-items-center mb-3">
-                    <input type="hidden" name="kode_matkul[]" value="{{ $data['kode_matkul'][$key] }}">
                     <label class="col-sm-4 col-form-label" for="example-hf-password">Kelas</label>
-                    <div class="col-md-2 col-lg-6">
-                      <div class="form-control">{{ $kelas.' R'.($data['jumlah'][$key]==1 ? '' : $a) }}</div>
-                      <input type="hidden" value="{{ 'R'.($data['jumlah'][$key]==1 ? '' : $a) }}" name="nama_kelas[]">
+                    <div class="col-md-2 col-lg-2">
+                      <input type="text" class="form-control" value="{{ 'R'.($data['jumlah'][$key]==1 ? '' : $a) }}" name="nama_kelas[{{ $key }}][]">
                     </div> 
                     <label class="col-sm-4 col-form-label" for="example-hf-password">Dosen</label>
                     <div class="col-md-2 col-lg-4">
-                      <select class="js-select2 form-select" name="id_dosen[{{ $jumlah+$i }}][]" style="width: 100%;" data-placeholder="Pilih Dosen" multiple required>
+                      <select class="js-select2 form-select" name="id_dosen[{{ $key }}][{{ $i }}][]" style="width: 100%;" data-placeholder="Pilih Dosen" multiple required>
                         <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                         @foreach ($dosen as $item)
                           <option value="{{ $item->id }}">{{ $item->nama }}</option>
@@ -63,7 +62,7 @@
                   </div>
                   <?php $a++;?>
                   @endfor
-                  <?php $jumlah=$jumlah+$data['jumlah'][$key]; ?>
+                 
                 @endforeach
               </div>
               <div class="row">

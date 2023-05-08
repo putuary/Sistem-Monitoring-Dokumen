@@ -285,7 +285,7 @@
      <script src={{  URL::asset("assets/js/pages/be_tables_datatables.min.js") }}></script>
 
      <script>
-      let jsfiles = <?php echo json_encode($matkul) ?>;
+      let jsfiles = @json($matkul)
 
       //modal
       function editMatkul(id) {

@@ -8,6 +8,7 @@ use App\Models\Kelas;
 use App\Models\DokumenDitugaskan;
 use App\Models\Score;
 use App\Models\UserBadge;
+use App\Models\MatkulDibuka;
 
 class TahunAjaran extends Model
 {
@@ -17,12 +18,12 @@ class TahunAjaran extends Model
     
     protected $fillable = [
         'tahun_ajaran',
-        'status',
+        'is_aktif',
     ];
 
     public function scopeTahunAktif($query)
     {
-        return $query->where('status', 1);
+        return $query->where('is_aktif', 1);
     }
 
     public function dokumen_ditugaskan()
@@ -44,5 +45,10 @@ class TahunAjaran extends Model
     public function user_badge()
     {
         return $this->hasMany(UserBadge::class, 'id_tahun_ajaran');
+    }
+
+    public function matkul()
+    {
+        return $this->hasMany(MatkulDibuka::class, 'id_tahun_ajaran');
     }
 }

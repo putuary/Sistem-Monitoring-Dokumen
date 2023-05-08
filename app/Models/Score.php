@@ -17,7 +17,6 @@ class Score extends Model
         'scoreable_id',
         'scoreable_type',
         'score',
-        'status',
     ];
 
     public function scopeScoreTahunAktif($query)

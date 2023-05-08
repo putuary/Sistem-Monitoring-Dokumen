@@ -7,14 +7,14 @@
     <div class="content">
       <!-- pop up success upload -->
       @if (session()->has('success'))
-          <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+          <div class="alert alert-success alert-dismissible fade show mb-3 alert-notification" role="alert">
           <strong>{{ session()->get('success') }}</strong>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
       @endif
 
       @if (session()->has('failed'))
-          <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+          <div class="alert alert-danger alert-dismissible fade show mb-3 alert-notification" role="alert">
             <strong>{{ session()->get('failed') }}</strong>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
@@ -56,20 +56,26 @@
         </div>
       </form>
 
-      <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start">
-          <form class="mt-3 mt-md-0" action="/progres-pengumpulan/unduh-semua-dokumen" method="POST">
-            @csrf
-            <input type="hidden" name="id_tahun_ajaran" value="{{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}">
+      <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start mb-3">
+        <form class="mt-3 mt-md-0" action="/progres-pengumpulan/unduh-semua-dokumen" method="POST">
+          @csrf
+          <input type="hidden" name="id_tahun_ajaran" value="{{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}">
 
-            <button type="submit" class="btn btn-info">
-              <i class="fa fa-fw fa-download me-1"></i> Unduh Semua Dokumen
-            </button>
-          </form>
-        
+          <button type="submit" class="btn btn-info">
+            <i class="fa fa-fw fa-download me-1"></i> Unduh Semua Dokumen
+          </button>
+        </form>
+
+        <div class="mt-3 mt-md-0">
+          <a class="btn btn-success" href="/progres-pengumpulan/resume-pengumpulan?tahun_ajaran={{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}">
+            <i class="fa fa-fw fa-rectangle-list me-1"></i> Tampilkan Resume Pengumpulan
+          </a>
+        </div>
+
         <div class="mt-md-0 ms-md-3 space-x-1">
           <div class="dropdown d-inline-block">
             <button type="button" class="btn btn-sm btn-alt-secondary space-x-1" id="dropdown-analytics-overview" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fa fa-fw fa-calendar-alt opacity-50"></i>
+              <i class="fa fa-fw fa-users-rectangle opacity-50"></i>
               <span>@if(request('filter') == null || request('filter') == 'kelas') {{ 'Kelas' }} @elseif(request('filter') != null && request('filter') == 'dokumen') {{ 'Dokumen' }} @endif</span>
               <i class="fa fa-fw fa-angle-down"></i>
             </button>
@@ -98,6 +104,13 @@
           </form>
         </div>
       </div>
+
+      @if (count($kelas) == 0)
+      <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Kelas tidak ditemukan!</h4>
+        <p>Maaf, Kelas tidak ada di dalam database.</p>
+      </div>
+      @endif
     
       <!-- Overview -->
       <div class="row items-push" id="search-results">
@@ -169,7 +182,7 @@
 
     <script>
       $(document).ready(function () {
-        $(".alert").delay(2000).fadeOut("slow");
+        $(".alert-notification").delay(2000).fadeOut("slow");
 
         $('#search-form').submit(function(e) {
             // Mencegah aksi default dari form

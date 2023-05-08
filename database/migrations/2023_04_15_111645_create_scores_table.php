@@ -18,11 +18,10 @@ return new class extends Migration
             $table->string('scoreable_id', 10);
             $table->string('scoreable_type');
             $table->integer('score');
-            $table->tinyInteger('status')->nullable();
             $table->timestamps();
             
-            $table->foreign('id_dosen')->references('id')->on('users');
-            $table->foreign('id_tahun_ajaran')->references('id_tahun_ajaran')->on('tahun_ajaran');
+            $table->foreign('id_dosen')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('id_tahun_ajaran')->references('id_tahun_ajaran')->on('tahun_ajaran')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
