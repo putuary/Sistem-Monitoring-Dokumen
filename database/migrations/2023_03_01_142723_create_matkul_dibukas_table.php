@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('nama_matkul');
             $table->integer('bobot_sks');
             $table->boolean('praktikum');
-            $table->timestamps();
 
             $table->unique(['kode_matkul', 'id_tahun_ajaran']);
             $table->foreign('id_tahun_ajaran')->references('id_tahun_ajaran')->on('tahun_ajaran')->onUpdate('cascade')->onDelete('cascade');

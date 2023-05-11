@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Badge;
 use App\Models\DokumenKelas;
+use App\Models\DokumenMatkul;
 use App\Models\Score;
 use App\Models\TahunAjaran;
 use App\Models\User;
 use App\Models\UserBadge;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,8 +35,29 @@ class LeaderBoardController extends Controller
         $leaderboards=showRank($users);
         // dd($leaderboards[0]->score[0]->scoreable->nama_matkul);
 
-       return view('admin.leaderboard.tampil-leaderboard', ['leaderboards' => $leaderboards, 'tahun_aktif' => $tahun_aktif]);
+       return view('user.leaderboard.tampil-leaderboard', ['leaderboards' => $leaderboards, 'tahun_aktif' => $tahun_aktif]);
     }
+
+    // public function showUserScore() {
+    //     $tahun_aktif=TahunAjaran::tahunAktif()->first();
+    //     $tahun_ajaran=TahunAjaran::orderBy('tahun_ajaran', 'desc')->get();
+        
+    //     $scores = Score::with([
+    //         'scoreable' => function (MorphTo $morphTo) {
+    //             $morphTo->morphWith([
+    //                 DokumenMatkul::class => ['matkul', 'dokumen_ditugaskan'],
+    //                 DokumenKelas::class => ['dokumen_ditugaskan', 'kelas' => function($query) {
+    //                     $query->with('matkul');
+    //                 }],
+    //             ]);
+    //         }])->scoreTahun(request('tahun_ajaran'))
+    //       ->where('id_dosen', Auth::user()->id)
+    //       ->whereNotNull('poin')
+    //       ->orderBy('updated_at', 'desc')->get();
+
+    //     // dd($scores);
+    //     return view('dosen.leaderboard.tampil-perolehan-score', ['tahun_aktif' => $tahun_aktif, 'tahun_ajaran' => $tahun_ajaran, 'scores' => $scores]);
+    // }
 
     public function resultBadge(Request $request) {
 
@@ -104,6 +126,6 @@ class LeaderBoardController extends Controller
         $user_badges=showRank($users);
         // dd($user_badges);
 
-        return view('admin.leaderboard.tampil-perolehan-badge', ['tahun_aktif' => $tahun_aktif, 'tahun_ajaran' => $tahun_ajaran, 'user_badges' => $user_badges]);
+        return view('user.leaderboard.tampil-perolehan-badge', ['tahun_aktif' => $tahun_aktif, 'tahun_ajaran' => $tahun_ajaran, 'user_badges' => $user_badges]);
     }
 }

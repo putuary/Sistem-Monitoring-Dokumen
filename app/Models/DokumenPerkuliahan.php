@@ -13,6 +13,7 @@ class DokumenPerkuliahan extends Model
     protected $table = 'dokumen_perkuliahan';
     protected $primaryKey = 'id_dokumen';
     public $incrementing = false;
+    public $timestamps = false;
     
     protected $fillable = [
         'id_dokumen',

@@ -65,6 +65,8 @@ Route::middleware(['auth', 'role:superAdmin'])->group(function () {
     Route::resource('/penugasan/dokumen-ditugaskan', DokumenDitugaskanController::class)->except(['create', 'show', 'edit']);
     // Route::get('/penugasan/dokumen-ditugaskan', [PenugasanController::class, 'showDokumenDitugaskan']);
 
+    Route::post('/leaderboard/badge', [LeaderBoardController::class, 'resultBadge']);
+
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -92,78 +94,44 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/progres-pengumpulan/resume-pengumpulan', [ProgresController::class, 'showReport']);
     Route::post('/progres-pengumpulan/resume-pengumpulan/unduh', [ProgresController::class, 'generateReport']);
     Route::get('/progres-pengumpulan/kelas', [ProgresController::class, 'showProgresKelas']);
+    Route::get('/progres-pengumpulan/kelas/{id_dokumen}', [DokumenDikumpulController::class, 'showDokumenDikumpul']);
+    Route::get('/progres-pengumpulan/kelas/unduh/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenDikumpul']);
+    Route::delete('/progres-pengumpulan/kelas/{id_dokumen}', [DokumenDikumpulController::class, 'deleteDokumenDikumpul']);
     Route::get('/progres-pengumpulan/dokumen', [ProgresController::class, 'showProgresDokumen']);
     Route::post('/progres-pengumpulan/dokumen', [ProgresController::class, 'downloadDokumen']);
     Route::post('/progres-pengumpulan/kelas', [ProgresController::class, 'downloadDokumenKelas']);
 
 
     // Riwayat Pengumpulan
-    Route::get('/riwayat-pengumpulan', [ProgresController::class, 'showRiwayat']);
+    Route::get('/riwayat-pengumpulan-score', [ProgresController::class, 'showRiwayat']);
 
     // Pengingat
     Route::get('/atur-pengingat-pengumpulan', [PengingatController::class, 'showPengingat']);
     Route::post('/atur-pengingat-pengumpulan/edit', [PengingatController::class, 'editPengingat']);
     Route::post('/atur-pengingat-pengumpulan/edit_pengumpulan', [PengingatController::class, 'editPengumpulan']);
-
-    
-    Route::post('/leaderboard/badge', [LeaderBoardController::class, 'resultBadge']);
-
 });
 
 Route::middleware(['auth', 'role:dosen'])->group(function () {
     // Kelas Diampu
     Route::get('/kelas-diampu', [KelasDiampuController::class, 'showKelasDiampu']);
     Route::get('/kelas-diampu/{kode_kelas}', [KelasDiampuController::class, 'showDokumenDitugaskan']);
-    Route::get('/kelas-diampu/download-template/{id_dokumen}', [DokumenDikumpulController::class, 'downloadTemplate']);
+    Route::get('/kelas-diampu/unduh-template/{id_dokumen}', [DokumenDikumpulController::class, 'downloadTemplate']);
     Route::post('/kelas-diampu/upload', [DokumenDikumpulController::class, 'uploadDokumen']);
     Route::post('/kelas-diampu/multiple-upload', [DokumenDikumpulController::class, 'uploadDokumenMultiple'])->name('store.dokumen');
 
-    Route::get('/kelas-diampu/dokumen/{id_dokumen}', [DokumenDikumpulController::class, 'readDokumenSingle'])->name('dokumen-single.show');
-    Route::get('/kelas-diampu/dokumen/download/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenSingle'])->name('dokumen-single.download');
-    Route::delete('/kelas-diampu/dokumen/{id_dokumen}', [DokumenDikumpulController::class, 'deleteDokumen'])->name('dokumen.delete');
-    
-    Route::get('/kelas-diampu/dokumen-multiple/{id_dokumen}', [DokumenDikumpulController::class, 'showDokumenMultiple']);
-    Route::get('/kelas-diampu/dokumen-multiple/show/{id_dokumen}', [DokumenDikumpulController::class, 'readDokumenDikumpulMultiple']);
-    Route::put('/kelas-diampu/dokumen-multiple/{id_dokumen}', [DokumenDikumpulController::class, 'renameDokumenDikumpulMultiple']);
-    Route::delete('/kelas-diampu/dokumen-multiple/{id_dokumen}', [DokumenDikumpulController::class, 'deleteDokumenDikumpulMultiple']);
+    Route::get('/kelas-diampu/dokumen/{id_dokumen}', [DokumenDikumpulController::class, 'showDokumenDikumpul']);
+    Route::get('/kelas-diampu/dokumen/unduh/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenDikumpul']);
+    Route::put('/kelas-diampu/dokumen/{id_dokumen}', [DokumenDikumpulController::class, 'renameDokumenDikumpulMultiple']);
+    Route::delete('/kelas-diampu/dokumen/{id_dokumen}', [DokumenDikumpulController::class, 'deleteDokumenDikumpul']);
+
+    // Riwayat Pengumpulan
+    Route::get('/riwayat-pengumpulan-perolehan-score', [KelasDiampuController::class, 'showRiwayat']);
+
+    // Score
+    // Route::get('/perolehan-score', [LeaderboardController::class, 'showUserScore']);
 
     // Dokumen Perkuliahan
     Route::get('/dokumen-perkuliahan', [DokumenPerkuliahanController::class, 'index']);
-    Route::get('/dokumen-perkuliahan/show/{id_dokumen}', [DokumenDikumpulController::class, 'readDokumenSingle']);
-    Route::get('/dokumen-perkuliahan/show-multiple/{id_dokumen}', [DokumenPerkuliahanController::class, 'showDokumenMultiple']);
-    Route::get('/dokumen-perkuliahan/show-multiple/show/{id_dokumen}', [DokumenDikumpulController::class, 'readDokumenDikumpulMultiple']);
-    Route::get('/dokumen-perkuliahan/download/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenSingle']);
-
+    Route::get('/dokumen-perkuliahan/{id_dokumen}', [DokumenDikumpulController::class, 'showDokumenDikumpul']);
+    Route::get('/dokumen-perkuliahan/unduh/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenDikumpul']);
 });
-
-
-
-// Route Dosen
-
-
-
-
-
-Route::get('/dokumen-sebelumnya', function () {
-    return view('user.dokumen-sebelumnya');
-})->middleware('auth');
-
-// Route::get('/atur-pengingat-pengumpulan', function () {
-//     return view('user.atur-pengingat');
-// })->middleware('auth');
-
-// Route::get('/atur-pengingat-pengumpulan', function () {
-//     return view('user.atur-pengingat');
-// })->middleware('auth');
-
-Route::get('/jumlah-kelas', function () {
-    return view('user.jumlah-kelas');
-})->middleware('auth');
-
-Route::get('/dosen-pengampu', function () {
-    return view('user.dosen-pengampu');
-})->middleware('auth');
-
-// Route::get('/dokumen-dikumpul', function () {
-//     return view('user.dokumen-dikumpul');
-// })->middleware('auth');

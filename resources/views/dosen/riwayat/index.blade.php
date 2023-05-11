@@ -89,34 +89,48 @@
                 <th class="text-center">No.</th>
                 <th class="text-center" >Dokumen</th>
                 <th class="text-center" >Kelas</th>
-                <th class="text-center" >Dosen</th>
                 <th class="text-center" >Waktu Pengumpulan</th>
                 <th class="text-center" >Status</th>
-                <th class="text-center" >Poin</th>
               </tr>
             </thead>
             <tbody>
 
-              @foreach ($dokumen as $key => $item)
-              <tr>
-                <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="fs-sm"><a href="/progres-pengumpulan/kelas?id={{ $item->kode_kelas }}">{{ $item->nama_dokumen }}</a></td>
-                <td class="fs-sm">{{ $item->matkul_kelas }}</td>
-                <td class="fs-sm">
-                  <ul>
-                    @foreach ($item->dosen as $dosen)
-                    <li>{{ $dosen }}</li>
-                    @endforeach
-                  </ul>
-                </td>
-                <td class="text-center fs-sm">
-                  {{ showWaktu($item->waktu_pengumpulan) }}
-                </td>
-                <td class="text-center">
-                  <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->waktu_pengumpulan ? backgroundStatus($item->tenggat_waktu, $item->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->waktu_pengumpulan ? statusPengumpulan($item->tenggat_waktu, $item->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
-                </td>
-                <td class="text-center fs-sm">{{ $item->poin ?? '-'}}</td>
-              </tr>
+              @php
+                  $no=1;
+              @endphp
+              @foreach ($kelas as $kls)
+                @foreach ($kls->dokumen_kelas as $item)
+                  <tr>
+                    <td class="text-center fs-sm">{{ $no }}</td>
+                    <td class="fs-sm"><a href="/kelas-diampu/{{ $kls->kode_kelas }}">{{ $item->dokumen_ditugaskan->nama_dokumen }}</a></td>
+                    <td class="fs-sm">{{ $kls->matkul->nama_matkul.' '.$kls->nama_kelas }}</td>
+                    <td class="text-center fs-sm">
+                      {{ showWaktu($item->waktu_pengumpulan) }}
+                    </td>
+                    <td class="text-center">
+                      <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->waktu_pengumpulan ? backgroundStatus($item->dokumen_ditugaskan->tenggat_waktu, $item->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->waktu_pengumpulan ? statusPengumpulan($item->dokumen_ditugaskan->tenggat_waktu, $item->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
+                    </td>
+                  </tr>
+                  @php
+                      $no++;
+                  @endphp
+                @endforeach
+                @foreach ($kls->kelas_dokumen_matkul as $item)
+                  <tr>
+                    <td class="text-center fs-sm">{{ $no }}</td>
+                    <td class="fs-sm"><a href="/kelas-diampu/{{ $kls->kode_kelas }}">{{ $item->dokumen_ditugaskan->nama_dokumen }}</a></td>
+                    <td class="fs-sm">{{ $kls->matkul->nama_matkul.' '.$kls->nama_kelas }}</td>
+                    <td class="text-center fs-sm">
+                      {{ showWaktu($item->waktu_pengumpulan) }}
+                    </td>
+                    <td class="text-center">
+                      <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->waktu_pengumpulan ? backgroundStatus($item->dokumen_ditugaskan->tenggat_waktu, $item->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->waktu_pengumpulan ? statusPengumpulan($item->dokumen_ditugaskan->tenggat_waktu, $item->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
+                    </td>
+                  </tr>
+                  @php
+                      $no++;
+                  @endphp
+                @endforeach
               @endforeach
             </tbody>
           </table>

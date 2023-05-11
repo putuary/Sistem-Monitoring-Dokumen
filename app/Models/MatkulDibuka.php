@@ -15,6 +15,7 @@ class MatkulDibuka extends Model
     protected $table = 'matkul_dibuka';
     protected $primaryKey = 'id_matkul_dibuka';
     public $incrementing = false;
+    public $timestamps = false;
     
     protected $fillable = [
         'id_matkul_dibuka',

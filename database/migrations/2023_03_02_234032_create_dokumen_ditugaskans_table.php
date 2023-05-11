@@ -20,7 +20,6 @@ return new class extends Migration
             $table->boolean('pengumpulan');
             $table->tinyInteger('dikumpulkan_per');
             $table->tinyInteger('dikumpul');
-            $table->timestamps();
 
             $table->unique(['id_dokumen', 'id_tahun_ajaran']);
             $table->foreign('id_dokumen')->references('id_dokumen')->on('dokumen_perkuliahan')->onUpdate('cascade')->onDelete('set null');

@@ -126,7 +126,7 @@
             <div class="bg-body-light rounded-bottom">
               <a
                 class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between"
-                href="/riwayat-pengumpulan?filter=terlambat">
+                href="/riwayat-pengumpulan-score?filter=terlambat">
                 <span>Lihat Pengumpulan Terlambat</span>
                 <i
                   class="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"></i>
@@ -154,7 +154,7 @@
             <div class="bg-body-light rounded-bottom">
               <a
                 class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between"
-                href="riwayat-pengumpulan?filter=belum_terkumpul">
+                href="/riwayat-pengumpulan-score?filter=belum_terkumpul">
                 <span>Lihat Belum Dikumpulkan</span>
                 <i
                   class="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"></i>

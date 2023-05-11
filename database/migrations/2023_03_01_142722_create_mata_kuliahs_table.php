@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('nama_matkul');
             $table->integer('bobot_sks');
             $table->boolean('praktikum');
-            $table->timestamps();
         });
     }
 

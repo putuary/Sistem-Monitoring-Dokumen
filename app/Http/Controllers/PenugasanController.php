@@ -147,8 +147,9 @@ class PenugasanController extends Controller
                     foreach($kls->dosen_kelas as $dsn) {
                         $dokumen_kelas->scores()->create([
                             'id_dosen'        => $dsn->id,
+                            'kode_kelas'      => $kls->kode_kelas,
                             'id_tahun_ajaran' => $kls->id_tahun_ajaran,
-                            'score'           => 0,
+                            'poin'            => null,
                         ]);
                     }
                 }
@@ -163,21 +164,17 @@ class PenugasanController extends Controller
                         'file_dokumen' => null,
                         'waktu_pengumpulan' => null,
                     ]);
-                    $dosen_id = array();
+        
                     foreach($mkl->kelas as $kls) {
                         $kls->kelas_dokumen_matkul()->attach($dokumen_matkul->id_dokumen_matkul);
 
                         foreach($kls->dosen_kelas as $dsn) {
-                            if(!in_array($dsn->id, $dosen_id)) {
-                                
-                               $dokumen_matkul->scores()->create([
-                                    'id_dosen'        => $dsn->id,
-                                    'id_tahun_ajaran' => $kls->id_tahun_ajaran,
-                                    'score'           => 0,
-                                ]);
-        
-                                array_push($dosen_id, $dsn->id);
-                            }
+                            $dokumen_matkul->scores()->create([
+                                'id_dosen'        => $dsn->id,
+                                'kode_kelas'      => $kls->kode_kelas,
+                                'id_tahun_ajaran' => $kls->id_tahun_ajaran,
+                                'poin'           => null,
+                            ]);
                         }
                     }
                 }

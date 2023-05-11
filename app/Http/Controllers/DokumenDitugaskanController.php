@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\DokumenDitugaskan;
 use App\Models\DokumenPerkuliahan;
 use App\Models\Kelas;
-use App\Models\MataKuliah;
 use App\Models\MatkulDibuka;
 use App\Models\Score;
 use App\Models\TahunAjaran;
-use Haruncpi\LaravelIdGenerator\IdGenerator;
 use Illuminate\Http\Request;
 
 class DokumenDitugaskanController extends Controller
@@ -69,7 +67,7 @@ class DokumenDitugaskanController extends Controller
                     $dokumen_kelas->scores()->create([
                         'id_dosen'        => $dsn->id,
                         'id_tahun_ajaran' => $kls->id_tahun_ajaran,
-                        'score'           => 0,
+                        'poin'            => null,
                     ]);
                 }
             }
@@ -94,7 +92,7 @@ class DokumenDitugaskanController extends Controller
                            $dokumen_matkul->scores()->create([
                                 'id_dosen'        => $dsn->id,
                                 'id_tahun_ajaran' => $kls->id_tahun_ajaran,
-                                'score'           => 0,
+                                'poin'            => null,
                             ]);
     
                             array_push($dosen_id, $dsn->id);

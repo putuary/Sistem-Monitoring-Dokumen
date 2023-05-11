@@ -55,13 +55,16 @@
                 <td class="text-center fs-sm">{{ $no }}</td>
                 <td class="fs-sm">{{ $file }}</td>
                 <td class="text-center">
-                  <form action="" method="POST">
-                    <a href="" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
+                  <form action="/progres-pengumpulan/kelas/{{ $id_dokumen }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <a href="/progres-pengumpulan/kelas/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
                       <i class="fa fa-fw fa-eye"></i>
                     </a>
-                    <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editNamaFile({{ $key }})" data-bs-toggle="tooltip" title="Rename">
-                      <i class="fa fa-fw fa-pencil-alt"></i>
+                    <a href="/progres-pengumpulan/kelas/unduh/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                      <i class="fa fa-fw fa-download"></i>
                     </a>
+                    <input type="hidden" name="nama_dokumen" value="{{ $file }}">
                     <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus">
                       <i class="fa fa-fw fa-times"></i>
                     </button>
@@ -74,52 +77,6 @@
               @endforeach
             </tbody>
           </table>
-          <div class="modal fade modal-edit" id="modal-block-fromleft" tabindex="-1" aria-labelledby="modal-block-fromleft" style="display: none;" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-fromleft" role="document">
-              <div class="modal-content">
-                <div class="block block-rounded block-transparent mb-0">
-                  <div class="block-header block-header-default">
-                    <h3 class="block-title">Edit Nama File Dokumen</h3>
-                    <div class="block-options">
-                      <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="fa fa-fw fa-times"></i>
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <form  action="/kelas-diampu/dokumen-dikumpul/{{ $id_dokumen }}"
-                  method="POST"
-                  enctype="multipart/form-data">
-                   @csrf
-                   @method('PUT')
-                    <div class="block-content fs-sm mb-3">
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <div class="form-group">
-                            <label for="example-text-input">Nama Lama</label>
-                            <input type="hidden" class="form-control" name="old_name" id="old_name">
-                            <div class="form-control" id="div_old_name"></div>
-                            <label for="example-text-input">Nama Baru</label>
-                            <input type="text" class="form-control" name="new_name">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="block-content block-content-full text-end border-top">
-                      <button
-                        type="submit"
-                        class="btn btn-alt-primary"
-                        data-bs-dismiss="modal">
-                        <i class="fa fa-check me-1"></i>Simpan
-                      </button>
-                    </div>
-                  </form>
-                  
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       <!-- END All Products -->

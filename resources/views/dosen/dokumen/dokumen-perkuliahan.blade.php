@@ -81,21 +81,12 @@
                   </ul>
                 </td>
                 <td class="text-center">
-                  @if($item->dikumpul==0)
-                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" href="/dokumen-perkuliahan/show/{{ $item->id_dokumen }}" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
+                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" href="/dokumen-perkuliahan/{{ $item->id_dokumen }}" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($item->dikumpul==0) target="_blank" @endif>
                     <i class="fa fa-fw fa-eye"></i>
                   </a>
-                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" href="/dokumen-perkuliahan/download/{{ $item->id_dokumen }}" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" href="/dokumen-perkuliahan/unduh/{{ $item->id_dokumen }}" data-bs-toggle="tooltip" title="Unduh Dokumen">
                     <i class="fa fa-fw fa-download"></i>
                   </a>
-                  @else
-                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" href="/dokumen-perkuliahan/show-multiple/{{ $item->id_dokumen }}" data-bs-toggle="tooltip" title="Lihat Dokumen">
-                    <i class="fa fa-fw fa-eye"></i>
-                  </a>
-                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" href="/dokumen-perkuliahan/download/{{ $item->id_dokumen }}" data-bs-toggle="tooltip" title="Unduh Dokumen">
-                    <i class="fa fa-fw fa-download"></i>
-                  </a>
-                  @endif
                 </td>
               </tr>
               @endforeach

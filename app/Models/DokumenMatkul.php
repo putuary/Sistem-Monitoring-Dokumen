@@ -16,6 +16,7 @@ class DokumenMatkul extends Model
     protected $table = 'dokumen_matkul';
     protected $primaryKey = 'id_dokumen_matkul';
     public $incrementing = false;
+    public $timestamps = false;
     
     
     protected $fillable = [
@@ -49,9 +50,14 @@ class DokumenMatkul extends Model
                 });
             } else if( $filter == 'belum_terkumpul') {
                 return $query->whereNull('file_dokumen');
-            } else if( $filter == 'terlewat') {
+            } else if( $filter == 'melewati_tenggat_waktu') {
                 return $query->whereNull('file_dokumen')->whereHas('dokumen_ditugaskan', function($query) {
                     $query->where('tenggat_waktu', '<', now());
+                });
+            } else if( $filter=="mendekati_tenggat_waktu") {
+                return $query->whereNull('file_dokumen')->whereHas('dokumen_ditugaskan', function($query) {
+                    $query->where('tenggat_waktu', '>=', now())
+                          ->whereRaw('tenggat_waktu - INTERVAL 1 WEEK <= NOW()');
                 });
             }
         }

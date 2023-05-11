@@ -16,6 +16,7 @@ class DokumenDitugaskan extends Model
     protected $table = 'dokumen_ditugaskan';
     protected $primaryKey = 'id_dokumen_ditugaskan';
     public $incrementing = false;
+    public $timestamps = false;
     
     protected $fillable = [
         'id_dokumen_ditugaskan',

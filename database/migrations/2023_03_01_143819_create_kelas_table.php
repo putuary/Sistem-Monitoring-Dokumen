@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('nama_kelas');
             $table->string('id_matkul_dibuka', 10);
             $table->bigInteger('id_tahun_ajaran')->unsigned();
-            $table->timestamps();
 
             $table->foreign('id_matkul_dibuka')->references('id_matkul_dibuka')->on('matkul_dibuka')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('id_tahun_ajaran')->references('id_tahun_ajaran')->on('tahun_ajaran')->onUpdate('cascade')->onDelete('cascade');

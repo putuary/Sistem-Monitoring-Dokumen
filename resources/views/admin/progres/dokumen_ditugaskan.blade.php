@@ -62,7 +62,6 @@
                 <th class="text-center">No.</th>
                 <th class="text-center" >{{ $dokumen->dikumpulkan_per==0 ? 'Mata Kuliah' : 'Kelas' }}</th>
                 <th class="text-center" >waktu_pengumpulan</th>
-                <th class="text-center" >Status</th>
                 <th class="text-center" >Status Pengumpulan</th>
                 <th class="text-center" style="width: 15%;">Aksi</th>
               </tr>
@@ -75,11 +74,6 @@
                   <td class="text-center fs-sm">{{ $key+1 }}</td>
                   <td class="fs-sm">{{ $item->matkul->nama_matkul }}</td>
                   <td class="fs-sm text-center">{{ showWaktu($item->waktu_pengumpulan) }}</td>
-                  <td class="text-center fw-semibold fs-sm">
-                    <div class="btn-sm btn-alt-{{ isset($item->file_dokumen) ? 'success' : 'danger' }} bg-{{ isset($item->file_dokumen) ? 'success' : 'danger' }}-light">
-                      <i class="far fa-fw fa-{{ isset($item->file_dokumen) ? 'square-check' : 'rectangle-xmark' }}"></i>
-                    </div>
-                  </td>
                   <td class="text-center">
                     <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->waktu_pengumpulan ? backgroundStatus($dokumen->tenggat_waktu, $item->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->waktu_pengumpulan ? statusPengumpulan($dokumen->tenggat_waktu, $item->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
                   </td>

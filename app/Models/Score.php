@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\TahunAjaran;
+use App\Models\Kelas;
 
 class Score extends Model
 {
@@ -13,10 +14,11 @@ class Score extends Model
 
     protected $fillable = [
         'id_dosen',
+        'kode_kelas',
         'id_tahun_ajaran',
         'scoreable_id',
         'scoreable_type',
-        'score',
+        'poin',
     ];
 
     public function scopeScoreTahunAktif($query)
@@ -36,6 +38,11 @@ class Score extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'id_dosen');
+    }
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'kode_kelas');
     }
 
     public function tahun_ajaran()

@@ -17,6 +17,7 @@ class Kelas extends Model
     use HasFactory;
     protected $table = 'kelas';
     protected $primaryKey = 'kode_kelas';
+    public $timestamps = false;
     
     protected $fillable = [
         'nama_kelas',
@@ -85,5 +86,10 @@ class Kelas extends Model
     public function dosen_kelas()
     {
         return $this->belongsToMany(User::class, 'dosen_kelas', 'kode_kelas', 'id_dosen');
+    }
+
+    public function score()
+    {
+        return $this->hasMany(Score::class, 'kode_kelas');
     }
 }

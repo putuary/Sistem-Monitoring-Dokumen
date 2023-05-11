@@ -307,7 +307,7 @@ function showRank($users) {
                 $empty++;
             }
             
-            $sum_score+=$score->score;
+            $sum_score+=$score->poin;
         }
         try {
             $percent=round(($sum_submited/$task)*100, 1);
@@ -516,4 +516,96 @@ function showReport($dokumen_ditugaskan, $kelas) {
 
     
     return $report;
+}
+
+function makeArchive($name, $path) {
+    $zip = new \ZipArchive();
+    $fileName = $name.'.zip';
+    $zip->open(storage_path('app/zip/'.$fileName), \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+
+    // Create recursive directory iterator
+    /** @var SplFileInfo[] $files */
+    $files = new \RecursiveIteratorIterator(
+        new \RecursiveDirectoryIterator($path),
+        \RecursiveIteratorIterator::LEAVES_ONLY
+    );
+    // dd($files);
+
+    foreach ($files as $key => $file)
+    {
+        
+        if (!$file->isDir()) {
+            // dd($file);
+            $filePath = $file->getRealPath();
+            $relativeNameInZipFile = basename($file);
+            $zip->addFile($filePath, $name.'/'.$relativeNameInZipFile);
+        }
+    }
+
+    // Zip archive will be created only after closing object
+    $zip->close();
+
+    return storage_path('app/zip/'.$fileName);
+}
+
+function mergerDokumen($kelas)
+{
+    $dokumen_all = [];
+    foreach($kelas as $kls) {
+        $dosen=[];
+        foreach($kls->dosen_kelas as $dsn) {
+            $dosen[] = $dsn->nama;
+        }
+        foreach($kls->dokumen_kelas as $dokumen) {
+            foreach($dokumen->scores as $score) {
+                if($score->kode_kelas == $kls->kode_kelas) {
+                    $poin = $score->poin;
+                }
+            }
+            $dokumen_all[] = (object) [
+                'kode_kelas'        => $kls->kode_kelas,
+                'id_dokumen'        => $dokumen->id_dokumen_kelas,
+                'nama_dokumen'      => $dokumen->dokumen_ditugaskan->nama_dokumen,
+                'matkul_kelas'      => $kls->matkul->nama_matkul.' '.$kls->nama_kelas,
+                'dosen'             => $dosen,
+                'poin'              => $poin,
+                'dikumpul'          => $dokumen->dokumen_ditugaskan->dikumpul,
+                'waktu_pengumpulan' => $dokumen->waktu_pengumpulan,
+                'tenggat_waktu'     => $dokumen->dokumen_ditugaskan->tenggat_waktu,
+            ];
+        }
+        // dd($dokumen_all);
+        
+        foreach($kls->kelas_dokumen_matkul as $dokumen) {
+            foreach($dokumen->scores as $score) {
+                if($score->kode_kelas == $kls->kode_kelas) {
+                    $poin = $score->poin;
+                }
+            }
+            $dokumen_all[] = (object) [
+                'kode_kelas'        => $kls->kode_kelas,
+                'id_dokumen'        => $dokumen->id_dokumen_matkul,
+                'nama_dokumen'      => $dokumen->dokumen_ditugaskan->nama_dokumen,
+                'matkul_kelas'      => $kls->matkul->nama_matkul.' '.$kls->nama_kelas,
+                'dosen'             => $dosen,
+                'poin'              => $poin,
+                'dikumpul'          => $dokumen->dokumen_ditugaskan->dikumpul,
+                'waktu_pengumpulan' => $dokumen->waktu_pengumpulan,
+                'tenggat_waktu'     => $dokumen->dokumen_ditugaskan->tenggat_waktu,
+            ];
+        }
+    }
+    
+    // Panggil usort() dengan array dokumen beserta fungsi pengurutannya sebagai parameter
+    usort($dokumen_all, function($a, $b) {
+        $timeA = strtotime($a->waktu_pengumpulan);
+        $timeB = strtotime($b->waktu_pengumpulan);
+    
+        if ($timeA == $timeB) {
+            return 0;
+        }
+        return ($timeA > $timeB) ? -1 : 1;
+    });
+    
+    return $dokumen_all;
 }

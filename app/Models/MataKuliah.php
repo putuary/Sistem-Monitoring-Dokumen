@@ -13,6 +13,7 @@ class MataKuliah extends Model
     protected $table = 'mata_kuliah';
     protected $primaryKey = 'kode_matkul';
     public $incrementing = false;
+    public $timestamps = false;
     
     protected $fillable = [
         'kode_matkul',

@@ -63,7 +63,6 @@
                 <th class="text-center">No.</th>
                 <th class="text-center" >Nama Dokumen</th>
                 <th class="text-center" >Waktu Pengumpulan</th>
-                <th class="text-center" >Status</th>
                 <th class="text-center" >Status Pengumpulan</th>
                 <th class="text-center" style="width: %;">Aksi</th>
               </tr>
@@ -82,46 +81,37 @@
                   @endif
                 </td>
                 @if ($item->dikumpulkan_per==0)
-                <td class="text-center fw-semibold fs-sm">
-                  <div class="btn-sm btn-alt-{{ isset($item->dokumen_matkul[0]->file_dokumen) ? 'success' : 'danger' }} bg-{{ isset($item->dokumen_matkul[0]->file_dokumen) ? 'success' : 'danger' }}-light">
-                    <i class="far fa-fw fa-{{ isset($item->dokumen_matkul[0]->file_dokumen) ? 'square-check' : 'rectangle-xmark' }}"></i>
-                  </div>
-                </td>
                 <td class="text-center">
                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->dokumen_matkul[0]->waktu_pengumpulan ? backgroundStatus($item->tenggat_waktu, $item->dokumen_matkul[0]->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->dokumen_matkul[0]->waktu_pengumpulan ? statusPengumpulan($item->tenggat_waktu, $item->dokumen_matkul[0]->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
                 </td>
+                <td class="text-center">
+                  <form action="/progres-pengumpulan/kelas/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    @if (isset($item->dokumen_matkul[0]->file_dokumen))
+                      <a href="/progres-pengumpulan/kelas/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($item->dikumpul==0) target="_blank" @endif>
+                        <i class="fa fa-fw fa-eye"></i>
+                      </a>
+                      <a href="/progres-pengumpulan/kelas/unduh/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                        <i class="fa fa-fw fa-download"></i>
+                      </a>
+                      <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus">
+                        <i class="fa fa-fw fa-times"></i>
+                      </button>
+                    @endif
                 @else
-                <td class="text-center fw-semibold fs-sm">
-                  <div class="btn-sm btn-alt-{{ isset($item->dokumen_kelas[0]->file_dokumen) ? 'success' : 'danger' }} bg-{{ isset($item->dokumen_kelas[0]->file_dokumen) ? 'success' : 'danger' }}-light">
-                    <i class="far fa-fw fa-{{ isset($item->dokumen_kelas[0]->file_dokumen) ? 'square-check' : 'rectangle-xmark' }}"></i>
-                  </div>
-                </td>
                 <td class="text-center">
                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->dokumen_kelas[0]->waktu_pengumpulan ? backgroundStatus($item->tenggat_waktu, $item->dokumen_kelas[0]->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->dokumen_kelas[0]->waktu_pengumpulan ? statusPengumpulan($item->tenggat_waktu, $item->dokumen_kelas[0]->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
                 </td>
-                @endif
                 <td class="text-center">
-                  <form action="/manajemen-pengguna/delete" method="POST">
+                  <form action="/progres-pengumpulan/kelas/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" method="POST">
                     @csrf
-                  @if ($item->dikumpulkan_per==0)
-                    @if (isset($item->dokumen_matkul[0]->file_dokumen))
-                    <a href="{{ asset('/storage'.pathDokumen($item->tahun_ajaran->tahun_ajaran, ismatkul($item->dikumpulkan_per), $item->dokumen_matkul[0]->matkul->nama_matkul ).'/'.$item->dokumen_matkul[0]->file_dokumen ) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
-                      <i class="fa fa-fw fa-eye"></i>
-                    </a>
-                    <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
-                      <i class="fa fa-fw fa-download"></i>
-                    </a>
-                      <input type="hidden" name="id_pengguna" value="">
-                      <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus">
-                        <i class="fa fa-fw fa-times"></i>
-                      </button>
-                    @endif
-                  @else
+                    @method('DELETE')
                     @if (isset($item->dokumen_kelas[0]->file_dokumen))
-                    <a href="{{ asset('/storage/'.pathDokumen($item->tahun_ajaran->tahun_ajaran, ismatkul($item->dikumpulkan_per), $item->dokumen_kelas[0]->kelas->matkul->nama_matkul, $item->dokumen_kelas[0]->kelas->nama_kelas).'/'.$item->dokumen_kelas[0]->file_dokumen ) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
+                    <a href="/progres-pengumpulan/kelas/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($item->dikumpul==0) target="_blank" @endif>
                       <i class="fa fa-fw fa-eye"></i>
                     </a>
-                    <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                    <a href="/progres-pengumpulan/kelas/unduh/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
                       <i class="fa fa-fw fa-download"></i>
                     </a>
                       <input type="hidden" name="id_pengguna" value="">
@@ -129,7 +119,7 @@
                         <i class="fa fa-fw fa-times"></i>
                       </button>
                     @endif
-                  @endif
+                @endif
                   
                   
                   </form>

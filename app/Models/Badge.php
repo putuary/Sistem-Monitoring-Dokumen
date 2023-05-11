@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Badge extends Model
 {
     use HasFactory;
+    public $timestamps = false;
     
     protected $fillable = [
         'nama_badge',

@@ -14,13 +14,15 @@ return new class extends Migration
         Schema::create('scores', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('id_dosen')->unsigned();
+            $table->bigInteger('kode_kelas')->unsigned();
             $table->bigInteger('id_tahun_ajaran')->unsigned();
             $table->string('scoreable_id', 10);
             $table->string('scoreable_type');
-            $table->integer('score');
+            $table->integer('poin')->nullable();
             $table->timestamps();
             
             $table->foreign('id_dosen')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('kode_kelas')->references('kode_kelas')->on('kelas')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('id_tahun_ajaran')->references('id_tahun_ajaran')->on('tahun_ajaran')->onUpdate('cascade')->onDelete('cascade');
         });
     }

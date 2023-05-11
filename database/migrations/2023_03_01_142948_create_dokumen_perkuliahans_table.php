@@ -17,7 +17,6 @@ return new class extends Migration
             $table->integer('tenggat_waktu_default');
             $table->tinyInteger('dikumpulkan_per');
             $table->string('template')->nullable();
-            $table->timestamps();
         });
     }
 

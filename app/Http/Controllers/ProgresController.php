@@ -74,19 +74,26 @@ class ProgresController extends Controller
         $tahun_aktif = TahunAjaran::tahunAktif()->first();
         // union two table
 
-        $dokumen_kelas=DokumenKelas::with(['kelas' => function($query) {
-            $query->with(['matkul', 'dosen_kelas']);
-        },'dokumen_ditugaskan'])->whereHas('dokumen_ditugaskan', function($query) {
-            $query->dokumenTahun(request('tahun_ajaran'));
-        })->filter(request('filter'))->get();
+        // $dokumen_kelas=DokumenKelas::with(['kelas' => function($query) {
+        //     $query->with(['matkul', 'dosen_kelas']);
+        // },'dokumen_ditugaskan'])->whereHas('dokumen_ditugaskan', function($query) {
+        //     $query->dokumenTahun(request('tahun_ajaran'));
+        // })->filter(request('filter'))->get();
         
-        $dokumen_matkul=DokumenMatkul::with(['matkul', 'dokumen_ditugaskan', 'kelas_dokumen_matkul' => function($query) {
-            $query->with('dosen_kelas');
-        }])->whereHas('dokumen_ditugaskan', function($query) {
-            $query->dokumenTahun(request('tahun_ajaran'));
-        })->filter(request('filter'))->get();
+        // $dokumen_matkul=DokumenMatkul::with(['matkul', 'dokumen_ditugaskan', 'kelas_dokumen_matkul' => function($query) {
+        //     $query->with('dosen_kelas');
+        // }])->whereHas('dokumen_ditugaskan', function($query) {
+        //     $query->dokumenTahun(request('tahun_ajaran'));
+        // })->filter(request('filter'))->get();
+        // $dokumen_all=mergeDokumen($dokumen_kelas, $dokumen_matkul);
         
-        $dokumen_all=mergeDokumen($dokumen_kelas, $dokumen_matkul);
+        $kelas = Kelas::with(['dokumen_kelas' => function($query) {
+                $query->with('dokumen_ditugaskan')->filter(request('filter'));
+                }, 'matkul','dosen_kelas','kelas_dokumen_matkul' => function($query) {
+                    $query->with('dokumen_ditugaskan')->filter(request('filter'));
+                }])->kelasTahun(request('tahun_ajaran'))->get();
+        $dokumen_all=mergerDokumen($kelas);
+        
 
         return view('admin.riwayat.index', [
             'tahun_ajaran' => $tahun_ajaran,
@@ -136,13 +143,13 @@ class ProgresController extends Controller
 
             // Zip archive will be created only after closing object
             $zip->close();
-
+            
+            return response()->download(storage_path('app/zip/'.$fileName));
+        
         } catch (\Throwable $th) {
             //throw $th;
-            return redirect()->back()->with('failed', $th->getMessage());
+            return redirect()->back()->with('failed', 'Gagal mengunduh dokumen, periksa kembali dokumen yang diunduh!');
         }
-
-        return response()->download(storage_path('app/zip/'.$fileName));
     }
 
     public function downloadDokumen(Request $request)
@@ -190,19 +197,18 @@ class ProgresController extends Controller
                 }
     
                 $zip->close();
+                
             }
+            return response()->download(storage_path('app/zip/'.$fileName));
+            
         } catch (\Throwable $th) {
             // throw $th;
-            return redirect()->back()->with('failed', $th->getMessage());
+            return redirect()->back()->with('failed', 'Gagal mengunduh dokumen, periksa kembali dokumen yang diunduh!');
         }
-
-        return response()->download(storage_path('app/zip/'.$fileName));
     }
 
     public function downloadDokumenKelas(Request $request)
     {
-        // dd($request->all());
-
         try {
             $tahun_ajaran = TahunAjaran::find($request->id_tahun_ajaran);
     
@@ -288,13 +294,11 @@ class ProgresController extends Controller
     
                 $zip->close();
             }
+            return response()->download(storage_path('app/zip/'.$fileName));
         } catch (\Throwable $th) {
             //throw $th;
-            return redirect()->back()->with('failed', $th->getMessage());
+            return redirect()->back()->with('failed', 'Gagal mengunduh dokumen, periksa kembali dokumen yang diunduh!');
         }
-
-        
-        return response()->download(storage_path('app/zip/'.$fileName));
     }
 
     public function showReport() {

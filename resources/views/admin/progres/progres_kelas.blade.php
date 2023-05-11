@@ -125,18 +125,18 @@
           <a class="block block-rounded d-flex flex-column h-100 mb-0" href="/progres-pengumpulan/kelas?id={{ $item->kode_kelas }}">
             <div
               class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
-              <dl class="mb-0">
-                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                  Terlewat <span class="text-danger">{{ $status->terlewat }}</span>
+              <dl class="mb-0 text-justify">
+                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
+                  Terlewat <span class="badge bg-danger rounded-pill"> {{ $status->terlewat }}</span>
                 </dd>
-                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                  Telat <span class="text-danger">{{ $status->telat }}</span>
+                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
+                  Telat <span class="badge bg-warning rounded-pill"> {{ $status->telat }}</span>
                 </dd>
-                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                  Terkumpul <span class="text-success">{{ $status->terkumpul }}</span>
+                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
+                  Terkumpul <span class="badge bg-success rounded-pill"> {{ $status->terkumpul }}</span>
                 </dd>
-                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
-                  Ditugaskan <span class="text-primary">{{ $status->ditugaskan }}</span>
+                <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
+                  Ditugaskan <span class="badge bg-info rounded-pill"> {{ $status->ditugaskan }}</span>
                 </dd>
               </dl>
               <div class="item item-2x item-circle bg-body-light">
@@ -167,7 +167,6 @@
 @section('script')
     <!-- Page JS Plugins -->
     <script src={{ URL::asset("assets/js/plugins/easy-pie-chart/jquery.easypiechart.min.js") }}></script>
-    <script src={{ URL::asset("assets/js/plugins/jquery-sparkline/jquery.sparkline.min.js") }}></script>
     <script src={{ URL::asset("assets/js/plugins/chart.js/chart.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/select2/js/select2.full.min.js") }}></script>
     
@@ -178,7 +177,7 @@
     <script src={{ URL::asset("assets/js/pages/be_comp_charts.min.js") }}></script>
 
     <!-- Page JS Helpers (Easy Pie Chart + jQuery Sparkline Plugins) -->
-    <script>One.helpersOnLoad(['jq-easy-pie-chart', 'jq-sparkline']);</script>
+    <script>One.helpersOnLoad(['jq-easy-pie-chart']);</script>
 
     <script>
       $(document).ready(function () {

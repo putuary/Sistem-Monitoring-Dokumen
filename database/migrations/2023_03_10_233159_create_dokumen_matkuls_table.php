@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('id_matkul_dibuka', 10);
             $table->string('file_dokumen')->nullable();
             $table->dateTime('waktu_pengumpulan')->nullable();
-            $table->timestamps();
 
             $table->unique(['id_dokumen_ditugaskan', 'id_matkul_dibuka']);
             $table->foreign('id_dokumen_ditugaskan')->references('id_dokumen_ditugaskan')->on('dokumen_ditugaskan')->onUpdate('cascade')->onDelete('cascade');

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id('id_tahun_ajaran');
             $table->string('tahun_ajaran');
             $table->boolean('is_aktif');
-            $table->timestamps();
         });
     }
 

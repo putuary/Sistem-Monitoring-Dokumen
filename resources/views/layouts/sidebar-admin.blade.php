@@ -8,7 +8,7 @@
 </li>
 
 <li class="nav-main-item">
-  <a class="nav-main-link {{ Request::is('manajemen-data') ? 'active' : '' }}" href="/manajemen-data">
+  <a class="nav-main-link {{ (Request::is('manajemen-data') || Request::is('manajemen-data/*')) ? 'active' : '' }}" href="/manajemen-data">
     <i class="nav-main-link-icon si si-folder-alt"></i>
     <span class="nav-main-link-name">Manajemen Data</span>
   </a>
@@ -31,9 +31,9 @@
 </li>
 
 <li class="nav-main-item">
-  <a class="nav-main-link {{ Request::is('riwayat-pengumpulan') ? 'active' : '' }}" href="/riwayat-pengumpulan">
+  <a class="nav-main-link {{ Request::is('riwayat-pengumpulan-score') ? 'active' : '' }}" href="/riwayat-pengumpulan-score">
     <i class="nav-main-link-icon far fa-clock"></i>
-    <span class="nav-main-link-name">Riwayat Pengumpulan</span>
+    <span class="nav-main-link-name">Riwayat Pengumpulan dan Score</span>
   </a>
 </li>
 
@@ -46,7 +46,7 @@
   </a>
 </li>
 
-<li class="nav-main-heading">MANAJEMEN PERINGKAT</li>
+<li class="nav-main-heading">PERINGKAT PENGUMPULAN</li>
 
 <li class="nav-main-item">
   <a class="nav-main-link {{ Request::is('leaderboard') ? 'active' : '' }}" href="/leaderboard">

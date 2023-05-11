@@ -47,19 +47,4 @@ class DokumenPerkuliahanController extends Controller
 
         return view('dosen.dokumen.dokumen-perkuliahan', ['tahun_aktif' => $tahun_aktif, 'tahun_ajaran' => $tahun_ajaran, 'dokumen' => $dokumen]);
     }
-
-    public function showDokumenMultiple($id_dokumen) {
-       
-        $dokumen=DokumenDikumpulController::showProfilDokumen($id_dokumen);
-        // $data=scandir('D:\Kuliah\TA\Program\scele-if - Copy\storage\app/Dokumen_Perkuliahan/2023-2024 Ganjil/Teori Bahasa Formal dan Otomata/Portofolio Perkuliahan_Teori Bahasa Formal dan Otomata', SCANDIR_SORT_ASCENDING);
-        // dd($data);
-
-        $storage = array_diff(scandir($dokumen->path_multiple, SCANDIR_SORT_ASCENDING), array('.', '..'));
-
-        return view('dosen.dokumen.tampil-dokumen-multiple', [
-            'title'      => $dokumen->nama_dokumen,
-            'id_dokumen' => $id_dokumen,
-            'nama_files' => $storage
-        ]);
-    }
 }
