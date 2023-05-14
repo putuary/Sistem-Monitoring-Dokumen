@@ -2,9 +2,9 @@
 
 namespace App\Models;
 use App\Models\DokumenDitugaskan;
-use App\Models\MataKuliah;
 use App\Models\Kelas;
 use App\Models\Score;
+use App\Models\CatatanPenolakan;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -89,5 +89,10 @@ class DokumenMatkul extends Model
     public function scores()
     {
         return $this->morphMany(Score::class, 'scoreable');
+    }
+
+    public function note()
+    {
+        return $this->morphOne(CatatanPenolakan::class, 'noteable');
     }
 }

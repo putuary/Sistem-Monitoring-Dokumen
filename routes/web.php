@@ -40,6 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/profil/update-password', [UserAuthController::class, 'updatePassword']);
 
     Route::post('/user-logout', [UserAuthController::class, 'logout']);
+    
+    Route::post('/set-session', [UserAuthController::class, 'setSession']);
 
     Route::get('/leaderboard', [LeaderBoardController::class, 'index']);
     Route::get('/badge', [LeaderBoardController::class, 'showResultBadge']);
@@ -63,9 +65,12 @@ Route::middleware(['auth', 'role:superAdmin'])->group(function () {
     Route::resource('/penugasan/daftar-kelas', KelasController::class)->except(['create', 'show', 'edit']);
     
     Route::resource('/penugasan/dokumen-ditugaskan', DokumenDitugaskanController::class)->except(['create', 'show', 'edit']);
-    // Route::get('/penugasan/dokumen-ditugaskan', [PenugasanController::class, 'showDokumenDitugaskan']);
+
+    Route::post('/penugasan/dokumen-ditugaskan/edit-pengumpulan', [DokumenDitugaskanController::class, 'editPengumpulan']);
+
 
     Route::post('/leaderboard/badge', [LeaderBoardController::class, 'resultBadge']);
+    Route::delete('/leaderboard/badge', [LeaderBoardController::class, 'deleteBadge']);
 
 });
 
@@ -77,14 +82,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/manajemen-data', [DataManagementController::class, 'index']);
     
     Route::get('/manajemen-data/mata-kuliah', [DataManagementController::class, 'showMatkul']);
-    Route::post('/manajemen-data/mata-kuliah/tambah', [DataManagementController::class, 'storeMatkul']);
-    Route::post('/manajemen-data/mata-kuliah/edit/{kode_matkul}', [DataManagementController::class, 'editMatkul']);
-    Route::post('/manajemen-data/mata-kuliah/delete', [DataManagementController::class, 'deleteMatkul']);
+    Route::post('/manajemen-data/mata-kuliah', [DataManagementController::class, 'storeMatkul']);
+    Route::put('/manajemen-data/mata-kuliah/{kode_matkul}', [DataManagementController::class, 'editMatkul']);
+    Route::delete('/manajemen-data/mata-kuliah/{kode_matkul}', [DataManagementController::class, 'deleteMatkul']);
     
     Route::get('/manajemen-data/dokumen-perkuliahan', [DataManagementController::class, 'showDokumen']);
-    Route::post('/manajemen-data/dokumen-perkuliahan/tambah', [DataManagementController::class, 'storeDokumen']);
-    Route::post('/manajemen-data/dokumen-perkuliahan/edit', [DataManagementController::class, 'editDokumen']);
-    Route::post('/manajemen-data/dokumen-perkuliahan/delete', [DataManagementController::class, 'deleteDokumen']);
+    Route::post('/manajemen-data/dokumen-perkuliahan', [DataManagementController::class, 'storeDokumen']);
+    Route::put('/manajemen-data/dokumen-perkuliahan/{id_dokumen}', [DataManagementController::class, 'editDokumen']);
+    Route::delete('/manajemen-data/dokumen-perkuliahan/{id_dokumen}', [DataManagementController::class, 'deleteDokumen']);
 
     Route::resource('/manajemen-data/badge', BadgeController::class)->except(['create', 'store', 'show', 'edit']);
 
@@ -93,22 +98,23 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/progres-pengumpulan/unduh-semua-dokumen', [ProgresController::class, 'downloadArchiveDokumen']);
     Route::get('/progres-pengumpulan/resume-pengumpulan', [ProgresController::class, 'showReport']);
     Route::post('/progres-pengumpulan/resume-pengumpulan/unduh', [ProgresController::class, 'generateReport']);
+   
     Route::get('/progres-pengumpulan/kelas', [ProgresController::class, 'showProgresKelas']);
     Route::get('/progres-pengumpulan/kelas/{id_dokumen}', [DokumenDikumpulController::class, 'showDokumenDikumpul']);
     Route::get('/progres-pengumpulan/kelas/unduh/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenDikumpul']);
-    Route::delete('/progres-pengumpulan/kelas/{id_dokumen}', [DokumenDikumpulController::class, 'deleteDokumenDikumpul']);
+    // Route::delete('/progres-pengumpulan/kelas/{id_dokumen}', [DokumenDikumpulController::class, 'deleteDokumenDikumpul']);
+   
     Route::get('/progres-pengumpulan/dokumen', [ProgresController::class, 'showProgresDokumen']);
+    Route::get('/progres-pengumpulan/dokumen/{id_dokumen}', [DokumenDikumpulController::class, 'showDokumenDikumpul']);
+    Route::get('/progres-pengumpulan/dokumen/unduh/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenDikumpul']);
+    Route::post('/progres-pengumpulan/dokumen/catatan', [ProgresController::class, 'storeCatatan']);
+
     Route::post('/progres-pengumpulan/dokumen', [ProgresController::class, 'downloadDokumen']);
     Route::post('/progres-pengumpulan/kelas', [ProgresController::class, 'downloadDokumenKelas']);
 
 
     // Riwayat Pengumpulan
     Route::get('/riwayat-pengumpulan-score', [ProgresController::class, 'showRiwayat']);
-
-    // Pengingat
-    Route::get('/atur-pengingat-pengumpulan', [PengingatController::class, 'showPengingat']);
-    Route::post('/atur-pengingat-pengumpulan/edit', [PengingatController::class, 'editPengingat']);
-    Route::post('/atur-pengingat-pengumpulan/edit_pengumpulan', [PengingatController::class, 'editPengumpulan']);
 });
 
 Route::middleware(['auth', 'role:dosen'])->group(function () {
@@ -117,7 +123,7 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::get('/kelas-diampu/{kode_kelas}', [KelasDiampuController::class, 'showDokumenDitugaskan']);
     Route::get('/kelas-diampu/unduh-template/{id_dokumen}', [DokumenDikumpulController::class, 'downloadTemplate']);
     Route::post('/kelas-diampu/upload', [DokumenDikumpulController::class, 'uploadDokumen']);
-    Route::post('/kelas-diampu/multiple-upload', [DokumenDikumpulController::class, 'uploadDokumenMultiple'])->name('store.dokumen');
+    Route::post('/kelas-diampu/multiple-upload', [DokumenDikumpulController::class, 'uploadDokumenMultiple']);
 
     Route::get('/kelas-diampu/dokumen/{id_dokumen}', [DokumenDikumpulController::class, 'showDokumenDikumpul']);
     Route::get('/kelas-diampu/dokumen/unduh/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenDikumpul']);

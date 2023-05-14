@@ -22,9 +22,9 @@ class DokumenDikumpulController extends Controller
             $nama_dokumen= $dokumen->dokumen_ditugaskan->nama_dokumen;
             $real_name= $nama_dokumen.'_'.$matkul;
 
-            $folder_path= storage_path('app/'.pathDokumen($tahun_ajaran, true, $matkul));
-            $path =  storage_path('app/'.pathDokumen($tahun_ajaran, true, $matkul).'/'.$real_name);
-            $path_dokumen = storage_path('app/'.pathDokumen($tahun_ajaran, true, $matkul).'/'.$dokumen->file_dokumen);
+            $folder_path= storage_path(pathDokumen($tahun_ajaran, true, $matkul));
+            $path =  storage_path(pathDokumen($tahun_ajaran, true, $matkul).'/'.$nama_dokumen);
+            $path_dokumen = storage_path(pathDokumen($tahun_ajaran, true, $matkul).'/'.$dokumen->file_dokumen);
         } else if(like_match('DK%', $id_dokumen)) {
             $dokumen=DokumenKelas::with(['kelas' => function($query) {
                 $query->with(['matkul']);
@@ -38,9 +38,9 @@ class DokumenDikumpulController extends Controller
             $nama_dokumen= $dokumen->dokumen_ditugaskan->nama_dokumen;
             $real_name= $nama_dokumen.'_'.$matkul.'_'.$kelas;
 
-            $folder_path= storage_path('app/'.pathDokumen($tahun_ajaran, false, $matkul, $kelas));
-            $path = storage_path('app/'.pathDokumen($tahun_ajaran, false, $matkul, $kelas).'/'.$nama_dokumen);
-            $path_dokumen = storage_path('app/'.pathDokumen($tahun_ajaran, false, $matkul, $kelas).'/'.$dokumen->file_dokumen);
+            $folder_path= storage_path(pathDokumen($tahun_ajaran, false, $matkul, $kelas));
+            $path = storage_path(pathDokumen($tahun_ajaran, false, $matkul, $kelas).'/'.$nama_dokumen);
+            $path_dokumen = storage_path(pathDokumen($tahun_ajaran, false, $matkul, $kelas).'/'.$dokumen->file_dokumen);
         }
         return (object) [
             'dokumen_dikumpul' => $dokumen,
@@ -62,35 +62,35 @@ class DokumenDikumpulController extends Controller
         return response()->download(public_path('storage/template/'.$dokumen->template));
     }
 
-    public function readDokumenSingle($id_dokumen)
-    {
-        $dokumen=$this->showProfilDokumen($id_dokumen);
+    // public function readDokumenSingle($id_dokumen)
+    // {
+    //     $dokumen=$this->showProfilDokumen($id_dokumen);
 
-        return response()->file($dokumen->path_dokumen);
-    }
+    //     return response()->file($dokumen->path_dokumen);
+    // }
 
-    public function downloadDokumenSingle($id_dokumen)
-    {
-        $dokumen=$this->showProfilDokumen($id_dokumen);
+    // public function downloadDokumenSingle($id_dokumen)
+    // {
+    //     $dokumen=$this->showProfilDokumen($id_dokumen);
         
-        return response()->download($dokumen->path_dokumen);
-    }
+    //     return response()->download($dokumen->path_dokumen);
+    // }
 
-    public function deleteDokumen($id_dokumen)
-    {
-        $dokumen=$this->showProfilDokumen($id_dokumen);
-        if($dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpul==0) {
-            File::delete($dokumen->path_dokumen);
-        } else {
-            File::deleteDirectory($dokumen->path_dokumen);
-        }
-        $dokumen->dokumen_dikumpul->update([
-            'file_dokumen'      => null,
-            'waktu_pengumpulan' => null,
-        ]);
+    // public function deleteDokumen($id_dokumen)
+    // {
+    //     $dokumen=$this->showProfilDokumen($id_dokumen);
+    //     if($dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpul==0) {
+    //         File::delete($dokumen->path_dokumen);
+    //     } else {
+    //         File::deleteDirectory($dokumen->path_dokumen);
+    //     }
+    //     $dokumen->dokumen_dikumpul->update([
+    //         'file_dokumen'      => null,
+    //         'waktu_pengumpulan' => null,
+    //     ]);
 
-        return redirect()->back()->with('success', 'Dokumen berhasil dihapus');
-    }
+    //     return redirect()->back()->with('success', 'Dokumen berhasil dihapus');
+    // }
 
     public function uploadDokumen(Request $request)
     {
@@ -109,26 +109,35 @@ class DokumenDikumpulController extends Controller
         ]);
 
         if($dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per == 0) {
-            $dokumen_matkul=DokumenMatkul::with(['kelas_dokumen_matkul' => function($query) {
-                $query->with('dosen_kelas');
-            }])->find($dokumen->dokumen_dikumpul->id_dokumen_matkul);
+            $dokumen_matkul=DokumenMatkul::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_matkul);
 
-            $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
-              
-            $dokumen_matkul->scores()->update([
-                'poin'       => $data['poin'],
-            ]);
+            if($dokumen_matkul->note == null) {
+                $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+                  
+                $dokumen_matkul->scores()->update([
+                    'poin'       => $data['poin'],
+                ]);
+            } else {
+                $dokumen_matkul->note()->where('is_aktif', 1)->update([
+                    'is_aktif' => 0,
+                ]);
+            }
+
         
         } else {
-            $dokumen_kelas=DokumenKelas::with(['kelas' => function($query) {
-                $query->with('dosen_kelas');
-            }])->find($dokumen->dokumen_dikumpul->id_dokumen_kelas);
-            
-            $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+            $dokumen_kelas=DokumenKelas::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_kelas);
 
-            $dokumen_kelas->scores()->update([
-                'poin'     => $data['poin'],
-            ]);
+            if($dokumen_kelas->note == null) {
+                $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+    
+                $dokumen_kelas->scores()->update([
+                    'poin'     => $data['poin'],
+                ]);
+            } else {
+                $dokumen_kelas->note()->where('is_aktif', 1)->update([
+                    'is_aktif' => 0,
+                ]);
+            }
         }
 
         return redirect()->back()->with('success', 'Dokumen berhasil dikumpulkan');
@@ -143,6 +152,7 @@ class DokumenDikumpulController extends Controller
         // dd($data);
 
         $dokumen=$this->showProfilDokumen($request->id_dokumen);
+        // dd($dokumen->path_multiple, $dokumen->nama_dokumen);
         foreach ($request->file('file_dokumen') as $file) {
             $nama_dokumen= $file->getClientOriginalName();
             $file->move($dokumen->path_multiple, $nama_dokumen);
@@ -154,61 +164,69 @@ class DokumenDikumpulController extends Controller
         ]);
 
         if($dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per == 0) {
-            $dokumen_matkul=DokumenMatkul::with(['kelas_dokumen_matkul' => function($query) {
-                $query->with('dosen_kelas');
-            }])->find($dokumen->dokumen_dikumpul->id_dokumen_matkul);
+            $dokumen_matkul=DokumenMatkul::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_matkul);
 
-            $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
-              
-            $dokumen_matkul->scores()->update([
-                'poin'       => $data['poin'],
-            ]);
+            if($dokumen_matkul->note == null) {
+                $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+                  
+                $dokumen_matkul->scores()->update([
+                    'poin'       => $data['poin'],
+                ]);
+            } else {
+                $dokumen_matkul->note()->where('is_aktif', 1)->update([
+                    'is_aktif' => 0,
+                ]);
+            }
 
         } else {
-            $dokumen_kelas=DokumenKelas::with(['kelas' => function($query) {
-                $query->with('dosen_kelas');
-            }])->find($dokumen->dokumen_dikumpul->id_dokumen_kelas);
+            $dokumen_kelas=DokumenKelas::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_kelas);
 
-            $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+            if($dokumen_kelas->note == null) {    
+                $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
 
-            $dokumen_kelas->scores()->update([
-                'poin'           => $data['poin'],
-            ]);
+                $dokumen_kelas->scores()->update([
+                    'poin'           => $data['poin'],
+                ]);
+            } else {
+                $dokumen_kelas->note()->where('is_aktif', 1)->update([
+                    'is_aktif' => 0,
+                ]);
+            }
         }
 
 
         return redirect()->back()->with('success', 'Dokumen berhasil dikumpulkan');
     }
 
-    public function showDokumenMultiple($id_dokumen) {
+    // public function showDokumenMultiple($id_dokumen) {
        
-        $dokumen=$this->showProfilDokumen($id_dokumen);
-        // $data=scandir('D:\Kuliah\TA\Program\scele-if - Copy\storage\app/Dokumen_Perkuliahan/2023-2024 Ganjil/Teori Bahasa Formal dan Otomata/Portofolio Perkuliahan_Teori Bahasa Formal dan Otomata', SCANDIR_SORT_ASCENDING);
-        // dd($data);
+    //     $dokumen=$this->showProfilDokumen($id_dokumen);
+    //     // $data=scandir('D:\Kuliah\TA\Program\scele-if - Copy\storage\app/Dokumen_Perkuliahan/2023-2024 Ganjil/Teori Bahasa Formal dan Otomata/Portofolio Perkuliahan_Teori Bahasa Formal dan Otomata', SCANDIR_SORT_ASCENDING);
+    //     // dd($data);
 
-        $storage = array_diff(scandir($dokumen->path_multiple, SCANDIR_SORT_ASCENDING), array('.', '..'));
+    //     $storage = array_diff(scandir($dokumen->path_multiple, SCANDIR_SORT_ASCENDING), array('.', '..'));
 
-        return view('dosen.kelas-diampu.tampil-dokumen-multiple', [
-            'title'      => $dokumen->nama_dokumen,
-            'id_dokumen' => $id_dokumen,
-            'nama_files' => $storage
-        ]);
-    }
+    //     return view('dosen.kelas-diampu.tampil-dokumen-multiple', [
+    //         'title'      => $dokumen->nama_dokumen,
+    //         'id_dokumen' => $id_dokumen,
+    //         'nama_files' => $storage
+    //     ]);
+    // }
     
-    public function readDokumenDikumpulMultiple($id_dokumen)
-    {
-        $nama_dokumen=request('dokumen');
+    // public function readDokumenDikumpulMultiple($id_dokumen)
+    // {
+    //     $nama_dokumen=request('dokumen');
 
-        $dokumen=$this->showProfilDokumen($id_dokumen);
+    //     $dokumen=$this->showProfilDokumen($id_dokumen);
 
-        // Cek apakah file ada di dalam folder
-        if (file_exists($dokumen->path_multiple . '/' . $nama_dokumen)) {
-            // mengembalikan response sebuah file
-            return response()->file($dokumen->path_multiple . '/' . $nama_dokumen);
-        } else{
-            return redirect()->back()->with('failed', 'File dokumen tidak ada');
-        }
-    }
+    //     // Cek apakah file ada di dalam folder
+    //     if (file_exists($dokumen->path_multiple . '/' . $nama_dokumen)) {
+    //         // mengembalikan response sebuah file
+    //         return response()->file($dokumen->path_multiple . '/' . $nama_dokumen);
+    //     } else{
+    //         return redirect()->back()->with('failed', 'File dokumen tidak ada');
+    //     }
+    // }
 
     public function renameDokumenDikumpulMultiple(Request $request, $id_dokumen)
     {
@@ -229,28 +247,28 @@ class DokumenDikumpulController extends Controller
         }
     }
 
-    public function deleteDokumenDikumpulMultiple(Request $request, $id_dokumen)
-    {
-        $dokumen=$this->showProfilDokumen($id_dokumen);
+    // public function deleteDokumenDikumpulMultiple(Request $request, $id_dokumen)
+    // {
+    //     $dokumen=$this->showProfilDokumen($id_dokumen);
 
-        // Cek apakah file ada di dalam folder
-        if (file_exists($dokumen->path_multiple . '/' . $request->nama_dokumen)) {
-            // Hapus file
-            unlink($dokumen->path_multiple . '/' . $request->nama_dokumen);
+    //     // Cek apakah file ada di dalam folder
+    //     if (file_exists($dokumen->path_multiple . '/' . $request->nama_dokumen)) {
+    //         // Hapus file
+    //         unlink($dokumen->path_multiple . '/' . $request->nama_dokumen);
 
-            $storage = array_diff(scandir($dokumen->path_multiple, SCANDIR_SORT_ASCENDING), array('.', '..'));
-            if(count($storage) == 0) {
-                $dokumen->dokumen_dikumpul->update([
-                    'file_dokumen'      => null,
-                    'waktu_pengumpulan' => null,
-                ]);
-            }
+    //         $storage = array_diff(scandir($dokumen->path_multiple, SCANDIR_SORT_ASCENDING), array('.', '..'));
+    //         if(count($storage) == 0) {
+    //             $dokumen->dokumen_dikumpul->update([
+    //                 'file_dokumen'      => null,
+    //                 'waktu_pengumpulan' => null,
+    //             ]);
+    //         }
         
-            return redirect()->back()->with('success', 'File dokumen berhasil dihapus');
-        } else{
-            return redirect()->back()->with('failed', 'File dokumen tidak ada');
-        }
-    }
+    //         return redirect()->back()->with('success', 'File dokumen berhasil dihapus');
+    //     } else{
+    //         return redirect()->back()->with('failed', 'File dokumen tidak ada');
+    //     }
+    // }
 
     public function showDokumenDikumpul($id_dokumen)
     {
@@ -314,6 +332,8 @@ class DokumenDikumpulController extends Controller
 
     public function deleteDokumenDikumpul($id_dokumen, Request $request) {
         $dokumen=$this->showProfilDokumen($id_dokumen);
+        $dokumen->dokumen_dikumpul->load('note');
+        // dd
         if($request->nama_dokumen) {
             // Cek apakah file ada di dalam folder
             if (file_exists($dokumen->path_multiple . '/' . $request->nama_dokumen)) {
@@ -326,6 +346,12 @@ class DokumenDikumpulController extends Controller
                         'file_dokumen'      => null,
                         'waktu_pengumpulan' => null,
                     ]);
+
+                    if($dokumen->dokumen_dikumpul->note == null) {
+                        $dokumen->dokumen_dikumpul->scores()->update([
+                            'poin' => null,
+                        ]);
+                    }
                 }
             
                 return redirect()->back()->with('success', 'File dokumen berhasil dihapus');
@@ -343,6 +369,12 @@ class DokumenDikumpulController extends Controller
             'file_dokumen'      => null,
             'waktu_pengumpulan' => null,
         ]);
+
+        if($dokumen->dokumen_dikumpul->note == null) {
+            $dokumen->dokumen_dikumpul->scores()->update([
+                'poin' => null,
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Dokumen berhasil dihapus');
     }

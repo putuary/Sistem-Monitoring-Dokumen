@@ -29,16 +29,20 @@ class KelasDiampuController extends Controller
             $nama_kelas=$kelas->matkul->nama_matkul.' '.$kelas->nama_kelas;
             
             $dokumen=DokumenDitugaskan::with(['dokumen_perkuliahan', 'dokumen_matkul' => function($query) use ($kode_kelas) {
-                $query->dokumenKelas($kode_kelas);
+                $query->with(['note' => function($query) {
+                    $query->where('is_aktif', 1);
+                }])->dokumenKelas($kode_kelas);
             }, 'dokumen_kelas' => function($query) use ($kode_kelas) {
-                $query->where('kode_kelas', $kode_kelas);
+                $query->with(['note' => function($query) {
+                    $query->where('is_aktif', 1);
+                }])->where('kode_kelas', $kode_kelas);
             }])->whereHas('dokumen_matkul', function($query) use ($kode_kelas) {
                 $query->dokumenKelas($kode_kelas);
             })->orWhereHas('dokumen_kelas', function($query) use ($kode_kelas) {
                 $query->where('kode_kelas', $kode_kelas);
             })->get();
             
-            // dd($dokumen);
+            // dd();
             return view('dosen.kelas-diampu.dokumen-ditugaskan', ['nama_kelas' => $nama_kelas, 'dokumen' => $dokumen]);
         }
         abort(403, 'Anda tidak memiliki akses ke halaman ini');

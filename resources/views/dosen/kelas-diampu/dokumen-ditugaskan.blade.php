@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Dokumen ' . $nama_kelas)
 @section('style')
      <!-- Stylesheets -->
      <link
@@ -50,12 +50,12 @@
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
                 <td class="fs-sm">{{ $item->dokumen_perkuliahan->nama_dokumen }}</td>
-                <td class="fs-sm">{{ showTenggat($item->tenggat_waktu) }}</td>
+                <td class="fs-sm">{{ showWaktu($item->tenggat_waktu) }}</td>
 
                 @if ($item->dikumpulkan_per==0)
                   <!-- Status Pengumpulan dokumen matkul -->
                   <td class="text-center">
-                    <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->dokumen_matkul[0]->waktu_pengumpulan ? backgroundStatus($item->tenggat_waktu, $item->dokumen_matkul[0]->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->dokumen_matkul[0]->waktu_pengumpulan ? statusPengumpulan($item->tenggat_waktu, $item->dokumen_matkul[0]->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
+                    <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill {{ ($item->dokumen_matkul[0]->note ==null) ? backgroundStatus($item->tenggat_waktu, $item->dokumen_matkul[0]->waktu_pengumpulan) : 'bg-danger-light text-danger' }}">{{ ($item->dokumen_matkul[0]->note ==null) ? statusPengumpulan($item->tenggat_waktu, $item->dokumen_matkul[0]->waktu_pengumpulan) : 'Dokumen ditolak' }}</span>
                   </td>
                   <td class="text-center">
                     <!-- Form Delete Dokumen Matkul -->
@@ -68,6 +68,14 @@
                         <i class="fa fa-file-lines fa-fw"></i>
                       </a>
                     @endif
+
+                    @if ($item->dokumen_matkul[0]->note !=null)
+                      <!-- Button Show Note -->
+                      <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" onclick="showNote({{ $key }})" data-bs-toggle="tooltip" title="Lihat Catatan">
+                        <i class="si si-note"></i>
+                      </a>
+                    @endif
+
                     @if ($item->pengumpulan == 1 && $item->dikumpul==1)
                       <!-- Button Upload dokumen Matkul Multiple -->
                       <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" onclick="uploadDokumenMultiple({{ $key }})" data-bs-toggle="tooltip" title="Unggah Dokumen">
@@ -100,7 +108,7 @@
                 @else
                   <!-- Status Pengumpulan dokumen kelas -->
                   <td class="text-center">
-                    <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->dokumen_kelas[0]->waktu_pengumpulan ? backgroundStatus($item->tenggat_waktu, $item->dokumen_kelas[0]->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->dokumen_kelas[0]->waktu_pengumpulan ? statusPengumpulan($item->tenggat_waktu, $item->dokumen_kelas[0]->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
+                    <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill {{ ($item->dokumen_kelas[0]->note ==null) ? backgroundStatus($item->tenggat_waktu, $item->dokumen_kelas[0]->waktu_pengumpulan) : 'bg-danger-light text-danger' }} ">{{ ($item->dokumen_kelas[0]->note ==null) ? statusPengumpulan($item->tenggat_waktu, $item->dokumen_kelas[0]->waktu_pengumpulan) : 'Dokumen ditolak' }}</span>
                   </td>
                   <td class="text-center">
                     <!-- Form Delete dokumen kelas -->
@@ -113,6 +121,14 @@
                           <i class="fa fa-file-lines fa-fw"></i>
                         </a>
                       @endif
+
+                      @if ($item->dokumen_kelas[0]->note !=null)
+                        <!-- Button Show Note -->
+                        <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" onclick="showNote({{ $key }})" data-bs-toggle="tooltip" title="Lihat Catatan">
+                          <i class="fa-fw si si-note"></i>
+                        </a>
+                      @endif
+
                       @if ($item->pengumpulan != 0 && $item->dikumpul==1)
                         <!-- Button Upload dokumen kelas Multiple -->
                         <a type="button" class="btn btn-sm btn-alt-warning bg-success-light" onclick="uploadDokumenMultiple({{ $key }})" data-bs-toggle="tooltip" title="Unggah Dokumen">
@@ -148,6 +164,35 @@
               
             </tbody>
           </table>
+
+          <!-- Modal Note -->
+          <div class="modal fade modal-note" id="modal-block-fromleft" tabindex="-1" aria-labelledby="modal-block-fromleft" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-fromleft" role="document">
+              <div class="modal-content">
+                <div class="block block-rounded block-transparent mb-0">
+                  <div class="block-header block-header-default">
+                    <h3 class="block-title title"></h3>
+                    <div class="block-options">
+                      <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-fw fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="block-content fs-sm mb-3">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="form-group">
+                          <label for="example-text-input">Catatan Dokumen</label>
+                          <textarea class="form-control" name="note" id="note" placeholder="Catatan" disabled></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="modal fade modal-upload" id="modal-block-fromleft" tabindex="-1" aria-labelledby="modal-block-fromleft" style="display: none;" aria-hidden="true">
             <div class="modal-dialog modal-dialog-fromleft" role="document">
               <div class="modal-content">
@@ -214,7 +259,7 @@
                     </div>
                   </div>
                                   
-                  <form  action="{{ route('store.dokumen') }}"
+                  <form  action="/kelas-diampu/multiple-upload"
                   method="POST"
                   enctype="multipart/form-data">
                    @csrf
@@ -280,7 +325,26 @@
       let jsfiles = {{ Js::from($dokumen) }};
       console.log(jsfiles);
       //modal
+
+      function showNote($id) {
+        $('.modal-note').modal({
+          backdrop: 'static',
+          keyboard: false
+        });
+        $('.modal-note').modal("show");
+        $('.title').html('Catatan Dokumen '+jsfiles[$id].nama_dokumen);
+        if(jsfiles[$id].dikumpulkan_per === 0) {
+          $('#note').html(jsfiles[$id].dokumen_matkul[0].note.isi_catatan);
+        } else {
+          $('#note').html(jsfiles[$id].dokumen_kelas[0].note.isi_catatan); 
+        }
+      }
+
       function uploadDokumen(id) {
+        $('.modal-upload').modal({
+          backdrop: 'static',
+          keyboard: false
+        });
         $('.modal-upload').modal("show");
         $('.title').html('Unggah Dokumen '+jsfiles[id].dokumen_perkuliahan.nama_dokumen);
         if(jsfiles[id].dikumpulkan_per === 0) {
@@ -291,6 +355,10 @@
       }
 
       function uploadDokumenMultiple(id) {
+        $('.modal-upload-multiple').modal({
+          backdrop: 'static',
+          keyboard: false
+        });
         $('.modal-upload-multiple').modal("show");
         $('.title').html('Unggah Dokumen '+jsfiles[id].dokumen_perkuliahan.nama_dokumen);
         if(jsfiles[id].dikumpulkan_per === 0) {

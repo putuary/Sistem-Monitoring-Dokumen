@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Progres Dokumen '.($dokumen->nama_dokumen ?? 'Undefine') )
 @section('style')
      <!-- Stylesheets -->
      <link
@@ -75,22 +75,21 @@
                   <td class="fs-sm">{{ $item->matkul->nama_matkul }}</td>
                   <td class="fs-sm text-center">{{ showWaktu($item->waktu_pengumpulan) }}</td>
                   <td class="text-center">
-                    <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->waktu_pengumpulan ? backgroundStatus($dokumen->tenggat_waktu, $item->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->waktu_pengumpulan ? statusPengumpulan($dokumen->tenggat_waktu, $item->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
+                    <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill {{ backgroundStatus($dokumen->tenggat_waktu, $item->waktu_pengumpulan) }} ">{{ statusPengumpulan($dokumen->tenggat_waktu, $item->waktu_pengumpulan) }}</span>
                   </td>
                   <td class="text-center">
                     <form action="/manajemen-pengguna/delete" method="POST">
                       @csrf
                       @if (isset($item->file_dokumen))
-                        <a href="{{ asset('/storage'.pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, ismatkul($dokumen->dikumpulkan_per), $item->matkul->nama_matkul ).'/'.$item->file_dokumen ) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
+                        <a href="/progres-pengumpulan/dokumen/{{ $item->id_dokumen_matkul }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($dokumen->dikumpul==0) target="_blank" @endif>
                           <i class="fa fa-fw fa-eye"></i>
                         </a>
-                        <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                        <a href="/progres-pengumpulan/dokumen/unduh/{{ $item->id_dokumen_matkul }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
                           <i class="fa fa-fw fa-download"></i>
                         </a>
-                          <input type="hidden" name="id_pengguna" value="">
-                          <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus">
-                            <i class="fa fa-fw fa-times"></i>
-                          </button>
+                        <button class="btn btn-sm btn-alt-danger bg-danger-light" onclick="refuseDokumen({{ $key }})" type="button"  data-bs-toggle="tooltip" title="Tolak Dokumen">
+                          <i class="fa fa-fw fa-times"></i>
+                        </button>
                       @endif
                     </form>
                   </td>
@@ -102,42 +101,33 @@
                   <td class="text-center fs-sm">{{ $key+1 }}</td>
                   <td class="fs-sm">{{ $item->kelas->matkul->nama_matkul.' '.$item->kelas->nama_kelas }}</td>
                   <td class="fs-sm text-center">{{ showWaktu($item->waktu_pengumpulan) }}</td>
-                  <td class="text-center fw-semibold fs-sm">
-                    <div class="btn-sm btn-alt-{{ isset($item->file_dokumen) ? 'success' : 'danger' }} bg-{{ isset($item->file_dokumen) ? 'success' : 'danger' }}-light">
-                      <i class="far fa-fw fa-{{ isset($item->file_dokumen) ? 'square-check' : 'rectangle-xmark' }}"></i>
-                    </div>
+                  <td class="text-center">
+                    <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill {{ backgroundStatus($dokumen->tenggat_waktu, $item->waktu_pengumpulan) }} ">{{ statusPengumpulan($dokumen->tenggat_waktu, $item->waktu_pengumpulan) }}</span>
                   </td>
                   <td class="text-center">
-                    <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->waktu_pengumpulan ? backgroundStatus($dokumen->tenggat_waktu, $item->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->waktu_pengumpulan ? statusPengumpulan($dokumen->tenggat_waktu, $item->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
-                  </td>
-                  <td class="text-center">
-                    <form action="/manajemen-pengguna/delete" method="POST">
-                      @csrf
-                      @if (isset($item->file_dokumen))
-                        <a href="{{ asset('/storage/'.pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, ismatkul($dokumen->dikumpulkan_per), $item->kelas->matkul->nama_matkul, $item->kelas->nama_kelas).'/'.$item->file_dokumen ) }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
-                          <i class="fa fa-fw fa-eye"></i>
-                        </a>
-                        <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
-                          <i class="fa fa-fw fa-download"></i>
-                        </a>
-                          <input type="hidden" name="id_pengguna" value="">
-                          <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus">
-                            <i class="fa fa-fw fa-times"></i>
-                          </button>
-                      @endif
-                    </form>
+                    @if (isset($item->file_dokumen))
+                      <a href="/progres-pengumpulan/dokumen/{{ $item->dokumen_kelas }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($dokumen->dikumpul==0) target="_blank" @endif>
+                        <i class="fa fa-fw fa-eye"></i>
+                      </a>
+                      <a href="/progres-pengumpulan/dokumen/unduh/{{ $item->id_dokumen_kelas }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                        <i class="fa fa-fw fa-download"></i>
+                      </a>
+                      <button class="btn btn-sm btn-alt-danger bg-danger-light" onclick="refuseDokumen({{ $key }})" type="button"  data-bs-toggle="tooltip" title="Tolak Dokumen">
+                        <i class="fa fa-fw fa-times"></i>
+                      </button>
+                    @endif
                   </td>
                 </tr>
                 @endforeach
               @endif
             </tbody>
           </table>
-          <div class="modal fade modal-upload" id="modal-block-fromleft" tabindex="-1" aria-labelledby="modal-block-fromleft" style="display: none;" aria-hidden="true">
+          <div class="modal fade modal-catatan" id="modal-block-fromleft" tabindex="-1" aria-labelledby="modal-block-fromleft" style="display: none;" aria-hidden="true">
             <div class="modal-dialog modal-dialog-fromleft" role="document">
               <div class="modal-content">
                 <div class="block block-rounded block-transparent mb-0">
                   <div class="block-header block-header-default">
-                    <h3 class="block-title title"></h3>
+                    <h3 class="block-title title">Penolakan Dokumen</h3>
                     <div class="block-options">
                       <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
                         <i class="fa fa-fw fa-times"></i>
@@ -145,7 +135,7 @@
                     </div>
                   </div>
                   
-                  <form  action="/kelas-diampu/upload"
+                  <form  action="/progres-pengumpulan/dokumen/catatan"
                   method="POST"
                   enctype="multipart/form-data">
                    @csrf
@@ -153,18 +143,11 @@
                       <div class="row">
                         <div class="col-lg-12">
                           <div class="form-group">
-                            <input type="hidden" name="id_dokumen_matkul" id="id_dokumen_matkul">
-                            <input type="hidden" name="id_dokumen_kelas" id="id_dokumen_kelas">
-                            <label for="example-text-input">File Dokumen</label>
-                            <input
-                                type="file"
-                                class="form-control @error('file_dokumen') is-invalid @enderror"
-                                placeholder="Masukkan File Dokumen"
-                                id="file_dokumen"
-                                name="file_dokumen"
-                                required />
+                            <input type="hidden" name="id_dokumen_terkumpul" id="id_dokumen_terkumpul">
+                            <label for="example-text-input">Catatan</label>
+                            <textarea class="form-control @error('isi_catatan') is-invalid @enderror" placeholder="Masukkan Catatan Penolakan" name="isi_catatan" required ></textarea>
                           </div>
-                          @error('file_dokumen')
+                          @error('isi_catatan')
                             <div class="invalid-feedback">{{ $message }}</div>
                           @enderror
                         </div>
@@ -193,17 +176,13 @@
 @endsection
 
 @section('script')
-    <script src={{  URL::asset("assets/js/plugins/datatables/jquery.dataTables.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-responsive/js/dataTables.responsive.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons/dataTables.buttons.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-jszip/jszip.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons/buttons.print.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons/buttons.html5.min.js") }}></script>
+      <script src={{  URL::asset("assets/js/plugins/datatables/jquery.dataTables.min.js") }}></script>
+      <script src={{  URL::asset("assets/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js") }}></script>
+      <script src={{  URL::asset("assets/js/plugins/datatables-responsive/js/dataTables.responsive.min.js") }}></script>
+      <script src={{  URL::asset("assets/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js") }}></script>
+      <script src={{  URL::asset("assets/js/plugins/datatables-buttons/dataTables.buttons.min.js") }}></script>
+      <script src={{  URL::asset("assets/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js") }}></script>
+      <script src={{  URL::asset("assets/js/plugins/datatables-buttons/buttons.html5.min.js") }}></script>
 
      <!-- Page JS Code -->
      <script src={{  URL::asset("assets/js/pages/be_tables_datatables.min.js") }}></script>
@@ -212,7 +191,6 @@
     <script src={{  URL::asset("assets/js/plugins/select2/js/select2.full.min.js") }}></script>
 
     <!-- Page JS Helpers (Select2 + Bootstrap Maxlength + CKEditor plugins) -->
-
     <script>
       One.helpersOnLoad([
         "jq-select2",
@@ -220,6 +198,19 @@
     </script>
 
     <script>
+      let dokumen = @json($dokumen);
+      console.log(dokumen);
+      function refuseDokumen(key) {
+        $('.modal-catatan').modal({backdrop: 'static', keyboard: false});
+        $('.modal-catatan').modal("show");
+
+        if(dokumen.dikumpulkan_per===0) {
+          $('#id_dokumen_terkumpul').val(dokumen.dokumen_matkul[key].id_dokumen_matkul);
+        } else {
+          $('#id_dokumen_terkumpul').val(dokumen.dokumen_kelas[key].id_dokumen_kelas);
+        }
+      }
+
       $(document).ready(function() {
         $(".alert").delay(2000).fadeOut("slow");
       });

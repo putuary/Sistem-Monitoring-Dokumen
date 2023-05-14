@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\CatatanPenolakan;
 use App\Models\DokumenDitugaskan;
 use App\Models\Kelas;
 use App\Models\TahunAjaran;
@@ -10,7 +11,7 @@ use App\Models\DokumenMatkul;
 use App\Models\DokumenKelas;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Illuminate\Support\Facades\File;
 
 class ProgresController extends Controller
 {
@@ -66,6 +67,58 @@ class ProgresController extends Controller
         // dd($dokumen);
         
         return view('admin.progres.dokumen_ditugaskan', ['dokumen' => $dokumen]);
+    }
+
+    public function storeCatatan(Request $request)
+    {
+        $dokumen=DokumenDikumpulController::showProfilDokumen($request->id_dokumen_terkumpul);
+        
+        $dokumen->dokumen_dikumpul->note()->where('is_aktif', 0)->delete();
+        
+        $dokumen->dokumen_dikumpul->note()->create([
+            'isi_catatan' => $request->isi_catatan,
+            'is_aktif' => 1,
+        ]);
+        
+        if($request->nama_dokumen) {
+            // Cek apakah file ada di dalam folder
+            if (file_exists($dokumen->path_multiple . '/' . $request->nama_dokumen)) {
+                // Hapus file
+                unlink($dokumen->path_multiple . '/' . $request->nama_dokumen);
+                
+                $dokumen->dokumen_dikumpul->scores()->update([
+                    'poin' => -50,
+                ]);
+                            
+                $storage = array_diff(scandir($dokumen->path_multiple, SCANDIR_SORT_ASCENDING), array('.', '..'));
+                if(count($storage) == 0) {
+                    $dokumen->dokumen_dikumpul->update([
+                        'file_dokumen'      => null,
+                        'waktu_pengumpulan' => null,
+                    ]);
+                }
+                
+                return redirect()->back()->with('success', 'Catatan berhasil disimpan');
+            } else{
+                return redirect()->back()->with('failed', 'File dokumen tidak ada');
+            }
+        }
+        
+        if($dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpul==0) {
+            File::delete($dokumen->path_dokumen);
+        } else {
+            File::deleteDirectory($dokumen->path_dokumen);
+        }
+        $dokumen->dokumen_dikumpul->update([
+            'file_dokumen'      => null,
+            'waktu_pengumpulan' => null,
+        ]);
+
+        $dokumen->dokumen_dikumpul->scores()->update([
+            'poin' => -50,
+        ]);
+
+        return redirect()->back()->with('success', 'Catatan berhasil disimpan');
     }
 
     public function showRiwayat() {

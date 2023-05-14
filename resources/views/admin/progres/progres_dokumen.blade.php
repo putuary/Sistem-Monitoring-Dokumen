@@ -1,4 +1,5 @@
 @extends('layouts.user-base')
+@section('title', 'Progres Dokumen')
 @section('style')
   <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/select2/css/select2.min.css') }}">
 @endsection

@@ -61,12 +61,6 @@ function createTenggat($date, $default) {
     return $dt->endOfWeek()->addDay(-2);
 }
 
-function showTenggat($date) {
-    $tenggat=Carbon::parse($date)->locale('id')->isoFormat('LLLL');
-    
-    return $tenggat;
-}
-
 function showWaktu($date) {
     if(is_null($date)) {
         return '-';
@@ -78,22 +72,34 @@ function showWaktu($date) {
 
 function backgroundStatus($tenggat, $waktu_pengumpulan) {
     $tenggat=Carbon::parse($tenggat);
-    $waktu_pengumpulan=Carbon::parse($waktu_pengumpulan);
     
-    if($waktu_pengumpulan->isBefore($tenggat)) {
-        return 'bg-success-light text-success';
+    if(is_null($waktu_pengumpulan)) {
+        if(Carbon::now()->isBefore($tenggat)) {
+            return 'bg-warning-light text-warning';
+        }return 'bg-danger-light text-danger';
+    } else {
+        $waktu_pengumpulan=Carbon::parse($waktu_pengumpulan);
+        if($waktu_pengumpulan->isBefore($tenggat)) {
+            return 'bg-success-light text-success';
+        }
+        return 'bg-danger-light text-danger';
     }
-    return 'bg-danger-light text-danger';
 }
 
 function statusPengumpulan($tenggat, $waktu_pengumpulan) {
     $tenggat=Carbon::parse($tenggat);
-    $waktu_pengumpulan=Carbon::parse($waktu_pengumpulan);
     
-    if($waktu_pengumpulan->isBefore($tenggat)) {
-        return 'Dikumpulkan';
+    if(is_null($waktu_pengumpulan)) {
+        if(Carbon::now()->isBefore($tenggat)) {
+            return 'Belum Dikumpulkan';
+        }return 'Melewati Tenggat Waktu';
+    } else {
+        $waktu_pengumpulan=Carbon::parse($waktu_pengumpulan);
+        if($waktu_pengumpulan->isBefore($tenggat)) {
+            return 'Dikumpulkan';
+        }
+        return 'Terlambat Dikumpulkan';
     }
-    return 'Terlambat Dikumpulkan';
 }
 
 function submitScore($tenggat, $waktu_pengumpulan, $isDokumenMatkul, $id_dokumen_terkumpul, $id_dokumen_ditugaskan) {
@@ -263,9 +269,16 @@ function isMatkul($type) {
 
 function pathDokumen($tahun_ajaran, $isMatkul, $matkul, $kelas=null) {
     if($isMatkul) {
-        return 'dokumen-perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/dokumen-matkul';
+        return 'app/dokumen-perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/dokumen-matkul';
     }
-    return 'dokumen-perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/'.$kelas;
+    return 'app/dokumen-perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/'.$kelas;
+}
+
+function pathDirectory($tahun_ajaran, $isKelas, $matkul, $kelas=null) {
+    if($isKelas) {
+        return 'app/dokumen-perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul.'/'.$kelas;
+    }
+    return 'app/dokumen-perkuliahan/'.str_replace('/','-',$tahun_ajaran).'/'.$matkul;
 }
 
 function dosenKelas($kelas_dokumen_matkul) {
@@ -350,51 +363,51 @@ function giveBadge($id_user, $id_badge, $id_tahun_ajaran) {
     return true;
 }
 
-function mergeDokumen($dokumen_kelas, $dokumen_matkul)
-{
-    $dokumen_all = [];
-    foreach($dokumen_kelas as $dokumen) {
-        $dosen=[];
-        foreach($dokumen->kelas->dosen_kelas as $dsn) {
-            $dosen[] = $dsn->nama;
-        }
-        $dokumen_all[] = (object) [
-            'id_dokumen'        => $dokumen->id_dokumen_kelas,
-            'nama_dokumen'      => $dokumen->dokumen_ditugaskan->nama_dokumen,
-            'matkul_kelas'      => $dokumen->kelas->matkul->nama_matkul.' '.$dokumen->kelas->nama_kelas,
-            'dosen'             => $dosen,
-            'dikumpul'          => $dokumen->dokumen_ditugaskan->dikumpul,
-            'waktu_pengumpulan' => $dokumen->waktu_pengumpulan,
-            'tenggat_waktu'     => $dokumen->dokumen_ditugaskan->tenggat_waktu,
-        ];
-    }
-    // dd($dokumen_all);
+// function mergeDokumen($dokumen_kelas, $dokumen_matkul)
+// {
+//     $dokumen_all = [];
+//     foreach($dokumen_kelas as $dokumen) {
+//         $dosen=[];
+//         foreach($dokumen->kelas->dosen_kelas as $dsn) {
+//             $dosen[] = $dsn->nama;
+//         }
+//         $dokumen_all[] = (object) [
+//             'id_dokumen'        => $dokumen->id_dokumen_kelas,
+//             'nama_dokumen'      => $dokumen->dokumen_ditugaskan->nama_dokumen,
+//             'matkul_kelas'      => $dokumen->kelas->matkul->nama_matkul.' '.$dokumen->kelas->nama_kelas,
+//             'dosen'             => $dosen,
+//             'dikumpul'          => $dokumen->dokumen_ditugaskan->dikumpul,
+//             'waktu_pengumpulan' => $dokumen->waktu_pengumpulan,
+//             'tenggat_waktu'     => $dokumen->dokumen_ditugaskan->tenggat_waktu,
+//         ];
+//     }
+//     // dd($dokumen_all);
     
-    foreach($dokumen_matkul as $dokumen) {
-        $dokumen_all[] = (object) [
-            'id_dokumen'        => $dokumen->id_dokumen_matkul,
-            'nama_dokumen'      => $dokumen->dokumen_ditugaskan->nama_dokumen,
-            'matkul_kelas'      => $dokumen->matkul->nama_matkul,
-            'dosen'             => dosenKelas($dokumen->kelas_dokumen_matkul),
-            'dikumpul'          => $dokumen->dokumen_ditugaskan->dikumpul,
-            'waktu_pengumpulan' => $dokumen->waktu_pengumpulan,
-            'tenggat_waktu'     => $dokumen->dokumen_ditugaskan->tenggat_waktu,
-        ];
-    }
+//     foreach($dokumen_matkul as $dokumen) {
+//         $dokumen_all[] = (object) [
+//             'id_dokumen'        => $dokumen->id_dokumen_matkul,
+//             'nama_dokumen'      => $dokumen->dokumen_ditugaskan->nama_dokumen,
+//             'matkul_kelas'      => $dokumen->matkul->nama_matkul,
+//             'dosen'             => dosenKelas($dokumen->kelas_dokumen_matkul),
+//             'dikumpul'          => $dokumen->dokumen_ditugaskan->dikumpul,
+//             'waktu_pengumpulan' => $dokumen->waktu_pengumpulan,
+//             'tenggat_waktu'     => $dokumen->dokumen_ditugaskan->tenggat_waktu,
+//         ];
+//     }
     
-    // Panggil usort() dengan array dokumen beserta fungsi pengurutannya sebagai parameter
-    usort($dokumen_all, function($a, $b) {
-        $timeA = strtotime($a->waktu_pengumpulan);
-        $timeB = strtotime($b->waktu_pengumpulan);
+//     // Panggil usort() dengan array dokumen beserta fungsi pengurutannya sebagai parameter
+//     usort($dokumen_all, function($a, $b) {
+//         $timeA = strtotime($a->waktu_pengumpulan);
+//         $timeB = strtotime($b->waktu_pengumpulan);
     
-        if ($timeA == $timeB) {
-            return 0;
-        }
-        return ($timeA > $timeB) ? -1 : 1;
-    });
+//         if ($timeA == $timeB) {
+//             return 0;
+//         }
+//         return ($timeA > $timeB) ? -1 : 1;
+//     });
     
-    return $dokumen_all;
-}
+//     return $dokumen_all;
+// }
 
 function showReport($dokumen_ditugaskan, $kelas) {
     $total_dikumpul=$total_belum_dikumpul=$total_tepat_waktu=$total_terlambat=$total_ditugaskan=$total_mendekati_dedline=$total_terlewat=0;

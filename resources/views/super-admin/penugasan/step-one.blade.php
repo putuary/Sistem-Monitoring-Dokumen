@@ -1,4 +1,5 @@
 @extends('layouts.user-base')
+@section('title', 'Buat Penugasan Baru')
 
 @section('style')
      <!-- Stylesheets -->

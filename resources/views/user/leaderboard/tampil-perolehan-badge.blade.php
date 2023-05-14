@@ -1,5 +1,7 @@
 @extends('layouts.user-base')
 
+@section('title', 'Badge')
+
 @section('style')
      <!-- Stylesheets -->
      <link
@@ -53,6 +55,22 @@
               </div>
             </div>
           </div>
+          @if(isset($tahun_aktif) && in_array(auth()->user()->role, ['kaprodi', 'gkmp'])) 
+            @if(auth()->user()->aktif_role->is_dosen==0)
+            <form class="row" action="/leaderboard/badge" method="POST">
+              @csrf
+              @method('DELETE')
+              <input type="hidden" name="id_tahun_ajaran" value="{{ $tahun_aktif->id_tahun_ajaran }}">
+              <div class="col-md-2 col-lg-4">
+                <div class="mb-4 text-start">
+                  <button type="submit" class="btn btn-alt-info" id="btn-submit">
+                    <i class="fa fa-fw fa-delete-left me-1"></i> Hapus Perolehan Badge
+                  </button>
+                </div>
+              </div>
+            </form>
+            @endif
+          @endif
           <!-- DataTables init on table by adding .js-dataTable-responsive class, functionality is initialized in js/pages/be_tables_datatables.min.js which was auto compiled from _js/pages/be_tables_datatables.js -->
           <table class="table table-bordered table-striped table-vcenter js-dataTable-responsive">
             <thead>

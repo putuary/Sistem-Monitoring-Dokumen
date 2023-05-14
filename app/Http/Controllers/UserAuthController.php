@@ -231,4 +231,38 @@ class UserAuthController extends Controller
         }
     }
 
+    public function setSession(Request $request) {
+        if($request->name == 'btn-mini') {
+            if(session()->has('btn-mini')) {
+                $btn_mini = session()->get('btn-mini');
+                if($btn_mini == false) {
+                    $request->session()->put('btn-mini', true);      
+                } else {
+                    $request->session()->put('btn-mini', false);
+                }
+            } else {
+                $request->session()->put('btn-mini', true);
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Session btn-mini berhasil diubah'
+            ]);
+        } else if($request->name == 'btn-dark-mode') {
+            if(session()->has('btn-dark-mode')) {
+                $btn_dark_mode = session()->get('btn-dark-mode');
+                if($btn_dark_mode == false) {
+                    $request->session()->put('btn-dark-mode', true);      
+                } else {
+                    $request->session()->put('btn-dark-mode', false);
+                }
+            } else {
+                $request->session()->put('btn-dark-mode', true);
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Session btn-dark-mode berhasil diubah'
+            ]);
+        }
+    }
+
 }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\DokumenDitugaskan;
 use App\Models\Kelas;
 use App\Models\Score;
+use App\Models\CatatanPenolakan;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 class DokumenKelas extends Model
@@ -76,4 +77,10 @@ class DokumenKelas extends Model
     {
         return $this->morphMany(Score::class, 'scoreable');
     }
+
+    public function note()
+    {
+        return $this->morphOne(CatatanPenolakan::class, 'noteable');
+    }
+
 }

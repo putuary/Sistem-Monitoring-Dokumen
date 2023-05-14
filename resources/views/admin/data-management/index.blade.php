@@ -1,4 +1,5 @@
 @extends('layouts.user-base')
+@section('title', 'Manajemen Data')
 @section('content')
     <!-- Hero -->
     <div class="content">

@@ -15,7 +15,7 @@
   </li>
 
 <li class="nav-main-item">
-    <a class="nav-main-link {{ Request::is('dokumen-perkuliahan') ? 'active' : '' }}" href="/dokumen-perkuliahan">
+    <a class="nav-main-link {{ (Request::is('dokumen-perkuliahan') || Request::is('dokumen-perkuliahan/*')) ? 'active' : '' }}" href="/dokumen-perkuliahan">
         <i class="nav-main-link-icon far fa-file-lines"></i>
         <span class="nav-main-link-name">Dokumen Perkuliahan</span>
     </a>

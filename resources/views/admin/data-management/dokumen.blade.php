@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Manajemen Data Dokumen')
 @section('style')
      <!-- Stylesheets -->
      <link
@@ -31,6 +31,13 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
       @endif
+
+      @error('template')
+      <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+        <strong>{{ $message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      @enderror
     
           <!-- Quick Overview -->
            <div class="row">
@@ -73,7 +80,7 @@
                       <i class="fa fa-fw fa-times"></i>
                     </button>
                   </div>
-                  <form  action="/manajemen-data/dokumen-perkuliahan/tambah"
+                  <form  action="/manajemen-data/dokumen-perkuliahan"
                   method="POST"
                   enctype="multipart/form-data">
                    @csrf
@@ -109,7 +116,7 @@
                             <label for="example-text-input">Template Dokumen Perkuliahan</label>
                             <input
                                 type="file"
-                                class="form-control mb-3"
+                                class="form-control mb-3 @error('template') is-invalid @enderror"
                                 name="template" />
                           </div>
                         </div>
@@ -157,12 +164,12 @@
                 <td class="text-center fw-semibold fs-sm">{{ $item->dikumpulkan_per==0 ? "Mata Kuliah" : "Kelas" }}</td>
                 <td class="text-center fw-semibold fs-sm"><i class="far fa-fw fa-{{ isset($item->template) ? 'square-check' : 'rectangle-xmark' }}"></i></td>
                 <td class="text-center">
-                  <form action="/manajemen-data/dokumen-perkuliahan/delete" method="POST">
+                  <form action="/manajemen-data/dokumen-perkuliahan/{{ $item->id_dokumen }}" method="POST">
                     @csrf
+                    @method('DELETE')
                   <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editDokumen({{ $key }})" data-bs-toggle="tooltip" title="Edit">
                     <i class="fa fa-fw fa-pencil-alt"></i>
                   </a>
-                    <input type="hidden" name="id_dokumen" value="{{ $item->id_dokumen }}">
                     <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Delete">
                       <i class="fa fa-fw fa-times"></i>
                     </button>
@@ -185,15 +192,15 @@
                     </div>
                   </div>
                   
-                  <form  action="/manajemen-data/dokumen-perkuliahan/edit"
+                  <form id="form-edit"
                   method="POST"
                   enctype="multipart/form-data">
                    @csrf
+                   @method('PUT')
                     <div class="block-content fs-sm mb-3">
                       <div class="row">
                         <div class="col-lg-12">
                           <div class="form-group">
-                            <input type="hidden" id="id_dokumen" name="id_dokumen">
                             <label for="example-text-input">Nama Dokumen Perkuliahan</label>
                             <input
                                 type="text"
@@ -224,7 +231,7 @@
                             <label for="example-text-input">Template Dokumen Perkuliahan</label>
                             <input
                                 type="file"
-                                class="form-control mb-3"
+                                class="form-control mb-3 @error('template') is-invalid @enderror"
                                 name="template"
                                 />
                           </div>
@@ -279,7 +286,7 @@
       function editDokumen(id) {
         $('.modal-edit').modal({backdrop: 'static', keyboard: false});
         $('.modal-edit').modal("show");
-        $('#id_dokumen').val(jsfiles[id].id_dokumen);
+        $('#form-edit').attr('action', '/manajemen-data/dokumen-perkuliahan/'+jsfiles[id].id_dokumen);
         $('#nama_dokumen').val(jsfiles[id].nama_dokumen);
         $('#tenggat_waktu_default').val(jsfiles[id].tenggat_waktu_default);
         if(jsfiles[id].dikumpulkan_per === 0){

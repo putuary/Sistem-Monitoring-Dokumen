@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Resume Pengumpulan Dokumen Perkuliahan')
 @section('content')
     <!-- Page Content -->
     

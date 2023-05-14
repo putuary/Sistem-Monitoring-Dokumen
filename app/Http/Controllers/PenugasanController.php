@@ -81,7 +81,11 @@ class PenugasanController extends Controller
         // dd($data);
         // dd($request->all());
 
-        TahunAjaran::where('is_aktif', 1)->update(['is_aktif' => 0]);
+        $tahun_aktif=TahunAjaran::where('is_aktif', 1)->first();
+        if($tahun_aktif) {
+            LeaderBoardController::storeResultBadge($tahun_aktif->id_tahun_ajaran);
+            $tahun_aktif->update(['is_aktif' => 0]);
+        }
 
         $tahun_ajar=session('tahun_ajaran');
 

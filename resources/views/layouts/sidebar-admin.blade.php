@@ -37,15 +37,6 @@
   </a>
 </li>
 
-<li class="nav-main-heading">PENGINGAT</li>
-
-<li class="nav-main-item">
-  <a class="nav-main-link {{ Request::is('atur-pengingat-pengumpulan') ? 'active' : '' }}" href="/atur-pengingat-pengumpulan">
-    <i class="nav-main-link-icon fa fa-clock-rotate-left"></i>
-    <span class="nav-main-link-name">Atur Pengingat dan Pengumpulan</span>
-  </a>
-</li>
-
 <li class="nav-main-heading">PERINGKAT PENGUMPULAN</li>
 
 <li class="nav-main-item">

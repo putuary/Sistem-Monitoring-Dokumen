@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Daftar Jumlah Kelas')
 @section('style')
      <!-- Stylesheets -->
      <link

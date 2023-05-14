@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Dokumen '.$title)
 @section('style')
      <!-- Stylesheets -->
      <link

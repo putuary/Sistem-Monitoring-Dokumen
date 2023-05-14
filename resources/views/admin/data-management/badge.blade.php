@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Manajemen Data Badge')
 @section('style')
      <!-- Stylesheets -->
      <link

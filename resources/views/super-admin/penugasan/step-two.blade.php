@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Buat Penugasan Baru')
 @section('style')
      <!-- Stylesheets -->
      <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}">

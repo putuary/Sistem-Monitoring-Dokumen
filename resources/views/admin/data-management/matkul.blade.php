@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Manajemen Data Mata Kuliah')
 @section('style')
      <!-- Stylesheets -->
      <link
@@ -81,7 +81,7 @@
                       <i class="fa fa-fw fa-times"></i>
                     </button>
                   </div>
-                  <form  action="/manajemen-data/mata-kuliah/tambah"
+                  <form  action="/manajemen-data/mata-kuliah"
                   method="POST"
                   enctype="multipart/form-data">
                    @csrf
@@ -172,12 +172,12 @@
                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill @if($item->praktikum==1) bg-success-light text-success @else bg-danger-light text-danger @endif ">{{ isPraktikum($item->praktikum) }}</span>
                 </td>
                 <td class="text-center">
-                  <form action="/manajemen-data/mata-kuliah/delete" method="POST">
+                  <form action="/manajemen-data/mata-kuliah/{{ $item->kode_matkul }}" method="POST">
                     @csrf
+                    @method('DELETE')
                   <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editMatkul({{ $key }})" data-bs-toggle="tooltip" title="Edit">
                     <i class="fa fa-fw fa-pencil-alt"></i>
                   </a>
-                    <input type="hidden" name="kode_matkul" value="{{ $item->kode_matkul }}">
                     <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Delete">
                       <i class="fa fa-fw fa-times"></i>
                     </button>
@@ -204,6 +204,7 @@
                   method="POST"
                   enctype="multipart/form-data">
                    @csrf
+                   @method('PUT')
                     <div class="block-content fs-sm mb-3">
                       <div class="row">
                         <div class="col-lg-12">
@@ -291,7 +292,7 @@
       function editMatkul(id) {
         $('.modal-edit').modal({backdrop: 'static', keyboard: false});
         $('.modal-edit').modal("show");
-        $('#submit-edit').attr('action', '/manajemen-data/mata-kuliah/edit/' + jsfiles[id].kode_matkul);
+        $('#submit-edit').attr('action', '/manajemen-data/mata-kuliah/' + jsfiles[id].kode_matkul);
         $('#kode_matkul').val(jsfiles[id].kode_matkul);
         $('#nama_matkul').val(jsfiles[id].nama_matkul);
         $('#bobot_sks').val(jsfiles[id].bobot_sks);

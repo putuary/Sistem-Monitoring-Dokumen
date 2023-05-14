@@ -1,4 +1,5 @@
 @extends('layouts.user-base')
+@section('title', 'Dashboard')
 @section('content')
     <!-- Hero -->
     <div class="content">
@@ -32,7 +33,7 @@
           <div class="block block-rounded d-flex flex-column h-100 mb-0">
             <div
               class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
-              <dl class="mb-0">
+              <dl class="mb-0 text-center">
                 <dt class="fs-3 fw-bold">{{ $persentase_dikumpulkan.'%' }}</dt>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
                   Progres Pengumpulan
@@ -60,7 +61,7 @@
           <div class="block block-rounded d-flex flex-column h-100 mb-0">
             <div
               class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
-              <dl class="mb-0">
+              <dl class="mb-0 text-center">
                 <dt class="fs-3 fw-bold">{{ $jumlahKelas }}</dt>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
                   Kelas Diampu
@@ -87,7 +88,7 @@
           <div class="block block-rounded d-flex flex-column h-100 mb-0">
             <div
               class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
-              <dl class="mb-0">
+              <dl class="mb-0 text-center">
                 <dt class="fs-3 fw-bold">{{ $report->total_mendekati_dedline }}</dt>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
                   Pengumpulan Mendekati Tenggat Waktu
@@ -114,7 +115,7 @@
           <div class="block block-rounded d-flex flex-column h-100 mb-0">
             <div
               class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
-              <dl class="mb-0">
+              <dl class="mb-0 text-center">
                 <dt class="fs-3 fw-bold">{{  $report->total_terlewat }}</dt>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
                   Pengumpulan Terlewat
@@ -144,7 +145,6 @@
 @endsection
 
 @section('script')
-    <script src={{ URL::asset("assets/js/pages/be_pages_dashboard.min.js") }}></script>
     <script>
       $(document).ready(function () {
         $(".alert").delay(2000).fadeOut("slow");

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-    <title>Halaman 
+    <title>@yield('title') |
       @if (in_array(Auth()->user()->role, ['kaprodi', 'gkmp']))
       {{ Auth()->user()->aktif_role->is_dosen == 1 ? "Dosen Pengampu" : namaPeran(Auth()->user()->role)  }}
       @else
@@ -12,23 +12,23 @@
       @endif
     </title>
 
-    <meta name="description" content="OneUI - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave and published on Themeforest">
-    <meta name="author" content="pixelcave">
+    <meta name="description" content="Sistem Monitoring Dokumen Perkuliahan Pogram Studi Teknik Informatika Institut Teknologi Sumatera">
+    <meta name="author" content="Putu Ary Kusuma Yudha IF'19">
     <meta name="robots" content="noindex, nofollow">
 
     <!-- Open Graph Meta -->
-    <meta property="og:title" content="OneUI - Bootstrap 5 Admin Template &amp; UI Framework">
-    <meta property="og:site_name" content="OneUI">
-    <meta property="og:description" content="OneUI - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave and published on Themeforest">
+    <meta property="og:title" content="Pogram Studi Teknik Informatika Institut Teknologi Sumatera">
+    <meta property="og:site_name" content="">
+    <meta property="og:description" content="Sistem Monitoring Dokumen Perkuliahan Pogram Studi Teknik Informatika Institut Teknologi Sumatera">
     <meta property="og:type" content="website">
     <meta property="og:url" content="">
     <meta property="og:image" content="">
 
     <!-- Icons -->
     <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
-    <link rel="shortcut icon" href={{ URL::asset("assets/media/favicons/logo-if.png")}}>
-    <link rel="icon" type="image/png" sizes="192x192" href={{ URL::asset("assets/media/favicons/favicon-192x192.png")}}>
-    <link rel="apple-touch-icon" sizes="180x180" href={{ URL::asset("assets/media/favicons/apple-touch-icon-180x180.png")}}>
+    <link rel="shortcut icon" href={{ URL::asset("assets/media/favicons/logo-if.png") }}>
+    <link rel="icon" type="image/png" sizes="192x192" href={{ URL::asset("assets/media/favicons/logo-if.png") }}>
+    <link rel="apple-touch-icon" sizes="180x180" href={{ URL::asset("assets/media/favicons/logo-if.png") }}>
     <!-- END Icons -->
 
    @yield('style')
@@ -43,7 +43,7 @@
 
   <body>
     <!-- Page Container -->
-    <div id="page-container" class="sidebar-o sidebar-dark enable-page-overlay side-scroll page-header-fixed main-content-narrow">
+    <div id="page-container" class="sidebar-o sidebar-dark enable-page-overlay side-scroll page-header-fixed main-content-narrow {{ session()->get('btn-mini') == true ? 'sidebar-mini' : '' }} {{ session()->get('btn-dark-mode') == true ? 'page-header-dark dark-mode' : '' }}">
       <!-- Side Overlay-->
       <aside id="side-overlay">
         <!-- Side Header -->
@@ -147,10 +147,16 @@
 
             <!-- Toggle Mini Sidebar -->
             <!-- Layout API, functionality initialized in Template._uiApiLayout()-->
-            <button type="button" class="btn btn-sm btn-alt-secondary me-2 d-none d-lg-inline-block" data-toggle="layout" data-action="sidebar_mini_toggle">
+            <button type="button" class="btn btn-sm btn-alt-secondary me-2 d-none d-lg-inline-block btn-mini" data-toggle="layout" data-action="sidebar_mini_toggle">
               <i class="fa fa-fw fa-ellipsis-v"></i>
             </button>
             <!-- END Toggle Mini Sidebar -->
+
+            <!-- Toggle Dark Mode -->
+            <button type="button" class="btn btn-sm btn-alt-secondary btn-dark-mode" data-toggle="layout" data-action="dark_mode_toggle">
+              <i class="far fa-moon"></i>
+            </button>
+            <!-- end Toggle Dark Mode -->
 
             <!-- Open Search Section (visible on smaller screens) -->
             <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
@@ -298,6 +304,36 @@
 
      <!-- jQuery (required for DataTables plugin) -->
      <script src={{  URL::asset("assets/js/lib/jquery.min.js") }}></script>
+
+     <script>
+        $(document).ready(function() {
+            $('.btn-mini').click(function() {
+                // Mengirimkan request AJAX
+                $.ajax({
+                  url: "/set-session", // endpoint untuk mengatur session pada sisi server
+                  type: "POST",
+                  data: {
+                    _token: "{{ csrf_token() }}", // token CSRF
+                    name: "btn-mini", // data ID dari tombol yang diklik
+                  },
+                });
+            });
+
+            $('.btn-dark-mode').click(function() {
+                // Mengirimkan request AJAX
+                $.ajax({
+                  url: "/set-session", // endpoint untuk mengatur session pada sisi server
+                  type: "POST",
+                  data: {
+                    _token: "{{ csrf_token() }}", // token CSRF
+                    name: "btn-dark-mode", // data ID dari tombol yang diklik
+                  },
+                });
+            });
+            
+        
+        });
+     </script>
 
     @yield('script')
   </body>

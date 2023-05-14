@@ -1,5 +1,6 @@
 @extends('layouts.user-base')
 
+@section('title', 'Leaderboard')
 @section('style')
      <!-- Stylesheets -->
      <link
@@ -11,7 +12,7 @@
    <link
      rel="stylesheet"
      href={{ URL::asset("assets/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css")}} />
-
+     <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/select2/css/select2.min.css') }}">
      <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/sweetalert2/sweetalert2.min.css') }}">
 @endsection
 
@@ -31,34 +32,37 @@
           <h3 class="block-title">Leaderboards</h3>
         </div>
         <div class="block-content block-content-full">
-          @if(isset($tahun_aktif) && auth()->user()->role != 'dosen')
-            @if(in_array(auth()->user()->role, ['kaprodi', 'gkmp'])) 
-              @if(auth()->user()->aktif_role->is_dosen==0)
-              <form class="block-content" action="/leaderboard/badge" method="POST">
-                @csrf
-                <input type="hidden" name="id_tahun_ajaran" value="{{ $tahun_aktif->id_tahun_ajaran }}">
-                <div class="row justify-content-center">
-                  <div class="col-md-2 col-lg-4">
-                    <div class="mb-4 text-center">
-                      <button type="submit" class="btn btn-alt-info" id="btn-submit">
-                        <i class="fa fa-fw fa-download me-1"></i> Tampilkan Perolehan Badge Final
-                      </button>
-                    </div>
+          <div class="block-content">
+            <div class="row justify-content-center">
+              <div class="col-md-2 col-lg-3">
+                <form action="/penugasan/dokumen-ditugaskan">
+                  <div class="mb-4 d-flex">
+                    <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
+                    <!-- For more info and examples you can check out https://github.com/select2/select2 -->
+                    <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Choose one..">
+                      <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+                      @foreach ($tahun_ajaran as $item)
+                      <option value="{{ $item->id_tahun_ajaran }}"@selected((request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }}</option>
+                      @endforeach
+                    </select>
+                    <button class="input-group-text">
+                      <i class="fa fa-fw fa-search"></i>
+                    </button>                
                   </div>
-                </div>
-              </form>
-              @endif
-            @else
-            <form class="block-content" action="/leaderboard/badge" method="POST">
+                </form>
+              </div>
+            </div>
+          </div>
+          @if(isset($tahun_aktif) && in_array(auth()->user()->role, ['kaprodi', 'gkmp'])) 
+            @if(auth()->user()->aktif_role->is_dosen==0)
+            <form class="row" action="/leaderboard/badge" method="POST">
               @csrf
               <input type="hidden" name="id_tahun_ajaran" value="{{ $tahun_aktif->id_tahun_ajaran }}">
-              <div class="row justify-content-center">
-                <div class="col-md-2 col-lg-4">
-                  <div class="mb-4 text-center">
-                    <button type="submit" class="btn btn-alt-info" id="btn-submit">
-                      <i class="fa fa-fw fa-download me-1"></i> Tampilkan Perolehan Badge Final
-                    </button>
-                  </div>
+              <div class="col-md-2 col-lg-4">
+                <div class="mb-4 text-start">
+                  <button type="submit" class="btn btn-alt-info" id="btn-submit">
+                    <i class="fa-fw si si-badge me-1"></i> Tampilkan Perolehan Badge Final
+                  </button>
                 </div>
               </div>
             </form>
@@ -120,25 +124,33 @@
 
      <!-- Page JS Plugins -->
      <script src="{{ URL::asset('assets/js/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+     <script src={{  URL::asset("assets/js/plugins/select2/js/select2.full.min.js") }}></script>
 
     <!-- Page JS Helpers (Select2 + Bootstrap Maxlength + CKEditor plugins) -->
+    <script>
+      One.helpersOnLoad([
+        "jq-select2",
+      ]);
+    </script>
 
     <script>
-      $('#btn-submit').click(function (e){
-           e.preventDefault();
-           let form = $(this).parents('form');
-           Swal.fire({
-            title: 'Apakah anda sudah yakin ?',
-            text: 'Anda tidak akan bisa mengubah data ini lagi!',
-            icon: 'warning',
-            showDenyButton: true,
-            confirmButtonText: 'Yakin',
-            denyButtonText: `Batal`,
-            }).then((result) => {
-              /* Read more about isConfirmed, isDenied below */
-              if (result.isConfirmed) {
-                form.submit();
-              }
+      $(document).ready(function() {
+          $('#btn-submit').click(function (e){
+               e.preventDefault();
+               let form = $(this).parents('form');
+               Swal.fire({
+                title: 'Apakah anda sudah yakin ?',
+                text: 'Anda tidak akan bisa mengubah data ini lagi!',
+                icon: 'warning',
+                showDenyButton: true,
+                confirmButtonText: 'Yakin',
+                denyButtonText: `Batal`,
+                }).then((result) => {
+                  /* Read more about isConfirmed, isDenied below */
+                  if (result.isConfirmed) {
+                    form.submit();
+                  }
+              });
           });
       });
      </script>

@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Penugasan')
 @section('style')
      <!-- Stylesheets -->
      <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/sweetalert2/sweetalert2.min.css') }}">

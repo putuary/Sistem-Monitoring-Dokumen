@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Progres Dokumen '.($kelas->matkul->nama_matkul.' '.$kelas->nama_kelas) )
 @section('style')
      <!-- Stylesheets -->
      <link
@@ -82,59 +82,48 @@
                 </td>
                 @if ($item->dikumpulkan_per==0)
                 <td class="text-center">
-                  <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->dokumen_matkul[0]->waktu_pengumpulan ? backgroundStatus($item->tenggat_waktu, $item->dokumen_matkul[0]->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->dokumen_matkul[0]->waktu_pengumpulan ? statusPengumpulan($item->tenggat_waktu, $item->dokumen_matkul[0]->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
+                  <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill {{ backgroundStatus($item->tenggat_waktu, $item->dokumen_matkul[0]->waktu_pengumpulan) }} ">{{ statusPengumpulan($item->tenggat_waktu, $item->dokumen_matkul[0]->waktu_pengumpulan) }}</span>
                 </td>
                 <td class="text-center">
-                  <form action="/progres-pengumpulan/kelas/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    @if (isset($item->dokumen_matkul[0]->file_dokumen))
-                      <a href="/progres-pengumpulan/kelas/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($item->dikumpul==0) target="_blank" @endif>
-                        <i class="fa fa-fw fa-eye"></i>
-                      </a>
-                      <a href="/progres-pengumpulan/kelas/unduh/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
-                        <i class="fa fa-fw fa-download"></i>
-                      </a>
-                      <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus">
-                        <i class="fa fa-fw fa-times"></i>
-                      </button>
-                    @endif
+                  @if (isset($item->dokumen_matkul[0]->file_dokumen))
+                    <a href="/progres-pengumpulan/kelas/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($item->dikumpul==0) target="_blank" @endif>
+                      <i class="fa fa-fw fa-eye"></i>
+                    </a>
+                    <a href="/progres-pengumpulan/kelas/unduh/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                      <i class="fa fa-fw fa-download"></i>
+                    </a>
+                    <button class="btn btn-sm btn-alt-danger bg-danger-light" onclick="refuseDokumen({{ $key }})" type="button"  data-bs-toggle="tooltip" title="Tolak Dokumen">
+                      <i class="fa fa-fw fa-times"></i>
+                    </button>
+                  @endif
                 @else
                 <td class="text-center">
                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->dokumen_kelas[0]->waktu_pengumpulan ? backgroundStatus($item->tenggat_waktu, $item->dokumen_kelas[0]->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->dokumen_kelas[0]->waktu_pengumpulan ? statusPengumpulan($item->tenggat_waktu, $item->dokumen_kelas[0]->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
                 </td>
                 <td class="text-center">
-                  <form action="/progres-pengumpulan/kelas/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    @if (isset($item->dokumen_kelas[0]->file_dokumen))
-                    <a href="/progres-pengumpulan/kelas/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($item->dikumpul==0) target="_blank" @endif>
-                      <i class="fa fa-fw fa-eye"></i>
-                    </a>
-                    <a href="/progres-pengumpulan/kelas/unduh/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
-                      <i class="fa fa-fw fa-download"></i>
-                    </a>
-                      <input type="hidden" name="id_pengguna" value="">
-                      <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus">
-                        <i class="fa fa-fw fa-times"></i>
-                      </button>
-                    @endif
+                  @if (isset($item->dokumen_kelas[0]->file_dokumen))
+                  <a href="/progres-pengumpulan/kelas/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($item->dikumpul==0) target="_blank" @endif>
+                    <i class="fa fa-fw fa-eye"></i>
+                  </a>
+                  <a href="/progres-pengumpulan/kelas/unduh/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                    <i class="fa fa-fw fa-download"></i>
+                  </a>
+                  <button class="btn btn-sm btn-alt-danger bg-danger-light" onclick="refuseDokumen({{ $key }})" type="button"  data-bs-toggle="tooltip" title="Tolak Dokumen">
+                    <i class="fa fa-fw fa-times"></i>
+                  </button>
+                  @endif
                 @endif
-                  
-                  
-                  </form>
-                </td>
               </tr>
               @endforeach
               
             </tbody>
           </table>
-          <div class="modal fade modal-upload" id="modal-block-fromleft" tabindex="-1" aria-labelledby="modal-block-fromleft" style="display: none;" aria-hidden="true">
+          <div class="modal fade modal-catatan" id="modal-block-fromleft" tabindex="-1" aria-labelledby="modal-block-fromleft" style="display: none;" aria-hidden="true">
             <div class="modal-dialog modal-dialog-fromleft" role="document">
               <div class="modal-content">
                 <div class="block block-rounded block-transparent mb-0">
                   <div class="block-header block-header-default">
-                    <h3 class="block-title title"></h3>
+                    <h3 class="block-title title">Penolakan Dokumen</h3>
                     <div class="block-options">
                       <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
                         <i class="fa fa-fw fa-times"></i>
@@ -142,7 +131,7 @@
                     </div>
                   </div>
                   
-                  <form  action="/kelas-diampu/upload"
+                  <form  action="/progres-pengumpulan/dokumen/catatan"
                   method="POST"
                   enctype="multipart/form-data">
                    @csrf
@@ -150,18 +139,11 @@
                       <div class="row">
                         <div class="col-lg-12">
                           <div class="form-group">
-                            <input type="hidden" name="id_dokumen_matkul" id="id_dokumen_matkul">
-                            <input type="hidden" name="id_dokumen_kelas" id="id_dokumen_kelas">
-                            <label for="example-text-input">File Dokumen</label>
-                            <input
-                                type="file"
-                                class="form-control @error('file_dokumen') is-invalid @enderror"
-                                placeholder="Masukkan File Dokumen"
-                                id="file_dokumen"
-                                name="file_dokumen"
-                                required />
+                            <input type="hidden" name="id_dokumen_terkumpul" id="id_dokumen_terkumpul">
+                            <label for="example-text-input">Catatan</label>
+                            <textarea class="form-control @error('isi_catatan') is-invalid @enderror" placeholder="Masukkan Catatan Penolakan" name="isi_catatan" required ></textarea>
                           </div>
-                          @error('file_dokumen')
+                          @error('isi_catatan')
                             <div class="invalid-feedback">{{ $message }}</div>
                           @enderror
                         </div>
@@ -196,10 +178,6 @@
     <script src={{  URL::asset("assets/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons/dataTables.buttons.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-jszip/jszip.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons/buttons.print.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons/buttons.html5.min.js") }}></script>
 
      <!-- Page JS Code -->
@@ -217,43 +195,23 @@
     </script>
      <script>
 
-      let jsfiles = {{ Js::from($dokumen) }};
-      console.log(jsfiles);
+      let dokumen = {{ Js::from($dokumen) }};
+      console.log(dokumen);
       //modal
-      function uploadDokumen(id) {
-        $('.modal-upload').modal("show");
-        $('.title').html('Unggah Dokumen '+jsfiles[id].nama_dokumen);
-        if(jsfiles[id].dikumpulkan_per === 0) {
-          $('#id_dokumen_matkul').val(jsfiles[id].dokumen_matkul[0].id_dokumen_matkul);
+      function refuseDokumen(key) {
+        // console.log(dokumen[key]);
+        $('.modal-catatan').modal({backdrop: 'static', keyboard: false});
+        $('.modal-catatan').modal("show");
+
+        if(dokumen[key].dikumpulkan_per===0) {
+          $('#id_dokumen_terkumpul').val(dokumen[key].dokumen_matkul[0].id_dokumen_matkul);
         } else {
-          $('#id_dokumen_kelas').val(jsfiles[id].dokumen_kelas[0].id_dokumen_kelas); 
+          $('#id_dokumen_terkumpul').val(dokumen[key].dokumen_kelas[0].id_dokumen_kelas);
         }
       }
 
-      function edit_pengguna(id) {
-        $('.modal-edit').modal("show");
-        $('#id_pengguna').val(jsfiles[id].id);
-        $('#nama').val(jsfiles[id].nama);
-        $('#email').val(jsfiles[id].email);
-        
-        if(jsfiles[id].role === 'kaprodi'){
-          $('#kaprodi').attr('selected', 'selected');
-        }else if(jsfiles[id].role === 'gkmp'){
-          $('#gkmp').attr('selected', 'selected');
-        }else if(jsfiles[id].role === 'dosen'){
-          $('#dosen').attr('selected', 'selected');
-        }else if(jsfiles[id].role === 'admin'){
-          $('#admin').attr('selected', 'selected');
-        }
-      }
-
-      $(document).ready(function () {
+      $(document).ready(function() {
         $(".alert").delay(2000).fadeOut("slow");
-        $(".button-tambah-pengguna").on("click", function () {
-          $("#modal-tambah-pengguna").modal("show");
-        });
-
-        $(".modal-edit").attr("id", "modal-edit");
       });
     </script>
 @endsection

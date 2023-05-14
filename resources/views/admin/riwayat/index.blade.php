@@ -1,4 +1,5 @@
 @extends('layouts.user-base')
+@section('title', 'Riwayat Pengumpulan dan Score')
 
 @section('style')
      <!-- Stylesheets -->
@@ -113,7 +114,7 @@
                   {{ showWaktu($item->waktu_pengumpulan) }}
                 </td>
                 <td class="text-center">
-                  <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->waktu_pengumpulan ? backgroundStatus($item->tenggat_waktu, $item->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->waktu_pengumpulan ? statusPengumpulan($item->tenggat_waktu, $item->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
+                  <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill {{ backgroundStatus($item->tenggat_waktu, $item->waktu_pengumpulan) }} ">{{ statusPengumpulan($item->tenggat_waktu, $item->waktu_pengumpulan) }}</span>
                 </td>
                 <td class="text-center fs-sm">{{ $item->poin ?? '-'}}</td>
               </tr>

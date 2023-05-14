@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Badge;
-use App\Models\DokumenDitugaskan;
 use App\Models\MataKuliah;
 use App\Models\DokumenPerkuliahan;
-use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
+use Illuminate\Support\Facades\Storage;
 
 class DataManagementController extends Controller
 {
@@ -61,10 +59,10 @@ class DataManagementController extends Controller
       
     }
 
-    public function deleteMatkul(Request $request)
+    public function deleteMatkul($kode_matkul)
     {
         try {
-            MataKuliah::where('kode_matkul', $request->kode_matkul)->delete();
+            MataKuliah::where('kode_matkul', $kode_matkul)->delete();
         } catch (\Throwable $th) {
             return redirect()->back()->with('failed', 'Tidak dapat menghapus parent data');
         }
@@ -116,31 +114,32 @@ class DataManagementController extends Controller
         return redirect()->back()->with('success', 'Data berhasil ditambahkan');
     }
 
-    public function editDokumen(Request $request)
+    public function editDokumen(Request $request, $id_dokumen)
     {
         // dd(request()->all());
         $request->validate([
-            'id_dokumen'            => 'required',
             'nama_dokumen'          => 'required',
             'tenggat_waktu_default' => 'required',
             'dikumpulkan_per'       => 'required',
             'template'              => 'mimes:docx,doc,xls,xlsx|max:3072'
             ]);
 
+        $dokumen=DokumenPerkuliahan::find($id_dokumen);
+
         if($request->hasFile('template')) {
-            // dd($request->file('template')->extension());
+            Storage::delete('public/template/'.$dokumen->template);
             $nama_dokumen= 'Template-'.$request->nama_dokumen.'.'.$request->file('template')->extension();
             $request->file('template')->storeAs('public/template', $nama_dokumen); // 'public' adalah nama folder di storage/app/public/template
 
             // dd($id);
-            DokumenPerkuliahan::where('id_dokumen', $request->id_dokumen)->update([
+            $dokumen->update([
                 'nama_dokumen'          => $request->nama_dokumen,
                 'tenggat_waktu_default' => $request->tenggat_waktu_default,
                 'dikumpulkan_per'       => $request->dikumpulkan_per,
                 'template'              => $nama_dokumen,
             ]);
         } else {
-            DokumenPerkuliahan::where('id_dokumen', $request->id_dokumen)->update([
+            $dokumen->update([
                 'nama_dokumen'          => $request->nama_dokumen,
                 'tenggat_waktu_default' => $request->tenggat_waktu_default,
                 'dikumpulkan_per'       => $request->dikumpulkan_per,
@@ -150,10 +149,12 @@ class DataManagementController extends Controller
         return redirect()->back()->with('success', 'Data berhasil diubah');
     }
 
-    public function deleteDokumen(Request $request)
+    public function deleteDokumen($id_dokumen)
     {
         try {
-            DokumenPerkuliahan::where('id_dokumen', $request->id_dokumen)->delete();
+            $dokumen=DokumenPerkuliahan::find($id_dokumen);
+            Storage::delete('public/template/'.$dokumen->template);
+            $dokumen->delete();
         } catch (\Throwable $th) {
             return redirect()->back()->with('failed', 'Tidak dapat menghapus parent data');
         }

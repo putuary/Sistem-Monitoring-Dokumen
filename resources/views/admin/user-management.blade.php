@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Manajemen Pengguna')
 @section('style')
      <!-- Stylesheets -->
      <link
@@ -11,6 +11,7 @@
    <link
      rel="stylesheet"
      href={{ URL::asset("assets/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css")}} />
+    <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/select2/css/select2.min.css') }}">
 @endsection
 
 @section('content')
@@ -33,110 +34,105 @@
           </div>
       @endif
 
-          <!-- Quick Overview -->
-           <div class="row">
-            <div class="col-6 col-lg-3">
-              <a
-                class="btn block block-rounded block-link-shadow text-center button-tambah-pengguna"
-                id="btn-detail"
-                type="button"
-                data-toggle="modal"
-                data-target="#modal-block-normal">
-                <div class="block-content block-content-full">
-                  <div class="fs-2 fw-semibold text-success">
-                    <i class="fa fa-plus"></i>
-                  </div>
-                </div>
-                <div class="block-content py-2 bg-body-light">
-                  <p class="fw-medium fs-sm text-success mb-0">
-                    Tambah Pengguna
-                  </p>
-                </div>
-              </a>
-            </div>
-          </div>
-          <!-- END Quick Overview -->
-          <!-- Modal -->
-          <div
-            class="modal fade"
-            id="modal-tambah-pengguna"
-            tabindex="-1"
-            role="dialog"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-popout" role="document">
-              <div class="modal-content">
-                <div class="block block-themed block-transparent mb-0">
-                  <div class="block-header bg-primary-dark">
-                    <h3 class="block-title">Tambah Pengguna</h3>
-                    <button
-                      type="button"
-                      class="btn btn-alt-danger"
-                      data-bs-dismiss="modal"
-                      aria-label="Close">
-                      <i class="fa fa-fw fa-times"></i>
-                    </button>
-                  </div>
-                  <form  action="{{ route('manajemen-pengguna.store') }}"
-                  method="POST"
-                  enctype="multipart/form-data">
-                   @csrf
-                    <div class="block-content fs-sm mb-3">
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <div class="form-group">
-                            <label for="example-text-input">Nama</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Masukkan Nama"
-                                name="nama"
-                                required />
-                            <label for="example-text-input">Email</label>
-                            <input
-                                type="email"
-                                class="form-control"
-                                placeholder="Masukkan Email"
-                                name="email"
-                                required />
-                            <label for="example-text-input">Password</label>
-                            <input
-                                type="password"
-                                class="form-control"
-                                placeholder="Masukkan Password"
-                                name="password"
-                                required />
-                            <label for="example-text-input">Peran</label>
-                            <select
-                                class="js-select2 form-select"
-                                id="one-ecom-product-category"
-                                name="role"
-                                required >
-                                <option value="">Pilih Peran</option>
-                                <!-- Required for data-placeholder attribute to work with Select2 plugin -->
-                                <option value="kaprodi">Koordinator Prodi</option>
-                                <option value="gkmp">Gugus Kendali Mutu Prodi</option>
-                                <option value="dosen">Dosen Pengampu</option>
-                                <option value="admin">Administrator Prodi</option>
-                            </select>    
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="block-content block-content-full text-end border-top">
-                      <button
-                        type="submit"
-                        class="btn btn-alt-primary"
-                        data-bs-dismiss="modal">
-                        <i class="fa fa-check me-1"></i>Simpan
-                      </button>
-                    </div>
-                  </form>
-                </div>
+      <!-- Quick Overview -->
+      <div class="row">
+        <div class="col-6 col-lg-3">
+          <a
+            class="btn block block-rounded block-link-shadow text-center button-tambah-pengguna"
+            id="btn-detail"
+            type="button"
+            data-toggle="modal"
+            data-target="#modal-block-normal">
+            <div class="block-content block-content-full">
+              <div class="fs-2 fw-semibold text-success">
+                <i class="fa fa-plus"></i>
               </div>
             </div>
+            <div class="block-content py-2 bg-body-light">
+              <p class="fw-medium fs-sm text-success mb-0">
+                Tambah Pengguna
+              </p>
+            </div>
+          </a>
+        </div>
+      </div>
+      <!-- END Quick Overview -->
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="modal-tambah-pengguna"
+        tabindex="-1"
+        role="dialog"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-popout" role="document">
+          <div class="modal-content">
+            <div class="block block-themed block-transparent mb-0">
+              <div class="block-header bg-primary-dark">
+                <h3 class="block-title">Tambah Pengguna</h3>
+                <button
+                  type="button"
+                  class="btn btn-alt-danger"
+                  data-bs-dismiss="modal"
+                  aria-label="Close">
+                  <i class="fa fa-fw fa-times"></i>
+                </button>
+              </div>
+              <form  action="{{ route('manajemen-pengguna.store') }}"
+              method="POST"
+              enctype="multipart/form-data">
+                @csrf
+                <div class="block-content fs-sm mb-3">
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <div class="form-group">
+                        <label for="example-text-input">Nama</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Masukkan Nama"
+                            name="nama"
+                            required />
+                        <label for="example-text-input">Email</label>
+                        <input
+                            type="email"
+                            class="form-control"
+                            placeholder="Masukkan Email"
+                            name="email"
+                            required />
+                        <label for="example-text-input">Password</label>
+                        <input
+                            type="password"
+                            class="form-control"
+                            placeholder="Masukkan Password"
+                            name="password"
+                            required />
+                        <label for="example-text-input">Peran</label>
+                        <select class="js-select2 form-select select2insidemodal" name="role" style="width: 100%;" data-placeholder="Pilih Peran" required>
+                          <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+                          <option value="kaprodi">Koordinator Prodi</option>
+                          <option value="gkmp">Gugus Kendali Mutu Prodi</option>
+                          <option value="dosen">Dosen Pengampu</option>
+                          <option value="admin">Administrator Prodi</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="block-content block-content-full text-end border-top">
+                  <button
+                    type="submit"
+                    class="btn btn-alt-primary"
+                    data-bs-dismiss="modal">
+                    <i class="fa fa-check me-1"></i>Simpan
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-          <!-- End Modal -->
+        </div>
+      </div>
+      <!-- End Modal -->
 
       <!-- All Products -->
       <div class="block block-rounded">
@@ -231,17 +227,13 @@
                             </div>
                             <div id="ubah-password"></div>
                             <label for="example-text-input">Peran</label>
-                            <select
-                                class="js-select2 form-select"
-                                name="role"
-                                required >
-                                <option value="">Pilih Peran</option>
-                                <!-- Required for data-placeholder attribute to work with Select2 plugin -->
-                                <option id="kaprodi" value="kaprodi">Koordinator Prodi</option>
-                                <option id="gkmp" value="gkmp">Gugus Kendali Mutu Prodi</option>
-                                <option id="dosen" value="dosen">Dosen Pengampu</option>
-                                <option id="admin" value="admin">Administrator Prodi</option>
-                            </select>    
+                            <select class="js-select2 form-select select2-inside-modal-edit" name="role" style="width: 100%;" data-placeholder="Pilih Peran" required>
+                              <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+                              <option value="kaprodi">Koordinator Prodi</option>
+                              <option value="gkmp">Gugus Kendali Mutu Prodi</option>
+                              <option value="dosen">Dosen Pengampu</option>
+                              <option value="admin">Administrator Prodi</option>
+                            </select>
                           </div>
                         </div>
                       </div>
@@ -280,6 +272,16 @@
      <!-- Page JS Code -->
      <script src={{  URL::asset("assets/js/pages/be_tables_datatables.min.js") }}></script>
 
+      <!-- Page JS Plugins -->
+    <script src={{  URL::asset("assets/js/plugins/select2/js/select2.full.min.js") }}></script>
+
+    <!-- Page JS Helpers (Select2 + Bootstrap Maxlength + CKEditor plugins) -->
+    <script>
+      One.helpersOnLoad([
+        "jq-select2",
+      ]);
+    </script>
+
      <script>
       let jsfiles = <?php echo json_encode($data); ?>;
       
@@ -304,6 +306,13 @@
 
       $(document).ready(function () {
         $(".alert").delay(2000).fadeOut("slow");
+        $(".select2-inside-modal-edit").select2({
+          dropdownParent: $(".modal-edit")
+        });
+
+        $(".select2insidemodal").select2({
+          dropdownParent: $("#modal-tambah-pengguna")
+        });
 
         $('#modal-tambah-pengguna').modal({backdrop: 'static', keyboard: false});
         $(".button-tambah-pengguna").on("click", function () {

@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Dokumen '.$title)
 @section('style')
      <!-- Stylesheets -->
      <link
@@ -55,21 +55,16 @@
                 <td class="text-center fs-sm">{{ $no }}</td>
                 <td class="fs-sm">{{ $file }}</td>
                 <td class="text-center">
-                  <form action="/progres-pengumpulan/kelas/{{ $id_dokumen }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <a href="/progres-pengumpulan/kelas/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
-                      <i class="fa fa-fw fa-eye"></i>
-                    </a>
-                    <a href="/progres-pengumpulan/kelas/unduh/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
-                      <i class="fa fa-fw fa-download"></i>
-                    </a>
-                    <input type="hidden" name="nama_dokumen" value="{{ $file }}">
-                    <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus">
-                      <i class="fa fa-fw fa-times"></i>
-                    </button>
-                  </form>
-                </td>
+                  <a href="/progres-pengumpulan/kelas/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
+                    <i class="fa fa-fw fa-eye"></i>
+                  </a>
+                  <a href="/progres-pengumpulan/kelas/unduh/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                    <i class="fa fa-fw fa-download"></i>
+                  </a>
+                  <input type="hidden" name="nama_dokumen" value="{{ $file }}">
+                  <button class="btn btn-sm btn-alt-danger bg-danger-light" type="button" onclick="refuseDokumen({{ $key }})"  data-bs-toggle="tooltip" title="Tolak Dokumen">
+                    <i class="fa fa-fw fa-times"></i>
+                  </button>
               </tr>
               @php
                   $no++;
@@ -77,6 +72,53 @@
               @endforeach
             </tbody>
           </table>
+          <div class="modal fade modal-catatan" id="modal-block-fromleft" tabindex="-1" aria-labelledby="modal-block-fromleft" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-fromleft" role="document">
+              <div class="modal-content">
+                <div class="block block-rounded block-transparent mb-0">
+                  <div class="block-header block-header-default">
+                    <h3 class="block-title title">Penolakan Dokumen</h3>
+                    <div class="block-options">
+                      <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-fw fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <form  action="/progres-pengumpulan/dokumen/catatan"
+                  method="POST"
+                  enctype="multipart/form-data">
+                   @csrf
+                    <div class="block-content fs-sm mb-3">
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div class="form-group">
+                            <input type="hidden" name="id_dokumen_terkumpul" id="id_dokumen_terkumpul">
+                            <input type="hidden" name="nama_dokumen" id="nama_dokumen">
+                            <label for="example-text-input">Catatan</label>
+                            <textarea class="form-control @error('isi_catatan') is-invalid @enderror" placeholder="Masukkan Catatan Penolakan" name="isi_catatan" required ></textarea>
+                          </div>
+                          @error('isi_catatan')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                          @enderror
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="block-content block-content-full text-end border-top">
+                      <button
+                        type="submit"
+                        class="btn btn-alt-primary"
+                        data-bs-dismiss="modal">
+                        <i class="fa fa-check me-1"></i>Simpan
+                      </button>
+                    </div>
+                  </form>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <!-- END All Products -->
@@ -97,13 +139,16 @@
      <script src={{  URL::asset("assets/js/pages/be_tables_datatables.min.js") }}></script>
 
      <script>
-      let jsfiles = @json($nama_files);
-      console.log(jsfiles);
-      //modal
-      function editNamaFile(id) {
-        $('.modal-edit').modal("show");
-        $('#div_old_name').html(jsfiles[id]);
-        $('#old_name').val(jsfiles[id]);
+       let dokumen = @json($nama_files);
+      console.log(dokumen);
+      function refuseDokumen(key) {
+        console.log(dokumen[key]);
+        $('.modal-catatan').modal({backdrop: 'static', keyboard: false});
+        $('.modal-catatan').modal("show");
+
+        $('#id_dokumen_terkumpul').val('{{ $id_dokumen }}');
+        
+        $('#nama_dokumen').val(dokumen[key]);
       }
 
       $(document).ready(function () {

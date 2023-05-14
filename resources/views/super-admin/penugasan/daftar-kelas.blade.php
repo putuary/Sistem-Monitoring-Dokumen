@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Daftar Kelas')
 @section('style')
      <!-- Stylesheets -->
      <link
@@ -25,6 +25,14 @@
       @if (session()->has('success'))
           <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
           <strong>{{ session()->get('success') }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      @endif
+
+      <!-- pop up error upload -->
+      @if (session()->has('failed'))
+          <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+          <strong>{{ session()->get('failed') }}</strong>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
       @endif
@@ -103,7 +111,7 @@
                         <label for="dosen_pengampu">Dosen Pengampu</label>
                         <div class="col-lg-12">
                           <div class="mb-2">
-                            <select class="js-select2 form-select select2insidemodal" name="id_dosen[]" style="width: 100%;" data-placeholder="Pilih Dosen" multiple required>
+                            <select class="js-select2 form-select select2insidemodal" name="id_dosen[]" data-placeholder="Pilih Dosen" style="width: 100%;"  multiple required>
                               <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                               @foreach ($dosen as $item)
                               <option value="{{ $item->id }}">{{ $item->nama }}</option>
@@ -210,7 +218,7 @@
               <div class="modal-content">
                 <div class="block block-rounded block-transparent mb-0">
                   <div class="block-header block-header-default">
-                    <h3 class="block-title">Edit Pengguna</h3>
+                    <h3 class="block-title">Edit Kelas</h3>
                     <div class="block-options">
                       <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
                         <i class="fa fa-fw fa-times"></i>
@@ -227,25 +235,30 @@
                       <div class="row">
                         <div class="col-lg-12">
                           <div class="form-group">
-                            <label for="text-input">Nama Kelas (Contoh. RA)</label>
-                            <input
-                                type="text"
-                                id="nama_kelas"
-                                class="form-control mb-2"
-                                placeholder="Masukkan Kelas (Contoh. RA)"
-                                name="nama_kelas"
-                                required />
-                            <label for="dosen_pengampu">Dosen Pengampu</label>
-                            <div class="col-lg-12">
-                              <div class="mb-2">
-                                <select class="js-select2 form-select select2-inside-modal-edit" name="id_dosen[]" style="width: 100%;"  multiple required>
-                                  <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-                                  @foreach ($dosen as $item)
-                                  <option value="{{ $item->id }}" id="dosen-{{ $item->id }}">{{ $item->nama }}</option>
-                                  @endforeach
-                                </select>
+                            <label class="form-label">Ubah Nama Kelas</label>
+                            <div class="space-x-2 mb-3">
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="ubah-nama-kelas" id="ubah-nama-kelas1" value=1>
+                                <label class="form-check-label" for="example-radios-inline1">Ya</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="ubah-nama-kelas" id="ubah-nama-kelas2" value=0 checked>
+                                <label class="form-check-label" for="example-radios-inline2">Tidak</label>
                               </div>
                             </div>
+                            <div id="ubah-nama-kelas"></div>
+                            <label class="form-label">Ubah Dosen</label>
+                            <div class="space-x-2 mb-3">
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="ubah-dosen" id="ubah-dosen1" value=1>
+                                <label class="form-check-label" for="example-radios-inline1">Ya</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="ubah-dosen" id="ubah-dosen2" value=0 checked>
+                                <label class="form-check-label" for="example-radios-inline2">Tidak</label>
+                              </div>
+                            </div>
+                            <div id="ubah-dosen"></div>
                           </div>
                         </div>
                       </div>
@@ -269,7 +282,6 @@
       </div>
       <!-- END All Products -->
     </div>
-    {{-- <?php dd($dosen); ?> --}}
     <!-- END Page Content -->
 @endsection
 
@@ -302,24 +314,53 @@
       console.log(jsfiles);
       //modal
       function editKelas(id) {
-        $('#modal-edit').modal({backdrop: 'static', keyboard: false});
+        $('.modal-edit').modal({backdrop: 'static', keyboard: false});
         $('.modal-edit').modal("show");
         $('#form-edit').attr('action', '/penugasan/daftar-kelas/'+jsfiles[id].kode_kelas);
-        $('#nama_kelas').val(jsfiles[id].nama_kelas);
-
-        let dosens=@json($dosen);
-        
-        dosens.forEach(dosen => {
-          jsfiles[id].dosen_kelas.forEach((element) => {
-          if(dosen.id === element.id){
-            $('#dosen-'+dosen.id).attr('selected', 'selected');
-          }
-        });
-        });
       }
 
       $(document).ready(function () {
           $(".alert").delay(2000).fadeOut("slow");
+
+          $("#ubah-nama-kelas1").click(function () {
+            $("#ubah-nama-kelas").html(
+              `<label for="text-input">Nama Kelas (Contoh. RA)</label>
+              <input
+                  type="text"
+                  class="form-control mb-2"
+                  placeholder="Masukkan Kelas (Contoh. RA)"
+                  name="nama_kelas"
+                  required />`
+            );
+          });
+          $("#ubah-nama-kelas2").click(function () {
+            $("#ubah-nama-kelas").html('');
+          });
+
+          $("#ubah-dosen1").click(function () {
+            $("#ubah-dosen").html(
+              `<label for="dosen_pengampu">Dosen Pengampu</label>
+                <div class="col-lg-12">
+                  <div class="mb-2">
+                    <select class="js-select2 form-select select2-inside-modal-edit" name="id_dosen[]" data-placeholder="Pilih Dosen" style="width: 100%;"  multiple required>
+                      <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+                      @foreach ($dosen as $item)
+                      <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>`
+               );
+              One.helpersOnLoad([
+                  "jq-select2",
+                ]);
+                $(".select2-inside-modal-edit").select2({
+                  dropdownParent: $(".modal-edit")
+                });
+            });
+          $("#ubah-dosen2").click(function () {
+            $("#ubah-dosen").html('');
+          });
 
           $('.btn-hapus').click(function (e){
             e.preventDefault();
@@ -347,10 +388,6 @@
             $('#modal-tambah-kelas').modal({backdrop: 'static', keyboard: false});
             $("#btn-tambah-kelas").on("click", function () {
               $("#modal-tambah-kelas").modal("show");
-            });
-
-            $(".select2-inside-modal-edit").select2({
-              dropdownParent: $(".modal-edit")
             });
         });
          
