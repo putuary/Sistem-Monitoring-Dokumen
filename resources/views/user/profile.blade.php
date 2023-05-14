@@ -1,4 +1,5 @@
 @extends('layouts.user-base')
+@section('title', 'Profil')
 
 @section('content')
     <!-- Hero -->
