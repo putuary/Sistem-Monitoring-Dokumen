@@ -92,21 +92,21 @@
                             placeholder="Masukkan Nama"
                             name="nama"
                             required />
-                        <label for="example-text-input">Email</label>
+                        <label class="mt-2" for="example-text-input">Email</label>
                         <input
                             type="email"
                             class="form-control"
                             placeholder="Masukkan Email"
                             name="email"
                             required />
-                        <label for="example-text-input">Password</label>
+                        <label class="mt-2" for="example-text-input">Password</label>
                         <input
                             type="password"
                             class="form-control"
                             placeholder="Masukkan Password"
                             name="password"
                             required />
-                        <label for="example-text-input">Peran</label>
+                        <label class="mt-2" for="example-text-input">Peran</label>
                         <select class="js-select2 form-select select2insidemodal" name="role" style="width: 100%;" data-placeholder="Pilih Peran" required>
                           <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                           <option value="kaprodi">Koordinator Prodi</option>
@@ -206,7 +206,7 @@
                                 id="nama"
                                 name="nama"
                                 required />
-                            <label for="example-text-input">Email</label>
+                            <label class="mt-2" for="example-text-input">Email</label>
                             <input
                                 type="email"
                                 class="form-control"
@@ -214,8 +214,8 @@
                                 id="email"
                                 name="email"
                                 required />
-                            <label class="form-label">Ubah Password</label>
-                            <div class="space-x-2 mb-3">
+                            <label class="form-label mt-2">Ubah Password</label>
+                            <div class="space-x-2 mb-2">
                               <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="ubah-password" id="ubah-password1" value=1>
                                 <label class="form-check-label" for="example-radios-inline1">Ya</label>
@@ -226,7 +226,7 @@
                               </div>
                             </div>
                             <div id="ubah-password"></div>
-                            <label for="example-text-input">Peran</label>
+                            <label class="mt-2" for="example-text-input">Peran</label>
                             <select class="js-select2 form-select select2-inside-modal-edit" name="role" style="width: 100%;" data-placeholder="Pilih Peran" required>
                               <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                               <option value="kaprodi">Koordinator Prodi</option>

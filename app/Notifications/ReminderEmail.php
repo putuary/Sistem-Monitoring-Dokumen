@@ -36,7 +36,7 @@ class ReminderEmail extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)->view('email', 
+        return (new MailMessage)->view('email.reminder-email', 
         [
             'nama'  => $this->username,
             'before' => $this->before,

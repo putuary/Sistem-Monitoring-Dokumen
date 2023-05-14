@@ -57,7 +57,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="row mt-3 mb-3 text-center">
+                <div class="row mt-3 mb-4 text-center">
                   <div class="col">
                     <button type="button" class="btn btn-primary btn-kelas">Jumlah Kelas</button>
                   </div>

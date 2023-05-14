@@ -29,7 +29,7 @@ class SendReminderEmail extends Command
         $dokumen=DokumenDitugaskan::dokumenAktif()->get();
         foreach($dokumen as $d) {
             $tenggat_waktu = Carbon::parse($d->tenggat_waktu);
-            if(in_array($tenggat_waktu->diffInDays(Carbon::now()), [1, 3, 7])) {
+            if(in_array($tenggat_waktu->diffInDays(Carbon::now()), [1, 2, 3, 4, 5, 6, 7])) {
                 return true;
             }
         }

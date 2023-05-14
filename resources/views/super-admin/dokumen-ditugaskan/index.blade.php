@@ -98,9 +98,9 @@
                           </div>
                         </div>
                         <label for="example-text-input">Tenggat Waktu</label>
-                        <input type="datetime-local" class="form-control" min="{{ date('Y-m-d\TH:i') }}" name="tenggat_waktu" id="tenggat_waktu"/>
+                        <input type="datetime-local" class="form-control mb-2" min="{{ date('Y-m-d\TH:i') }}" name="tenggat_waktu" id="tenggat_waktu"/>
                         <label class="form-label fw-8">Dikumpul</label>
-                        <div class="space-x-2 mb-3">
+                        <div class="space-x-2 mb-2">
                           <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" id="example-radios-inline1" name="dikumpul" value=0 checked>
                             <label class="form-check-label" for="example-radios-inline1">Single Dokumen</label>
@@ -140,7 +140,7 @@
           <div class="block-content">
             <div class="row justify-content-center">
               <div class="col-md-2 col-lg-3">
-                <form action="/atur-pengingat-pengumpulan">
+                <form action="/penugasan/dokumen-ditugaskan">
                 <div class="mb-4 d-flex">
                   <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
                   <!-- For more info and examples you can check out https://github.com/select2/select2 -->

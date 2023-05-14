@@ -92,7 +92,7 @@
                             <label for="example-text-input">Kode Mata Kuliah</label>
                             <input
                                 type="text"
-                                class="form-control mb-3 @error('kode_matkul') is-invalid @enderror"
+                                class="form-control mb-2 @error('kode_matkul') is-invalid @enderror"
                                 placeholder="Masukkan Kode Mata Kuliah"
                                 name="kode_matkul"
                                 required />
@@ -102,19 +102,19 @@
                             <label for="example-text-input">Nama Mata Kuliah</label>
                             <input
                                 type="text"
-                                class="form-control mb-3"
+                                class="form-control mb-2"
                                 placeholder="Masukkan Nama Mata Kuliah"
                                 name="nama_matkul"
                                 required />
                             <label for="example-text-input">Bobot SKS</label>
                             <input
                                 type="number"
-                                class="form-control mb-3"
+                                class="form-control mb-2"
                                 placeholder="Masukkan Bobot SKS"
                                 name="bobot_sks"
                                 required />
                             <label class="form-label fw-8">Praktikum</label>
-                            <div class="space-x-2 mb-3">
+                            <div class="space-x-2 mb-2">
                               <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" id="example-radios-inline1" name="praktikum" value=1 checked>
                                 <label class="form-check-label" for="example-radios-inline1">Ya</label>

@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         
-        $schedule->command('reminder:email')->withoutOverlapping()->dailyAt('23:48');
+        $schedule->command('reminder:email')->withoutOverlapping()->dailyAt('16:16');
     }
 
     /**

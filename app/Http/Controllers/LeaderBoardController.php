@@ -6,12 +6,14 @@ use App\Models\Score;
 use App\Models\TahunAjaran;
 use App\Models\User;
 use App\Models\UserBadge;
+use App\Models\DokumenDitugaskan;
 
 use Illuminate\Http\Request;
 
 class LeaderBoardController extends Controller
 {
     public static function storeResultBadge($id_tahun_ajaran) {
+        DokumenDitugaskan::where('id_tahun_ajaran', $id_tahun_ajaran)->update(['pengumpulan' => 0]);
         Score::whereHas('scoreable', function($query) {
             $query->whereNull('file_dokumen');
         })->scoreTahun($id_tahun_ajaran)->update(['poin'  => -100]);
@@ -134,10 +136,14 @@ class LeaderBoardController extends Controller
     }
 
     public function deleteBadge(Request $request) {
+        DokumenDitugaskan::where('id_tahun_ajaran', $request->id_tahun_ajaran)->update(['pengumpulan' => 1]);
         UserBadge::where('id_tahun_ajaran', $request->id_tahun_ajaran)->delete();
         Score::whereHas('scoreable', function($query) {
-            $query->whereNull('file_dokumen');
-        })->scoreTahun($request->tahun_ajaran)->update(['poin'  => null]);
+            $query->whereNull('file_dokumen')->whereDoesntHave('note');
+        })->scoreTahun($request->tahun_ajaran)->update(['poin' => null]);
+        Score::whereHas('scoreable', function($query) {
+            $query->whereHas('note');
+        })->scoreTahun($request->tahun_ajaran)->update(['poin' => -50]);
         return redirect('/badge')->with('success', 'Berhasil menghapus badge');
     }
 }

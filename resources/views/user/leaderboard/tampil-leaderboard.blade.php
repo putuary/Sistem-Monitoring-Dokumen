@@ -35,7 +35,7 @@
           <div class="block-content">
             <div class="row justify-content-center">
               <div class="col-md-2 col-lg-3">
-                <form action="/penugasan/dokumen-ditugaskan">
+                <form action="/leaderboard">
                   <div class="mb-4 d-flex">
                     <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
                     <!-- For more info and examples you can check out https://github.com/select2/select2 -->
@@ -54,18 +54,20 @@
             </div>
           </div>
           @if(isset($tahun_aktif) && in_array(auth()->user()->role, ['kaprodi', 'gkmp'])) 
-            @if(auth()->user()->aktif_role->is_dosen==0)
-            <form class="row" action="/leaderboard/badge" method="POST">
-              @csrf
-              <input type="hidden" name="id_tahun_ajaran" value="{{ $tahun_aktif->id_tahun_ajaran }}">
-              <div class="col-md-2 col-lg-4">
-                <div class="mb-4 text-start">
-                  <button type="submit" class="btn btn-alt-info" id="btn-submit">
-                    <i class="fa-fw si si-badge me-1"></i> Tampilkan Perolehan Badge Final
-                  </button>
+            @if (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true)
+              @if(auth()->user()->aktif_role->is_dosen==0)
+              <form class="row" action="/leaderboard/badge" method="POST">
+                @csrf
+                <input type="hidden" name="id_tahun_ajaran" value="{{ $tahun_aktif->id_tahun_ajaran }}">
+                <div class="col-md-2 col-lg-4">
+                  <div class="mb-4 text-start">
+                    <button type="submit" class="btn btn-alt-info" id="btn-submit">
+                      <i class="fa-fw si si-badge me-1"></i> Tampilkan Perolehan Badge Final
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
+              @endif
             @endif
           @endif
           <!-- DataTables init on table by adding .js-dataTable-responsive class, functionality is initialized in js/pages/be_tables_datatables.min.js which was auto compiled from _js/pages/be_tables_datatables.js -->

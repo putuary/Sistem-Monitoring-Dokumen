@@ -78,7 +78,7 @@
               <div class="modal-content">
                 <div class="block block-rounded block-transparent mb-0">
                   <div class="block-header block-header-default">
-                    <h3 class="block-title">Edit Matkul</h3>
+                    <h3 class="block-title">Edit Badge</h3>
                     <div class="block-options">
                       <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
                         <i class="fa fa-fw fa-times"></i>
@@ -98,20 +98,20 @@
                             <label for="example-text-input">Nama Badge</label>
                             <input
                                 type="text"
-                                class="form-control mb-3"
+                                class="form-control mb-2"
                                 placeholder="Masukkan nama badge"
                                 name="nama_badge"
                                 id="nama_badge"
                                 required />
-                            <label for="example-text-input">Gambar</label>
+                            <label for="example-text-input">Gambar (.jpeg .png .jpg .gif .svg max: 3MB)</label>
                             <input
                                 type="file"
-                                class="form-control mb-3"
+                                class="form-control mb-2"
                                 placeholder="Masukkan gambar badge"
                                 name="gambar"/>
                             <label for="example-text-input">Deskripsi</label>
                             <textarea
-                                class="form-control mb-3"
+                                class="form-control mb-2"
                                 placeholder="Masukkan deskripsi badge"
                                 name="deskripsi"
                                 id="deskripsi"

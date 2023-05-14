@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DokumenKelas;
 use App\Models\DokumenMatkul;
 use App\Models\DokumenPerkuliahan;
+use App\Models\TahunAjaran;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 
@@ -108,35 +109,41 @@ class DokumenDikumpulController extends Controller
             'waktu_pengumpulan' => date('Y-m-d H:i:s'),
         ]);
 
-        if($dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per == 0) {
-            $dokumen_matkul=DokumenMatkul::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_matkul);
+        $tahun_aktif=TahunAjaran::where('is_aktif', 1)->first();
 
-            if($dokumen_matkul->note == null) {
-                $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
-                  
-                $dokumen_matkul->scores()->update([
-                    'poin'       => $data['poin'],
-                ]);
-            } else {
-                $dokumen_matkul->note()->where('is_aktif', 1)->update([
-                    'is_aktif' => 0,
-                ]);
+        if($dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per == 0) {
+            
+            if($tahun_aktif->id_tahun_ajaran == $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_tahun_ajaran) {
+                $dokumen_matkul=DokumenMatkul::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_matkul);
+                if($dokumen_matkul->note == null) {
+                    $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+                      
+                    $dokumen_matkul->scores()->update([
+                        'poin'       => $data['poin'],
+                    ]);
+                } else {
+                    $dokumen_matkul->note()->where('is_aktif', 1)->update([
+                        'is_aktif' => 0,
+                    ]);
+                }
             }
 
         
         } else {
-            $dokumen_kelas=DokumenKelas::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_kelas);
-
-            if($dokumen_kelas->note == null) {
-                $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
-    
-                $dokumen_kelas->scores()->update([
-                    'poin'     => $data['poin'],
-                ]);
-            } else {
-                $dokumen_kelas->note()->where('is_aktif', 1)->update([
-                    'is_aktif' => 0,
-                ]);
+            
+            if($tahun_aktif->id_tahun_ajaran == $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_tahun_ajaran) {
+                $dokumen_kelas=DokumenKelas::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_kelas);
+                if($dokumen_kelas->note == null) {
+                    $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+        
+                    $dokumen_kelas->scores()->update([
+                        'poin'     => $data['poin'],
+                    ]);
+                } else {
+                    $dokumen_kelas->note()->where('is_aktif', 1)->update([
+                        'is_aktif' => 0,
+                    ]);
+                }
             }
         }
 
@@ -163,34 +170,40 @@ class DokumenDikumpulController extends Controller
             'waktu_pengumpulan' => date('Y-m-d H:i:s'),
         ]);
 
-        if($dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per == 0) {
-            $dokumen_matkul=DokumenMatkul::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_matkul);
+        $tahun_aktif=TahunAjaran::where('is_aktif', 1)->first();
 
-            if($dokumen_matkul->note == null) {
-                $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
-                  
-                $dokumen_matkul->scores()->update([
-                    'poin'       => $data['poin'],
-                ]);
-            } else {
-                $dokumen_matkul->note()->where('is_aktif', 1)->update([
-                    'is_aktif' => 0,
-                ]);
+        if($dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per == 0) {
+            
+            if($tahun_aktif->id_tahun_ajaran == $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_tahun_ajaran) {
+                $dokumen_matkul=DokumenMatkul::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_matkul);
+                if($dokumen_matkul->note == null) {
+                    $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+                      
+                    $dokumen_matkul->scores()->update([
+                        'poin'       => $data['poin'],
+                    ]);
+                } else {
+                    $dokumen_matkul->note()->where('is_aktif', 1)->update([
+                        'is_aktif' => 0,
+                    ]);
+                }
             }
 
         } else {
-            $dokumen_kelas=DokumenKelas::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_kelas);
-
-            if($dokumen_kelas->note == null) {    
-                $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
-
-                $dokumen_kelas->scores()->update([
-                    'poin'           => $data['poin'],
-                ]);
-            } else {
-                $dokumen_kelas->note()->where('is_aktif', 1)->update([
-                    'is_aktif' => 0,
-                ]);
+            
+            if($tahun_aktif->id_tahun_ajaran == $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_tahun_ajaran) {
+                $dokumen_kelas=DokumenKelas::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_kelas);
+                if($dokumen_kelas->note == null) {    
+                    $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+    
+                    $dokumen_kelas->scores()->update([
+                        'poin'           => $data['poin'],
+                    ]);
+                } else {
+                    $dokumen_kelas->note()->where('is_aktif', 1)->update([
+                        'is_aktif' => 0,
+                    ]);
+                }
             }
         }
 

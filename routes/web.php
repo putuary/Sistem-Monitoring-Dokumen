@@ -141,3 +141,11 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::get('/dokumen-perkuliahan/{id_dokumen}', [DokumenDikumpulController::class, 'showDokumenDikumpul']);
     Route::get('/dokumen-perkuliahan/unduh/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenDikumpul']);
 });
+
+Route::get('/email', function() {
+    $nama="Rizky";
+    $before=[];
+    $after=[];
+
+    return view('email.tes', ['nama' => $nama, 'before' => $before, 'after' => $after]);
+});

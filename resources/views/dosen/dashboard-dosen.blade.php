@@ -101,7 +101,7 @@
             <div class="bg-body-light rounded-bottom">
               <a
                 class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between"
-                href="/kelas-diampu">
+                href="/riwayat-pengumpulan-perolehan-score?filter=mendekati_tenggat_waktu">
                 <span>Lihat Pengumpulan Mendekati Tenggat Waktu</span>
                 <i
                   class="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"></i>
@@ -128,7 +128,7 @@
             <div class="bg-body-light rounded-bottom">
               <a
                 class="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between"
-                href="/kelas-diampu">
+                href="/riwayat-pengumpulan-perolehan-score?filter=melewati_tenggat_waktu">
                 <span>Lihat Pengumpulan Terlewat</span>
                 <i
                   class="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"></i>

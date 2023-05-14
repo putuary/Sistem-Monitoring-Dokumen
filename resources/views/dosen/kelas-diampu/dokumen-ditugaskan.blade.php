@@ -215,7 +215,7 @@
                         <div class="col-lg-12">
                           <div class="form-group">
                             <input type="hidden" name="id_dokumen" id="id_dokumen">
-                            <label for="example-text-input">File Dokumen (Single Dokumen)</label>
+                            <label for="example-text-input">File Dokumen (Single Dokumen .pdf max: 10MB)</label>
                             <input
                                 type="file"
                                 class="form-control @error('file_dokumen') is-invalid @enderror"
@@ -269,7 +269,7 @@
                           <div class="form-group">
                             <div class="previews"></div>
                             <input type="hidden" name="id_dokumen" id="id_dokumen_multiple">
-                            <label for="example-text-input">File Dokumen (Multiple Dokumen)</label>
+                            <label for="example-text-input">File Dokumen <br> (Multiple Dokumen .pdf max: 10MB note: ikuti perintah penamaan file)</label>
                             <input
                                 type="file"
                                 class="form-control @error('file_dokumen') is-invalid @enderror"

@@ -157,13 +157,6 @@
               <i class="far fa-moon"></i>
             </button>
             <!-- end Toggle Dark Mode -->
-
-            <!-- Open Search Section (visible on smaller screens) -->
-            <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
-            <button type="button" class="btn btn-sm btn-alt-secondary d-md-none" data-toggle="layout" data-action="header_search_on">
-              <i class="fa fa-fw fa-search"></i>
-            </button>
-            <!-- END Open Search Section -->
             
           </div>
           <!-- END Left Section -->

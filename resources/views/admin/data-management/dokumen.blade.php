@@ -91,19 +91,19 @@
                             <label for="example-text-input">Nama Dokumen Perkuliahan</label>
                             <input
                                 type="text"
-                                class="form-control mb-3"
+                                class="form-control mb-2"
                                 placeholder="Masukkan Nama Dokumen Perkuliahan"
                                 name="nama_dokumen"
                                 required />
                             <label for="example-text-input">Tenggat Waktu Default</label>
                             <input
                                 type="number"
-                                class="form-control mb-3"
+                                class="form-control mb-2"
                                 placeholder="Masukkan Tenggat Waktu Default"
                                 name="tenggat_waktu_default"
                                 required />
                             <label class="form-label">Dikumpulkan Per</label>
-                            <div class="space-x-2 mb-3">
+                            <div class="space-x-2 mb-2">
                               <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" id="example-radios-inline1" name="dikumpulkan_per" value=0 required>
                                 <label class="form-check-label" for="example-radios-inline1">Mata Kuliah</label>
@@ -113,10 +113,10 @@
                                 <label class="form-check-label" for="example-radios-inline2">Kelas</label>
                               </div>
                             </div>
-                            <label for="example-text-input">Template Dokumen Perkuliahan</label>
+                            <label for="example-text-input">Template Dokumen Perkuliahan (.docx .doc .xls .xlsx .zip)</label>
                             <input
                                 type="file"
-                                class="form-control mb-3 @error('template') is-invalid @enderror"
+                                class="form-control mb-2 @error('template') is-invalid @enderror"
                                 name="template" />
                           </div>
                         </div>
@@ -204,7 +204,7 @@
                             <label for="example-text-input">Nama Dokumen Perkuliahan</label>
                             <input
                                 type="text"
-                                class="form-control mb-3"
+                                class="form-control mb-2"
                                 placeholder="Masukkan Nama Dokumen Perkuliahan"
                                 id="nama_dokumen"
                                 name="nama_dokumen"
@@ -212,13 +212,13 @@
                             <label for="example-text-input">Tenggat Waktu Default</label>
                             <input
                                 type="number"
-                                class="form-control mb-3"
+                                class="form-control mb-2"
                                 placeholder="Masukkan Tenggat Waktu Default"
                                 id="tenggat_waktu_default"
                                 name="tenggat_waktu_default"
                                 required />
                             <label class="form-label">Dikumpulkan Per</label>
-                            <div class="space-x-2 mb-3">
+                            <div class="space-x-2 mb-2">
                               <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" id="mata-kuliah" name="dikumpulkan_per" value=0>
                                 <label class="form-check-label" for="example-radios-inline1">Mata Kuliah</label>
@@ -228,10 +228,10 @@
                                 <label class="form-check-label" for="example-radios-inline2">Kelas</label>
                               </div>
                             </div>
-                            <label for="example-text-input">Template Dokumen Perkuliahan</label>
+                            <label for="example-text-input">Template Dokumen Perkuliahan (.docx .doc .xls .xlsx .zip)</label>
                             <input
                                 type="file"
-                                class="form-control mb-3 @error('template') is-invalid @enderror"
+                                class="form-control mb-2s @error('template') is-invalid @enderror"
                                 name="template"
                                 />
                           </div>

@@ -236,7 +236,7 @@
                         <div class="col-lg-12">
                           <div class="form-group">
                             <label class="form-label">Ubah Nama Kelas</label>
-                            <div class="space-x-2 mb-3">
+                            <div class="space-x-2 mb-2">
                               <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="ubah-nama-kelas" id="ubah-nama-kelas1" value=1>
                                 <label class="form-check-label" for="example-radios-inline1">Ya</label>
@@ -246,9 +246,9 @@
                                 <label class="form-check-label" for="example-radios-inline2">Tidak</label>
                               </div>
                             </div>
-                            <div id="ubah-nama-kelas"></div>
+                            <div class="mb-2" id="ubah-nama-kelas"></div>
                             <label class="form-label">Ubah Dosen</label>
-                            <div class="space-x-2 mb-3">
+                            <div class="space-x-2 mb-2">
                               <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="ubah-dosen" id="ubah-dosen1" value=1>
                                 <label class="form-check-label" for="example-radios-inline1">Ya</label>
@@ -258,7 +258,7 @@
                                 <label class="form-check-label" for="example-radios-inline2">Tidak</label>
                               </div>
                             </div>
-                            <div id="ubah-dosen"></div>
+                            <div class="mb-2" id="ubah-dosen"></div>
                           </div>
                         </div>
                       </div>
