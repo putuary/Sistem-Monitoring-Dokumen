@@ -41,7 +41,7 @@
                 <div class="mb-4 d-flex">
                   <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
                   <!-- For more info and examples you can check out https://github.com/select2/select2 -->
-                  <select class="js-select2 form-select" name="tahun_ajaran" style="width: 100%;" data-placeholder="Choose one..">
+                  <select class="js-select2 form-select" name="tahun_ajaran" style="width: 100%;" data-placeholder="Pilih Tahun Ajaran..">
                     <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                     @foreach ($tahun_ajaran as $item)
                     <option value="{{ $item->id_tahun_ajaran }}" @selected((request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }}</option>

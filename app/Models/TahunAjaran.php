@@ -43,6 +43,11 @@ class TahunAjaran extends Model
         return $this->hasMany(Score::class, 'id_tahun_ajaran');
     }
 
+    public function leader_board()
+    {
+        return $this->hasMany(LeaderBoard::class, 'id_tahun_ajaran');
+    }
+
     public function user_badge()
     {
         return $this->hasMany(UserBadge::class, 'id_tahun_ajaran');

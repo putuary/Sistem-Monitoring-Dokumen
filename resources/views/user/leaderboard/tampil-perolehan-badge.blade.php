@@ -41,7 +41,7 @@
                   <div class="mb-4 d-flex">
                     <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
                     <!-- For more info and examples you can check out https://github.com/select2/select2 -->
-                    <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Choose one..">
+                    <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Pilih Tahun Ajaran..">
                       <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                       @foreach ($tahun_ajaran as $item)
                       <option value="{{ $item->id_tahun_ajaran }}"@selected((request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }}</option>
@@ -55,7 +55,7 @@
               </div>
             </div>
           </div>
-          @if(isset($tahun_aktif) && in_array(auth()->user()->role, ['kaprodi', 'gkmp']))
+          @if(isset($tahun_aktif) && (count($users) !=0) && in_array(auth()->user()->role, ['kaprodi', 'gkmp']))
             @if (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true) 
               @if(auth()->user()->aktif_role->is_dosen==0)
               <form class="row" action="/leaderboard/badge" method="POST">
@@ -80,7 +80,7 @@
                 <th class="text-center">No.</th>
                 <th class="text-center" >Nama Dosen</th>
                 <th class="text-center" >Tepat Waktu</th>
-                <th class="text-center" >Telat</th>
+                <th class="text-center" >Terlambat</th>
                 <th class="text-center" >Kosong</th>
                 <th class="text-center" >Poin</th>
                 <th class="text-center" >Badge</th>
@@ -88,17 +88,17 @@
               </tr>
             </thead>
             <tbody>
-              @foreach ($user_badges as $key => $item)
+              @foreach ($users as $key => $user)
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="text-center fs-sm">{{ $item->user->nama ?? null }}</td>
-                <td class="text-center fs-sm">{{ $item->onTime }}</td>
-                <td class="text-center fs-sm">{{ $item->late }}</td>
-                <td class="text-center fs-sm">{{ $item->empty }}</td>
-                <td class="text-center fs-sm">{{ $item->point }}</td>
+                <td class="text-center fs-sm">{{ $user->user->nama ?? null }}</td>
+                <td class="text-center fs-sm">{{ $user->tepat_waktu }}</td>
+                <td class="text-center fs-sm">{{ $user->terlambat }}</td>
+                <td class="text-center fs-sm">{{ $user->kosong }}</td>
+                <td class="text-center fs-sm">{{ $user->skor }}</td>
                 <td class="text-center">
-                  @foreach ($item->user->user_badge as $badge)
-                  <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ asset('storage/badges/'.$badge->gambar) }}" alt="">
+                  @foreach ($user->user->user_badge as $badge)
+                  <img class="img-avatar img-avatar48 img-avatar-thumb" src="{{ asset('storage/badges/'.$badge->gambar) }}" alt="badge">
                   @endforeach
                 </td>
               </tr>

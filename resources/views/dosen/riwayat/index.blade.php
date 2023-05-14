@@ -1,5 +1,5 @@
 @extends('layouts.user-base')
-
+@section('title', 'Riwayat Pengumpulan dan Perolehan Score')
 @section('style')
      <!-- Stylesheets -->
      <link
@@ -68,7 +68,7 @@
                   @endif
                   <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
                   <!-- For more info and examples you can check out https://github.com/select2/select2 -->
-                  <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Choose one..">
+                  <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Pilih Tahun Ajaran..">
                     <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                     @foreach ($tahun_ajaran as $item)
                     <option value={{ $item->id_tahun_ajaran }} @selected((request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }}</option>
@@ -91,46 +91,23 @@
                 <th class="text-center" >Kelas</th>
                 <th class="text-center" >Waktu Pengumpulan</th>
                 <th class="text-center" >Status</th>
+                <th class="text-center" >Poin</th>
               </tr>
             </thead>
             <tbody>
-
-              @php
-                  $no=1;
-              @endphp
-              @foreach ($kelas as $kls)
-                @foreach ($kls->dokumen_kelas as $item)
-                  <tr>
-                    <td class="text-center fs-sm">{{ $no }}</td>
-                    <td class="fs-sm"><a href="/kelas-diampu/{{ $kls->kode_kelas }}">{{ $item->dokumen_ditugaskan->nama_dokumen }}</a></td>
-                    <td class="fs-sm">{{ $kls->matkul->nama_matkul.' '.$kls->nama_kelas }}</td>
-                    <td class="text-center fs-sm">
-                      {{ showWaktu($item->waktu_pengumpulan) }}
-                    </td>
-                    <td class="text-center">
-                      <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->waktu_pengumpulan ? backgroundStatus($item->dokumen_ditugaskan->tenggat_waktu, $item->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->waktu_pengumpulan ? statusPengumpulan($item->dokumen_ditugaskan->tenggat_waktu, $item->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
-                    </td>
-                  </tr>
-                  @php
-                      $no++;
-                  @endphp
-                @endforeach
-                @foreach ($kls->kelas_dokumen_matkul as $item)
-                  <tr>
-                    <td class="text-center fs-sm">{{ $no }}</td>
-                    <td class="fs-sm"><a href="/kelas-diampu/{{ $kls->kode_kelas }}">{{ $item->dokumen_ditugaskan->nama_dokumen }}</a></td>
-                    <td class="fs-sm">{{ $kls->matkul->nama_matkul.' '.$kls->nama_kelas }}</td>
-                    <td class="text-center fs-sm">
-                      {{ showWaktu($item->waktu_pengumpulan) }}
-                    </td>
-                    <td class="text-center">
-                      <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-success-light text-success {{ $item->waktu_pengumpulan ? backgroundStatus($item->dokumen_ditugaskan->tenggat_waktu, $item->waktu_pengumpulan) : 'bg-warning-light text-warning' }} ">{{ $item->waktu_pengumpulan ? statusPengumpulan($item->dokumen_ditugaskan->tenggat_waktu, $item->waktu_pengumpulan) : 'Belum Dikumpulkan' }}</span>
-                    </td>
-                  </tr>
-                  @php
-                      $no++;
-                  @endphp
-                @endforeach
+              @foreach ($dokumen as $key => $item)
+                <tr>
+                  <td class="text-center fs-sm">{{ $key+1 }}</td>
+                  <td class="fs-sm"><a href="/kelas-diampu/{{ $item->kode_kelas }}">{{ $item->nama_dokumen }}</a></td>
+                  <td class="fs-sm">{{ $item->matkul_kelas }}</td>
+                  <td class="text-center fs-sm">
+                    {{ showWaktu($item->waktu_pengumpulan) }}
+                  </td>
+                  <td class="text-center">
+                    <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill {{ backgroundStatus($item->tenggat_waktu, $item->waktu_pengumpulan) }} ">{{ statusPengumpulan($item->tenggat_waktu, $item->waktu_pengumpulan) }}</span>
+                  </td>
+                  <td class="text-center fs-sm">{{ $item->poin ?? '-'}}</td>
+                </tr>
               @endforeach
             </tbody>
           </table>

@@ -76,7 +76,7 @@ class KelasDiampuController extends Controller
         // dd($kelas);
         $dokumen=mergerDokumen($kelas);
 
-        return view('dosen.riwayat.riwayat', [
+        return view('dosen.riwayat.index', [
             'tahun_ajaran' => $tahun_ajaran,
             'tahun_aktif' => $tahun_aktif,
             'dokumen' => $dokumen,

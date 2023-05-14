@@ -29,7 +29,6 @@ class KelasController extends Controller
                 $matkul= MataKuliah::matkulDibuka('Pendek')->get();
             }
         }
-
         
         $dosen=User::where('role', '!=', 'admin')->get();
         // dd($dosen);

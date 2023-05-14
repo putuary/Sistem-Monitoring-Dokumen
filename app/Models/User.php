@@ -5,6 +5,7 @@ use App\Models\AktifRole;
 use App\Models\Kelas;
 use App\Models\Score;
 use App\Models\Badge;
+use App\Models\LeaderBoard;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -59,6 +60,11 @@ class User extends Authenticatable
     public function score()
     {
         return $this->hasMany(Score::class, 'id_dosen');
+    }
+
+    public function leader_board()
+    {
+        return $this->hasMany(LeaderBoard::class, 'id_dosen');
     }
 
     public function user_badge()

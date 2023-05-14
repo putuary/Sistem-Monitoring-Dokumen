@@ -36,7 +36,7 @@
           </div>
       @endif
 
-      @if (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true)
+      @if(isset($tahun_aktif) && (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true))
       <!-- Quick Overview -->
        <div class="row">
         <div class="col-6 col-lg-3">
@@ -144,7 +144,7 @@
                 <div class="mb-4 d-flex">
                   <!-- Select2 (.js-select2 class is initialized in Helpers.jqSelect2()) -->
                   <!-- For more info and examples you can check out https://github.com/select2/select2 -->
-                  <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Choose one..">
+                  <select class="js-select2 form-select" id="one-ecom-product-category" name="tahun_ajaran" style="width: 100%;" data-placeholder="Pilih Tahun Ajaran..">
                     <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                     @foreach ($tahun_ajaran as $item)
                     <option value="{{ $item->id_tahun_ajaran }}"@selected((request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) == $item->id_tahun_ajaran)>{{ $item->tahun_ajaran }}</option>
@@ -167,7 +167,7 @@
                 <th class="text-center" >Tenggat Waktu</th>
                 <th class="text-center" >Dikumpul</th>
                 <th class="text-center"  style="width: 15%;">Pengumpulan</th>
-                @if (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true)
+                @if(isset($tahun_aktif) && (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true))
                 <th class="text-center" style="width: 15%;">Aksi</th>
                 @endif
               </tr>
@@ -186,7 +186,7 @@
                       </div>
                   </div>
                 </td>
-                @if (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true)
+                @if(isset($tahun_aktif) && (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true))
                 <td class="text-center">
                   <form action="{{ route('dokumen-ditugaskan.destroy', $item->id_dokumen_ditugaskan) }}" method="POST">
                     <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editPengingat({{ $key }})" data-bs-toggle="tooltip" title="Edit">
@@ -204,7 +204,7 @@
               @endforeach
             </tbody>
           </table>
-          @if (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true)
+          @if(isset($tahun_aktif) && (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true))
           <div class="modal fade modal-edit" id="modal-block-fromleft" tabindex="-1" aria-labelledby="modal-block-fromleft" style="display: none;" aria-hidden="true">
             <div class="modal-dialog modal-dialog-fromleft" role="document">
               <div class="modal-content">

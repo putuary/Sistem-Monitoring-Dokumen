@@ -7,7 +7,7 @@ use App\Models\TahunAjaran;
 use App\Models\User;
 use App\Models\UserBadge;
 use App\Models\DokumenDitugaskan;
-
+use App\Models\LeaderBoard;
 use Illuminate\Http\Request;
 
 class LeaderBoardController extends Controller
@@ -39,7 +39,17 @@ class LeaderBoardController extends Controller
         $lecturers=showRank($users);
 
         UserBadge::where('is_aktif', 1)->update(['is_aktif' => 0]);
+        LeaderBoard::where('id_tahun_ajaran', $id_tahun_ajaran)->delete();
         foreach ($lecturers as $key => $lecturer) {
+            LeaderBoard::create([
+                'id_dosen'        => $lecturer->user->id,
+                'id_tahun_ajaran' => $id_tahun_ajaran,
+                'tepat_waktu'     => $lecturer->onTime,
+                'terlambat'       => $lecturer->late,
+                'kosong'          => $lecturer->empty,
+                'skor'            => $lecturer->point,
+            ]);
+            
             if($key === 0) {
                 giveBadge($lecturer->user->id, 1, $id_tahun_ajaran);
             } else if($key == 1) {
@@ -118,25 +128,40 @@ class LeaderBoardController extends Controller
         }
     }
 
+    // public function showResultBadges() {
+    //     $tahun_aktif=TahunAjaran::tahunAktif()->first();
+    //     $tahun_ajaran=TahunAjaran::orderBy('id_tahun_ajaran', 'desc')->get();
+    //     $users=User::with(['user_badge' => function($query) use ($tahun_aktif) {
+    //         $query->where('id_tahun_ajaran', (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran));
+    //         }, 'score' => function($query) {
+    //         $query->scoreTahun(request('tahun_ajaran'));
+    //     }])->whereHas('dosen_kelas', function($query) {
+    //         $query->kelasTahun(request('tahun_ajaran'));
+    //     })->where('role', '!=', 'admin')->get();
+
+    //     $user_badges=showRank($users);
+    //     // dd($user_badges);
+
+    //     return view('user.leaderboard.tampil-perolehan-badge', ['tahun_aktif' => $tahun_aktif, 'tahun_ajaran' => $tahun_ajaran, 'user_badges' => $user_badges]);
+    // }
+
     public function showResultBadge() {
         $tahun_aktif=TahunAjaran::tahunAktif()->first();
         $tahun_ajaran=TahunAjaran::orderBy('id_tahun_ajaran', 'desc')->get();
-        $users=User::with(['user_badge' => function($query) use ($tahun_aktif) {
-            $query->where('id_tahun_ajaran', (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran));
-            }, 'score' => function($query) {
-            $query->scoreTahun(request('tahun_ajaran'));
-        }])->whereHas('dosen_kelas', function($query) {
-            $query->kelasTahun(request('tahun_ajaran'));
-        })->where('role', '!=', 'admin')->get();
+        $users=LeaderBoard::with(['user' => function($query) use($tahun_aktif) {
+            $query->with(['user_badge' => function($query) use ($tahun_aktif) {
+                $query->where('id_tahun_ajaran', (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran));
+            }]);
+        }])->leaderboardTahun(request('tahun_ajaran'))->orderBy('skor', 'desc')->get();
+        // dd(count($users !=0));
 
-        $user_badges=showRank($users);
-        // dd($user_badges);
-
-        return view('user.leaderboard.tampil-perolehan-badge', ['tahun_aktif' => $tahun_aktif, 'tahun_ajaran' => $tahun_ajaran, 'user_badges' => $user_badges]);
+        return view('user.leaderboard.tampil-perolehan-badge', ['tahun_aktif' => $tahun_aktif, 'tahun_ajaran' => $tahun_ajaran, 'users' => $users]);
     }
+
 
     public function deleteBadge(Request $request) {
         DokumenDitugaskan::where('id_tahun_ajaran', $request->id_tahun_ajaran)->update(['pengumpulan' => 1]);
+        LeaderBoard::where('id_tahun_ajaran', $request->id_tahun_ajaran)->delete();
         UserBadge::where('id_tahun_ajaran', $request->id_tahun_ajaran)->delete();
         Score::whereHas('scoreable', function($query) {
             $query->whereNull('file_dokumen')->whereDoesntHave('note');
