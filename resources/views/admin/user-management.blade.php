@@ -226,13 +226,13 @@
                               </div>
                             </div>
                             <div id="ubah-password"></div>
-                            <label class="mt-2" for="example-text-input">Peran</label>
+                            <label class="mt-2" for="example-text-input">Peran (kosongkan jika tidak diubah)</label>
                             <select class="js-select2 form-select select2-inside-modal-edit" name="role" style="width: 100%;" data-placeholder="Pilih Peran" required>
                               <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-                              <option value="kaprodi">Koordinator Prodi</option>
-                              <option value="gkmp">Gugus Kendali Mutu Prodi</option>
-                              <option value="dosen">Dosen Pengampu</option>
-                              <option value="admin">Administrator Prodi</option>
+                              <option value="kaprodi" id="kaprodi">Koordinator Prodi</option>
+                              <option value="gkmp" id="gkmp">Gugus Kendali Mutu Prodi</option>
+                              <option value="dosen" id="dosen">Dosen Pengampu</option>
+                              <option value="admin" id="admin">Administrator Prodi</option>
                             </select>
                           </div>
                         </div>
@@ -294,7 +294,7 @@
         $('#email').val(jsfiles[id].email);
         
         if(jsfiles[id].role === 'kaprodi'){
-          $('#kaprodi').attr('selected', 'selected');
+          $('#kaprodi').attr('selected');
         }else if(jsfiles[id].role === 'gkmp'){
           $('#gkmp').attr('selected', 'selected');
         }else if(jsfiles[id].role === 'dosen'){

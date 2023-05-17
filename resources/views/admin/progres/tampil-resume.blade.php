@@ -49,8 +49,9 @@
             <table class="table table-bordered table-striped table-vcenter">
               <thead>
                 <tr>
-                  <th class="text-center">Nama Kelas</th>
-                  <th class="text-center">Nama Dosen</th>
+                  <th class="text-center">Mata Kuliah</th>
+                  <th class="text-center">Kelas</th>
+                  <th class="text-center">Dosen</th>
                   @foreach ($dokumen as $item)
                   <th class="text-center">{{ $item->nama_dokumen }}</th>    
                   @endforeach
@@ -59,6 +60,7 @@
               <tbody>
                 @foreach ($report->kelas as $item)
                 <tr>
+                  <th class="text-center">{{ $item->nama_matkul }}</th>
                   <th class="text-center">{{ $item->nama_kelas }}</th>
                   <td>
                     <ul>

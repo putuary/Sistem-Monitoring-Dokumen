@@ -1,10 +1,3 @@
-/*
- *  Document   : helpers.js
- *  Author     : pixelcave
- *  Description: Various helpers for plugin inits or helper functionality
- *
- */
-
 // Helper variables
 let jqSparklineResize = false;
 let jqSparklineTimeout;

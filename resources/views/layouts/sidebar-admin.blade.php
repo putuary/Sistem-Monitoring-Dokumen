@@ -16,12 +16,14 @@
 
 <li class="nav-main-heading">DOKUMEN PERKULIAHAN</li>
 
+@if(Auth::user()->role != 'admin')
 <li class="nav-main-item">
   <a class="nav-main-link {{ (Request::is('penugasan') || Request::is('penugasan/*')) ? 'active' : '' }}" href="/penugasan">
     <i class="nav-main-link-icon far fa-id-badge"></i>
     <span class="nav-main-link-name">Penugasan</span>
   </a>
 </li>
+@endif
 
 <li class="nav-main-item">
   <a class="nav-main-link {{ (Request::is('progres-pengumpulan') || Request::is('progres-pengumpulan/*')) ? 'active' : '' }}" href="/progres-pengumpulan">

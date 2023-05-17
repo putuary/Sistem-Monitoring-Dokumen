@@ -81,6 +81,10 @@ class PenugasanController extends Controller
         // dd($data);
         // dd($request->all());
 
+        if(count($request->nama_kelas) != count($request->id_dosen)) {
+            return redirect()->back()->with('failed', 'Nama Kelas atau dosen tidak boleh kosong');
+        }
+
         $tahun_aktif=TahunAjaran::where('is_aktif', 1)->first();
         if($tahun_aktif) {
             LeaderBoardController::storeResultBadge($tahun_aktif->id_tahun_ajaran);

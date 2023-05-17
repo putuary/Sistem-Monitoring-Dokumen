@@ -220,7 +220,7 @@ function dokumenSummary($dokumen_ditugaskan) {
     $terkumpul=0;
     $ditugaskan=0;
 
-    if($dokumen_ditugaskan->dokumen_perkuliahan->dikumpulkan_per==0){
+    if($dokumen_ditugaskan->dikumpulkan_per==0){
         $dokumen_dikumpul=$dokumen_ditugaskan->dokumen_matkul;
     }else{
         $dokumen_dikumpul=$dokumen_ditugaskan->dokumen_kelas;
@@ -417,7 +417,8 @@ function showReport($dokumen_ditugaskan, $kelas) {
     foreach($kelas as $key => $kls) {
         $submit=$late=$ontime=$empty=$mendekati_dedline=$terlewat=0;
         $report->kelas[$key] = (object) [
-            'nama_kelas' => $kls->matkul->nama_matkul. ' ' .$kls->nama_kelas,
+            'nama_matkul' => $kls->matkul->nama_matkul,
+            'nama_kelas'  => $kls->nama_kelas,
         ];
         foreach($kls->dosen_kelas as $dosen) {
             $report->kelas[$key]->dosen[] = $dosen->nama;

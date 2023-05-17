@@ -27,6 +27,14 @@
 
     <!-- Page Content -->
     <div class="content">
+
+      @if (session()->has('failed'))
+          <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <strong>{{ session()->get('failed') }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      @endif
+
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
@@ -117,22 +125,26 @@
      <script>One.helpersOnLoad(["js-flatpickr", "jq-select2"]);</script>
 
      <script>
-      $('#btn-submit').click(function (e){
-           e.preventDefault();
-           let form = $(this).parents('form');
-           Swal.fire({
-            title: 'Apakah anda sudah yakin ?',
-            text: 'Anda tidak akan bisa mengubah data ini lagi!',
-            icon: 'warning',
-            showDenyButton: true,
-            confirmButtonText: 'Yakin',
-            denyButtonText: `Batal`,
-            }).then((result) => {
-              /* Read more about isConfirmed, isDenied below */
-              if (result.isConfirmed) {
-                form.submit();
-              }
-          });
+       $(document).ready(function () {
+        $(".alert").delay(2000).fadeOut("slow");
+        $('#btn-submit').click(function (e){
+            e.preventDefault();
+            let form = $(this).parents('form');
+            Swal.fire({
+              title: 'Apakah anda sudah yakin ?',
+              text: 'Anda tidak akan bisa mengubah data ini lagi!',
+              icon: 'warning',
+              showDenyButton: true,
+              confirmButtonText: 'Yakin',
+              denyButtonText: `Batal`,
+              }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                  form.submit();
+                }
+            });
+        });
+
       });
      </script>
 @endsection

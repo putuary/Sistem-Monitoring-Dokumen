@@ -113,7 +113,8 @@
 	<table>
 		<thead>
 			<tr>
-				<th></th>
+				<th>Mata Kuliah</th>
+        <th>Kelas</th>
         @foreach ($dokumen as $item)
         <th>{{ $item->nama_dokumen }}</th>    
         @endforeach
@@ -122,6 +123,7 @@
 		<tbody>
       @foreach ($report->kelas as $item)
       <tr>
+        <th>{{ $item->nama_matkul }}</th>
         <th>{{ $item->nama_kelas }}</th>
         @foreach ($item->dokumen as $dokumen)
         <td class="@if($dokumen->status == 0) {{ 'text-danger' }} @elseif($dokumen->status == 1) {{ $dokumen->is_late == 1 ? 'text-warning' : 'text-success' }} @endif" style="font-size: 25px;">@if($dokumen->status == 0) &#x2717; @elseif($dokumen->status == 1) &#x2713; @elseif($dokumen->status == 2) <span style="font-size: 10px;">TD</span> @endif</td>

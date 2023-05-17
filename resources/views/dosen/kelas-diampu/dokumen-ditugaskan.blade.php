@@ -49,7 +49,7 @@
             @foreach ($dokumen as $key => $item)
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="fs-sm">{{ $item->dokumen_perkuliahan->nama_dokumen }}</td>
+                <td class="fs-sm">{{ $item->nama_dokumen }}</td>
                 <td class="fs-sm">{{ showWaktu($item->tenggat_waktu) }}</td>
 
                 @if ($item->dikumpulkan_per==0)
@@ -346,7 +346,7 @@
           keyboard: false
         });
         $('.modal-upload').modal("show");
-        $('.title').html('Unggah Dokumen '+jsfiles[id].dokumen_perkuliahan.nama_dokumen);
+        $('.title').html('Unggah Dokumen '+jsfiles[id].nama_dokumen);
         if(jsfiles[id].dikumpulkan_per === 0) {
           $('#id_dokumen').val(jsfiles[id].dokumen_matkul[0].id_dokumen_matkul);
         } else {
@@ -360,7 +360,7 @@
           keyboard: false
         });
         $('.modal-upload-multiple').modal("show");
-        $('.title').html('Unggah Dokumen '+jsfiles[id].dokumen_perkuliahan.nama_dokumen);
+        $('.title').html('Unggah Dokumen '+jsfiles[id].nama_dokumen);
         if(jsfiles[id].dikumpulkan_per === 0) {
           $('#id_dokumen_multiple').val(jsfiles[id].dokumen_matkul[0].id_dokumen_matkul);
         } else {
