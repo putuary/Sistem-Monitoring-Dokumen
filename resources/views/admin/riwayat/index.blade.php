@@ -155,31 +155,4 @@
       ]);
     </script>
 
-     <script>
-      let jsfiles = 1;
-      // console.log(jsfiles);
-      //modal
-      function editPengingat(id) {
-        $('.modal-edit').modal("show");
-        $('#id_dokumen_ditugaskan').val(jsfiles[id].id_dokumen_ditugaskan);
-        $('#tenggat_waktu').val(jsfiles[id].tenggat_waktu);
-      }
-
-      function aturPengumpulan(id) {
-        // post data using ajax
-        $.ajax({
-          url: '/atur-pengingat-pengumpulan/edit_pengumpulan',
-          type: 'POST',
-          data: {
-            id_dokumen_ditugaskan: jsfiles[id].id_dokumen_ditugaskan,
-            _token: '{{ csrf_token() }}'
-          },
-          success: function (status) {
-            console.log(status);
-          }
-        });
-      }
-
-
-    </script>
 @endsection

@@ -140,7 +140,7 @@
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
-          <h3 class="block-title">Data Mata Kuliah</h3>
+          <h3 class="block-title">Data Dokumen Perkuliahan</h3>
         </div>
         <div class="block-content block-content-full">
           <!-- DataTables init on table by adding .js-dataTable-responsive class, functionality is initialized in js/pages/be_tables_datatables.min.js which was auto compiled from _js/pages/be_tables_datatables.js -->
@@ -280,7 +280,7 @@
     <script>One.helpersOnLoad(['jq-notify']);</script>
 
      <script>
-      let jsfiles = <?php echo json_encode($dokumen) ?>;
+      let jsfiles = @json($dokumen);
 
       //modal
       function editDokumen(id) {

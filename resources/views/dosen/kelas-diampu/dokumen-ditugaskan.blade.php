@@ -323,7 +323,7 @@
      <script>
 
       let jsfiles = {{ Js::from($dokumen) }};
-      console.log(jsfiles);
+      
       //modal
 
       function showNote($id) {

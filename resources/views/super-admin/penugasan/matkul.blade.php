@@ -291,7 +291,7 @@
 
      <script>
       let jsfiles = <?php echo json_encode($matkul) ?>;
-      console.log(jsfiles);
+      
 
       function errorAlert(message) {
         One.helpers('notify', {type: 'danger', icon: 'fa fa-times me-1', message: message});

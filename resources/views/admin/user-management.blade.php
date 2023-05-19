@@ -283,7 +283,7 @@
     </script>
 
      <script>
-      let jsfiles = <?php echo json_encode($data); ?>;
+      let jsfiles = @json($data);
       
       //modal
       function edit_pengguna(id) {

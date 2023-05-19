@@ -147,7 +147,7 @@
 
      <script>
       let jsfiles = @json($nama_files);
-      console.log(jsfiles);
+      
       //modal
       function editNamaFile(id) {
         $('.modal-edit').modal("show");

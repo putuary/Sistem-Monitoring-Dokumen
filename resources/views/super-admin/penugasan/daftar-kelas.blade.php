@@ -311,7 +311,7 @@
 
      <script>
       let jsfiles = @json($kelas);
-      console.log(jsfiles);
+      
       //modal
       function editKelas(id) {
         $('.modal-edit').modal({backdrop: 'static', keyboard: false});

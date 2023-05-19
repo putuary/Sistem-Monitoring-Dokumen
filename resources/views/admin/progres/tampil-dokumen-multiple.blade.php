@@ -140,9 +140,8 @@
 
      <script>
        let dokumen = @json($nama_files);
-      console.log(dokumen);
+      
       function refuseDokumen(key) {
-        console.log(dokumen[key]);
         $('.modal-catatan').modal({backdrop: 'static', keyboard: false});
         $('.modal-catatan').modal("show");
 

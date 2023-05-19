@@ -17,14 +17,23 @@
 
 @section('content')
     <!-- Page Content -->
-     <!-- pop up success upload -->
-    @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
-        <strong>{{ session()->get('success') }}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
+    
     <div class="content">
+       <!-- pop up success upload -->
+      @if (session()->has('success'))
+        <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+          <strong>{{ session()->get('success') }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      @endif
+
+      @if (session()->has('failed'))
+          <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <strong>{{ session()->get('failed') }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      @endif
+
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
@@ -186,33 +195,9 @@
       ]);
     </script>
 
-     <script>
-      let jsfiles = 1;
-      console.log(jsfiles);
-      //modal
-      function edit_pengguna(id) {
-        $('.modal-edit').modal("show");
-        $('#id_pengguna').val(jsfiles[id].id);
-        $('#nama').val(jsfiles[id].nama);
-        $('#email').val(jsfiles[id].email);
-        
-        if(jsfiles[id].role === 'kaprodi'){
-          $('#kaprodi').attr('selected', 'selected');
-        }else if(jsfiles[id].role === 'gkmp'){
-          $('#gkmp').attr('selected', 'selected');
-        }else if(jsfiles[id].role === 'dosen'){
-          $('#dosen').attr('selected', 'selected');
-        }else if(jsfiles[id].role === 'admin'){
-          $('#admin').attr('selected', 'selected');
-        }
-      }
-
+    <script>
       $(document).ready(function () {
-        $(".button-tambah-pengguna").on("click", function () {
-          $("#modal-tambah-pengguna").modal("show");
-        });
-
-        $(".modal-edit").attr("id", "modal-edit");
+        $(".alert").delay(2000).fadeOut("slow");
       });
     </script>
 @endsection

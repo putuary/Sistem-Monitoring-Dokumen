@@ -199,7 +199,7 @@
 
     <script>
       let dokumen = @json($dokumen);
-      console.log(dokumen);
+      
       function refuseDokumen(key) {
         $('.modal-catatan').modal({backdrop: 'static', keyboard: false});
         $('.modal-catatan').modal("show");

@@ -285,7 +285,7 @@
 
      <script>
       let jsfiles = @json($dokumen);
-      // console.log(jsfiles);
+      
       //modal
       function editPengingat(id) {
         $('.modal-edit').modal({backdrop: 'static', keyboard: false});

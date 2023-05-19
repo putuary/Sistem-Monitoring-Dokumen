@@ -196,7 +196,7 @@
      <script>
 
       let dokumen = {{ Js::from($dokumen) }};
-      console.log(dokumen);
+     
       //modal
       function refuseDokumen(key) {
         // console.log(dokumen[key]);
