@@ -43,6 +43,7 @@
         <div class="block-content block-content-full">
           <form class="block-content" action="/progres-pengumpulan/dokumen" method="POST">
             @csrf
+            <input type="hidden" name="dikumpul" value="{{ $dokumen->dikumpul }}">
             <input type="hidden" name="nama_dokumen" value="{{ $dokumen->nama_dokumen }}">
             <input type="hidden" name="id_tahun_ajaran" value="{{ $dokumen->id_tahun_ajaran }}">
             <div class="row justify-content-center">

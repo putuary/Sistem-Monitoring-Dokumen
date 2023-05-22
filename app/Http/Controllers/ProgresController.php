@@ -221,21 +221,20 @@ class ProgresController extends Controller
     
             $filearr=[];
             foreach ($files as $name => $file)
-            {
-                
+            {   
                 // Skip directories (they would be added automatically)
                 if (!$file->isDir())
                 {
-                    if(like_match($request->nama_dokumen.'%', $file->getFilename())){
-                        // Get real and relative path for current file
+                    // Get real and relative path for current file
+                    if(like_match('%'.$request->nama_dokumen.'%', $file->getRealPath())){
                         $filePath = $file->getRealPath();
-                        
                         $filearr[]= $filePath;
                     }
-                    
                 }
             }
+            // dd($filearr);
             $zip = new \ZipArchive;
+            // dd($rootPath);
     
             $fileName = $request->nama_dokumen.'.zip';
         
@@ -243,10 +242,23 @@ class ProgresController extends Controller
             {
                 $files = $filearr; //passing the above array
     
-                foreach ($files as $key => $value) {
-                    // dd($value);
-                    $relativeNameInZipFile = basename($value);
-                    $zip->addFile($value, $request->nama_dokumen.'/'.$relativeNameInZipFile);
+                if($request->dikumpul==0) {
+                    foreach ($files as $key => $value) {
+                        // dd($value);
+                        $relativeNameInZipFile = basename($value);
+                        $zip->addFile($value, $request->nama_dokumen.'/'.$relativeNameInZipFile);
+                    }
+                } else {
+                    foreach ($files as $key => $value) {
+                        // dd($value);
+                        // dd($rootPath);
+                        $subPathToRemove = str_replace('/', '\\', $rootPath);
+                        // dd($subPathToRemove);
+
+                        $newPath = str_replace($subPathToRemove.'\\', '', $value);
+                        
+                        $zip->addFile($value, $newPath);
+                    }
                 }
     
                 $zip->close();
