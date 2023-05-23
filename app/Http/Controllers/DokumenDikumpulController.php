@@ -96,7 +96,7 @@ class DokumenDikumpulController extends Controller
     public function uploadDokumen(Request $request)
     {
         $request->validate([
-            'file_dokumen' => 'required|mimes:pdf|max:10240',
+            'file_dokumen' => 'required|mimes:pdf|max:2048',
         ]);
 
         $dokumen=$this->showProfilDokumen($request->id_dokumen);
@@ -153,7 +153,7 @@ class DokumenDikumpulController extends Controller
     public function uploadDokumenMultiple(Request $request){
         // dd($request->all());
         $request->validate([
-            'file_dokumen.*' => 'required|mimes:pdf|max:10240',
+            'file_dokumen.*' => 'required|mimes:pdf|max:2048',
         ]);
         // $data=$request->file('file_dokumen')->move(storage_path('app/dokumen'), $request->file('file_dokumen')->getClientOriginalName());
         // dd($data);

@@ -85,7 +85,7 @@ class DataManagementController extends Controller
             'nama_dokumen'          => 'required',
             'tenggat_waktu_default' => 'required',
             'dikumpulkan_per'       => 'required',
-            'template'              => 'mimes:docx,doc,xls,xlsx,zip|max:3072'
+            'template'              => 'mimes:docx,doc,xls,xlsx,zip|max:2048'
         ]);
 
         $id = IdGenerator::generate(['table' => 'dokumen_perkuliahan', 'field'=>'id_dokumen', 'length' => 6, 'prefix' => 'DP']);
@@ -121,7 +121,7 @@ class DataManagementController extends Controller
             'nama_dokumen'          => 'required',
             'tenggat_waktu_default' => 'required',
             'dikumpulkan_per'       => 'required',
-            'template'              => 'mimes:docx,doc,xls,xlsx,zip|max:3072'
+            'template'              => 'mimes:docx,doc,xls,xlsx,zip|max:2048'
             ]);
 
         $dokumen=DokumenPerkuliahan::find($id_dokumen);

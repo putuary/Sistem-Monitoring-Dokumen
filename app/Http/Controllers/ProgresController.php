@@ -366,6 +366,83 @@ class ProgresController extends Controller
         }
     }
 
+    // private function makeZip() {
+    //     $zip = new \ZipArchive;
+        
+    //     $fileName = $request->nama_matkul.'-'.$request->nama_kelas.'.zip';
+        
+    //     if ($zip->open(storage_path('app/zip/'.$fileName), \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE)
+    //     {
+    //         foreach ($fileArr as $key => $file) {
+    //             $parent_dir = dirname($value);
+    //             if(like_match('%dokumen-matkul%', $value)) {
+    //                 if(basename($parent_dir) != 'dokumen-matkul') {
+    //                     $relativeNameInZipFile = basename($parent_dir).'/'.basename($value);
+    //                 } else {
+    //                     $relativeNameInZipFile =basename($value);
+    //                 }
+    //             } else {
+    //                 if(basename($parent_dir) != $request->nama_kelas) {
+    //                     $relativeNameInZipFile = basename($parent_dir).'/'.basename($value);
+    //                 } else {
+    //                     $relativeNameInZipFile =basename($value);
+    //                 }
+    //             }
+    //             $zip->addFile($value, $request->nama_matkul.'-'.$request->nama_kelas.'/'.$relativeNameInZipFile);
+    //         }
+
+    //         $zip->close();
+    //     }
+    //     return response()->download(storage_path('app/zip/'.$fileName));
+    // }
+
+    // public function downloadFileDokumen(Request $request) {
+    //     // dd($request->all());
+    //     $dokumen = DokumenDitugaskan::with('tahun_ajaran')->find($request->id_dokumen_ditugaskan);
+
+    //     $fileArr=[];
+    //     if($dokumen->dikumpulkan_per == 0) {
+    //         $dokumen->load(['dokumen_matkul' => function($query) {
+    //             $query->whereNotNull('file_dokumen')->with('matkul');
+    //         }]);
+    //         if($dokumen->dikumpul==0) {
+    //             foreach($dokumen->dokumen_matkul as $dokumen_matkul) {
+    //                 $fileArr[] = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, true, $dokumen_matkul->matkul->nama_matkul).'/'.$dokumen_matkul->nama_dokumen);
+    //             }
+    //             $fileZip=$this->makeZip($fileArr, $dokumen->nama_dokumen); 
+    //         } else {
+    //             foreach($dokumen->dokumen_matkul as $dokumen_matkul) {
+    //                 $pathDokumen = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, true, $dokumen_matkul->matkul->nama_matkul).'/'.$dokumen->nama_dokumen);
+    //                 // dd($pathDokumen);
+    //                 $files = array_diff(scandir($pathDokumen, SCANDIR_SORT_ASCENDING), array('.', '..'));
+    //                 foreach($files as $file) {
+    //                     $fileArr[] = $pathDokumen.'/'.$file;
+    //                 }
+    //             }
+    //         }
+    //     } else {
+    //         $dokumen->load(['dokumen_kelas' => function($query) {
+    //             $query->whereNotNull('file_dokumen')->with(['kelas' => function($query) {
+    //                 $query->with('matkul');
+    //             }]);
+    //         }]);
+    //         if($dokumen->dikumpul==0) {
+    //             foreach($dokumen->dokumen_kelas as $dokumen_kelas) {
+    //                 $fileArr[] = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, false, $dokumen_kelas->kelas->matkul->nama_matkul, $dokumen_kelas->kelas->nama_kelas).'/'.$dokumen_kelas->nama_dokumen);
+    //             }
+    //         } else {
+    //             foreach($dokumen->dokumen_kelas as $dokumen_kelas) {
+    //                 $pathDokumen = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, false, $dokumen_kelas->kelas->matkul->nama_matkul, $dokumen_kelas->kelas->nama_kelas).'/'.$dokumen->nama_dokumen);
+    //                 $files = array_diff(scandir($pathDokumen, SCANDIR_SORT_ASCENDING), array('.', '..'));
+    //                 foreach($files as $file) {
+    //                     $fileArr[] = $pathDokumen.'/'.$file;
+    //                 }
+    //             }
+    //         }
+    //     }
+        
+    // }
+
     public function showReport() {
         $id_tahun_ajaran=request('tahun_ajaran');
         $tahun_ajaran=TahunAjaran::find($id_tahun_ajaran);

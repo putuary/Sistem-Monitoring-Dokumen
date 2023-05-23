@@ -113,7 +113,7 @@
                                 <label class="form-check-label" for="example-radios-inline2">Kelas</label>
                               </div>
                             </div>
-                            <label for="example-text-input">Template Dokumen Perkuliahan (.docx .doc .xls .xlsx .zip)</label>
+                            <label for="example-text-input">Template Dokumen Perkuliahan (.docx .doc .xls .xlsx .zip max: 2MB)</label>
                             <input
                                 type="file"
                                 class="form-control mb-2 @error('template') is-invalid @enderror"
@@ -228,7 +228,7 @@
                                 <label class="form-check-label" for="example-radios-inline2">Kelas</label>
                               </div>
                             </div>
-                            <label for="example-text-input">Template Dokumen Perkuliahan (.docx .doc .xls .xlsx .zip)</label>
+                            <label for="example-text-input">Template Dokumen Perkuliahan (.docx .doc .xls .xlsx .zip max: 2MB)</label>
                             <input
                                 type="file"
                                 class="form-control mb-2s @error('template') is-invalid @enderror"

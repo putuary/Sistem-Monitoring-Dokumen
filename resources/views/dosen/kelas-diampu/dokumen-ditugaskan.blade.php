@@ -27,6 +27,20 @@
         </div>
       @endif
 
+      @error('file_dokumen.*')
+      <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+        <strong>{{ $message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      @enderror
+
+      @error('file_dokumen')
+      <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+        <strong>{{ $message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      @enderror
+
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
@@ -215,7 +229,7 @@
                         <div class="col-lg-12">
                           <div class="form-group">
                             <input type="hidden" name="id_dokumen" id="id_dokumen">
-                            <label for="example-text-input">File Dokumen (Single Dokumen .pdf max: 10MB)</label>
+                            <label for="example-text-input">File Dokumen (Single Dokumen .pdf max: 2MB)</label>
                             <input
                                 type="file"
                                 class="form-control @error('file_dokumen') is-invalid @enderror"
@@ -223,9 +237,6 @@
                                 id="file_dokumen"
                                 name="file_dokumen"
                                 required />
-                              @error('file_dokumen')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                              @enderror
                           </div>
                         </div>
                       </div>
@@ -269,7 +280,7 @@
                           <div class="form-group">
                             <div class="previews"></div>
                             <input type="hidden" name="id_dokumen" id="id_dokumen_multiple">
-                            <label for="example-text-input">File Dokumen <br> (Multiple Dokumen .pdf max: 10MB note: ikuti perintah penamaan file)</label>
+                            <label for="example-text-input">File Dokumen <br> (Multiple Dokumen .pdf max: 2MB note: ikuti perintah penamaan file)</label>
                             <input
                                 type="file"
                                 class="form-control @error('file_dokumen') is-invalid @enderror"
@@ -277,9 +288,6 @@
                                 id="file_dokumen"
                                 name="file_dokumen[]"
                                 required multiple />
-                                @error('file_dokumen')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                              @enderror
                             </div>
                           </div>
                         </div>
