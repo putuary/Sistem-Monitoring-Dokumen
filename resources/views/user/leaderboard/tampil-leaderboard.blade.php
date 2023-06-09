@@ -81,14 +81,14 @@
                 <th class="text-center" >Kosong</th>
                 <th class="text-center" >Tugas</th>
                 <th class="text-center" style="width: 15%">Persentase Pengumpulan</th>
-                <th class="text-center" >Poin</th>
+                <th class="text-center" >Score</th>
               </tr>
             </thead>
             <tbody>
               @foreach ($leaderboards as $key => $item)
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="text-center fs-sm">{{ $item->user->nama }}</td>
+                <td class="text-center fs-sm"><a href="/leaderboard/rincian-score/{{ $item->user->id.((request()->tahun_ajaran != null) ? '?tahun_ajaran='.request()->tahun_ajaran : '') }}">{{ $item->user->nama }}</a></td>
                 <td class="text-center fs-sm">{{ $item->onTime }}</td>
                 <td class="text-center fs-sm">{{ $item->late }}</td>
                 <td class="text-center fs-sm">{{ $item->empty }}</td>
@@ -100,7 +100,7 @@
                   <p class="fs-xs fw-semibold mb-0">{{ $item->percent. ' %' }}</p>
                 </td>
                 {{-- <td class="text-center fs-sm">{{ $item->percent. ' %' }}</td> --}}
-                <td class="text-center fs-sm">{{ $item->point }}</td>
+                <td class="text-center fs-sm">{{ $item->score }}</td>
               </tr>
               @endforeach
             </tbody>

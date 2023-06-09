@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
 	<title>Laporan Pengumpulan Dokumen</title>
 	<style>
-		table, span {
+		.table-utama, span {
 			width: 100%;
 			border-collapse: collapse;
 			font-size: 10px;
 			page-break-inside: auto; /* Setelah tabel dicetak, laman baru akan dimulai */
 		}
 
-		th, td {
+		th, tbody tr td {
 			padding: 5px;
 			border: 1px solid #000;
 			text-align: center;
@@ -23,7 +23,7 @@
 			background-color: #ccc;
 		}
 
-		tr:nth-child(even) {
+		tbody tr:nth-child(even) {
 			background-color: #f2f2f2;
 		}
 
@@ -39,36 +39,16 @@
       text-align: center;
     }
 
-    .row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .label {
-      width: 45%;
-      font-weight: bold;
-    }
-
-    .value {
-      width: 55%;
-    }
-
-
-    .report-row {
-      display: flex;
-    }
-
-    .report-col {
-      flex: 3;
-    }
-
-    .report-col-label {
+    .text-start {
       text-align: left;
     }
 
-    .report-col-value {
-      text-align: left;
+    .text-center {
+      text-align: center;
+    }
+
+    .text-end {
+      text-align: right;
     }
 
     .text-success {
@@ -91,14 +71,41 @@
       color: teal;
     }
 
+    .table-success {
+      background-color: green;
+    }
+
+    .table-danger {
+      background-color: red;
+    }
+
+    .table-primary {
+      background-color: blue;
+    }
+
+    .table-warning {
+      background-color: yellow;
+    }
+
+    .table-info {
+      background-color: grey;
+    }
+
+    .foot1 {
+      width: 400px;
+    }
+    .foot2 {
+      width: 100px;
+    }
+
     pre {
-  display: inline;
-  font-family: inherit;
-  font-size: inherit;
-  margin: 0;
-  padding: 0;
-  white-space: pre-wrap;
-}
+      display: inline;
+      font-family: inherit;
+      font-size: inherit;
+      margin: 0;
+      padding: 0;
+      white-space: pre-wrap;
+    }
 
 
 	</style>
@@ -109,8 +116,8 @@
     Laporan Pengumpulan Dokumen Perkuliahan <br />
     TA : {{ $tahun_ajaran->tahun_ajaran }}
   </h3>
-  <p style="text-align: center">Dicetak : {{ \Carbon\Carbon::now()->locale('id')->isoFormat('LLLL') }}</p>
-	<table>
+  <p class="text-center">Dicetak : {{ \Carbon\Carbon::now()->locale('id')->isoFormat('LLLL') }}</p>
+	<table class="table-utama">
 		<thead>
 			<tr>
 				<th>Mata Kuliah</th>
@@ -122,7 +129,7 @@
 		</thead>
 		<tbody>
       @foreach ($report->kelas as $item)
-      <tr>
+      <tr class="data">
         <th>{{ $item->nama_matkul }}</th>
         <th>{{ $item->nama_kelas }}</th>
         @foreach ($item->dokumen as $dokumen)
@@ -134,25 +141,30 @@
 		</tbody>
 	</table>
 
-  <div class="row" style="margin-top: 20px;">
-    <div class="label"><span class="text-success">Total Terkumpul</span></div>
-    <div class="value"><span class="text-success">{{ $report->total_dikumpul }}</span></div>
-  </div>
-  <div class="row">
-    <div class="label"><span class="text-danger">Total Belum Dikumpul</span></div>
-    <div class="value"><span class="text-danger">{{ $report->total_belum_dikumpul }}</span></div>
-  </div>
-  <div class="row">
-    <div class="label"><span class="text-primary">Total Tepat Waktu</span></div>
-    <div class="value"><span class="text-primary">{{ $report->total_tepat_waktu }}</span></div>
-  </div>
-  <div class="row">
-    <div class="label"><span class="text-warning">Total Terlambat</span></div>
-    <div class="value"><span class="text-warning">{{ $report->total_terlambat }}</span></div>
-  </div>
-  <div class="row">
-    <div class="label"><span class="text-info">Total Ditugaskan</span></div>
-    <div class="value"><span class="text-info">{{ $report->total_ditugaskan}}</span></div>
-  </div>
+  <table>
+    <tfoot>
+      <tr class="table-success">
+        <td class="text-start foot1"><strong>Total Terkumpul:</strong></td>
+        <td class="text-end foot2">{{ $report->total_dikumpul }}</td>
+      </tr>
+      <tr class="table-danger">
+        <td class="text-start foot1"><strong>Total Belum Dikumpul:</strong></td>
+        <td class="text-end foot2">{{ $report->total_belum_dikumpul }}</td>
+      </tr>
+      <tr class="table-primary">
+        <td class="text-start foot1"><strong>Total Tepat Waktu:</strong></td>
+        <td class="text-end foot2"><strong>{{ $report->total_tepat_waktu }}</strong></td>
+      </tr>
+      <tr class="table-warning">
+        <td class="text-start foot1"><strong>Total Terlambat:</strong></td>
+        <td class="text-end foot2"><strong>{{ $report->total_terlambat }}</strong></td>
+      </tr>
+      <tr class="table-info">
+        <td class="text-start foot1"><strong>Total Ditugaskan:</strong></td>
+        <td class="text-end foot2"><strong>{{ $report->total_ditugaskan}}</strong></td>
+      </tr>
+    </tfoot>
+  </table>
+  
 </body>
 </html>

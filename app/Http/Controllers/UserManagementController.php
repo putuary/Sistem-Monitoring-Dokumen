@@ -31,7 +31,6 @@ class UserManagementController extends Controller
             'email'     => $request->email,
             'password'  => Hash::make($request->password),
             'role'      => $request->role,
-            'avatar'    => 'default.png',
         ]);
 
         if(in_array($request->role, ['kaprodi', 'gkmp'])) {

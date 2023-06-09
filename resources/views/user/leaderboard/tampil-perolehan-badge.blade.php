@@ -82,7 +82,7 @@
                 <th class="text-center" >Tepat Waktu</th>
                 <th class="text-center" >Terlambat</th>
                 <th class="text-center" >Kosong</th>
-                <th class="text-center" >Poin</th>
+                <th class="text-center" >Score</th>
                 <th class="text-center" >Badge</th>
 
               </tr>

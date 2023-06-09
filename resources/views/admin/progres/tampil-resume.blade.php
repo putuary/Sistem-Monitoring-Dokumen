@@ -32,19 +32,17 @@
               </h1>
             </div>
           </div>
-          <form class="block-content" action="/progres-pengumpulan/resume-pengumpulan/unduh" method="POST">
-            @csrf
-            <input type="hidden" name="id_tahun_ajaran" value="{{ request('tahun_ajaran') ?? '' }}">
+          <div class="block-content">
             <div class="row justify-content-left">
               <div class="col-md-2 col-lg-4">
                 <div class="mb-4 text-center">
-                  <button type="submit" class="btn btn-alt-info" id="btn-submit">
+                  <a href="/progres-pengumpulan/resume-pengumpulan/unduh?tahun_ajaran={{ request('tahun_ajaran') ?? null }}" class="btn btn-alt-info" id="btn-submit">
                     <i class="fa fa-fw fa-download me-1"></i> Unduh Laporan Pengumpulan
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
-          </form>
+          </div>
           <div class="table-responsive">
             <table class="table table-bordered table-striped table-vcenter">
               <thead>
@@ -74,10 +72,30 @@
                   @endforeach
                 </tr>
                 @endforeach
+                <tr class="table-success">
+                  <td colspan="2" class="text-start"><strong>Total Terkumpul:</strong></td>
+                  <td class="text-end">{{ $report->total_dikumpul }}</td>
+                </tr>
+                <tr class="table-danger">
+                  <td colspan="2" class="text-start"><strong>Total Belum Dikumpul:</strong></td>
+                  <td class="text-end">{{ $report->total_belum_dikumpul }}</td>
+                </tr>
+                <tr class="table-primary">
+                  <td colspan="2" class="text-start"><strong>Total Tepat Waktu:</strong></td>
+                  <td class="text-end"><strong>{{ $report->total_tepat_waktu }}</strong></td>
+                </tr>
+                <tr class="table-warning">
+                  <td colspan="2" class="text-start"><strong>Total Terlambat:</strong></td>
+                  <td class="text-end"><strong>{{ $report->total_terlambat }}</strong></td>
+                </tr>
+                <tr class="table-info">
+                  <td colspan="2" class="text-start"><strong>Total Ditugaskan:</strong></td>
+                  <td class="text-end"><strong>{{ $report->total_ditugaskan}}</strong></td>
+                </tr>
               </tbody>
             </table>
           </div>
-          <div class="row mt-3 ms-3">
+          {{-- <div class="row mt-3 ms-3">
             <div class="col-4">
               <p class="text-success">Total Terkumpul</p>
             </div>
@@ -117,7 +135,7 @@
               <p class="text-info">{{ $report->total_ditugaskan}}</p>
             </div>
           </div>
-        </div>
+        </div> --}}
       </div>
       <!-- Table -->
     </div>

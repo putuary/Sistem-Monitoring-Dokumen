@@ -227,7 +227,7 @@
                             </div>
                             <div id="ubah-password"></div>
                             <label class="mt-2" for="example-text-input">Peran (kosongkan jika tidak diubah)</label>
-                            <select class="js-select2 form-select select2-inside-modal-edit" name="role" style="width: 100%;" data-placeholder="Pilih Peran" required>
+                            <select class="form-select select2-inside-modal-edit" id="peran-edit" name="role" style="width: 100%;" data-placeholder="Pilih Peran" id="select-peran" required>
                               <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                               <option value="kaprodi" id="kaprodi">Koordinator Prodi</option>
                               <option value="gkmp" id="gkmp">Gugus Kendali Mutu Prodi</option>
@@ -292,16 +292,19 @@
         $('#form_edit').attr('action', `manajemen-pengguna/${jsfiles[id].id}` );
         $('#nama').val(jsfiles[id].nama);
         $('#email').val(jsfiles[id].email);
-        
+
+        $("#peran-edit option").prop("selected", false);
+
         if(jsfiles[id].role === 'kaprodi'){
-          $('#kaprodi').attr('selected');
+          $('#kaprodi').prop("selected", true);
         }else if(jsfiles[id].role === 'gkmp'){
-          $('#gkmp').attr('selected', 'selected');
+          $('#gkmp').prop("selected", true);
         }else if(jsfiles[id].role === 'dosen'){
-          $('#dosen').attr('selected', 'selected');
+          $('#dosen').prop("selected", true);
         }else if(jsfiles[id].role === 'admin'){
-          $('#admin').attr('selected', 'selected');
+          $('#admin').prop("selected", true);
         }
+        $("#peran-edit").trigger("change");
       }
 
       $(document).ready(function () {

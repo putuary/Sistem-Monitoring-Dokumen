@@ -7,7 +7,10 @@ use App\Models\TahunAjaran;
 use App\Models\User;
 use App\Models\UserBadge;
 use App\Models\DokumenDitugaskan;
+use App\Models\DokumenKelas;
+use App\Models\DokumenMatkul;
 use App\Models\LeaderBoard;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Http\Request;
 
 class LeaderBoardController extends Controller
@@ -47,7 +50,7 @@ class LeaderBoardController extends Controller
                 'tepat_waktu'     => $lecturer->onTime,
                 'terlambat'       => $lecturer->late,
                 'kosong'          => $lecturer->empty,
-                'skor'            => $lecturer->point,
+                'skor'            => $lecturer->score,
             ]);
             
             if($key === 0) {
@@ -120,6 +123,23 @@ class LeaderBoardController extends Controller
     //     // dd($scores);
     //     return view('dosen.leaderboard.tampil-perolehan-score', ['tahun_aktif' => $tahun_aktif, 'tahun_ajaran' => $tahun_ajaran, 'scores' => $scores]);
     // }
+
+    public function showDetailScore($id_dosen) {
+        // $scores = Score::query()->with(['user','kelas' =>['matkul'],
+        //     'scoreable' => ['dokumen_ditugaskan'],
+        //     ])->scoreTahun(request('tahun_ajaran'))
+        //   ->where('id_dosen', $id_dosen)
+        //   ->whereNotNull('poin')
+        //   ->orderBy('updated_at', 'desc')->get();
+
+        $user=User::with(['score' => function($query) {
+            $query->with(['scoreable' => ['dokumen_ditugaskan'], 'kelas' => ['matkul']])
+            ->scoreTahun(request('tahun_ajaran'))->orderBy('updated_at', 'desc');
+        }])->where('id', $id_dosen)->get();
+        $detail=showRank($user);
+        // dd($detail[0]);
+        return view('user.leaderboard.detail-score', ['detail' => $detail[0]]);
+    }
 
     public function resultBadge(Request $request) {
         if($this->storeResultBadge($request->id_tahun_ajaran)) {

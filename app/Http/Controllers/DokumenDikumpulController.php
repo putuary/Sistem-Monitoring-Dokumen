@@ -7,6 +7,7 @@ use App\Models\DokumenKelas;
 use App\Models\DokumenMatkul;
 use App\Models\DokumenPerkuliahan;
 use App\Models\TahunAjaran;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 
@@ -120,6 +121,7 @@ class DokumenDikumpulController extends Controller
                       
                     $dokumen_matkul->scores()->update([
                         'poin'       => $data['poin'],
+                        'bonus'      => $data['bonus'],
                     ]);
                 } else {
                     $dokumen_matkul->note()->where('is_aktif', 1)->update([
@@ -138,6 +140,7 @@ class DokumenDikumpulController extends Controller
         
                     $dokumen_kelas->scores()->update([
                         'poin'     => $data['poin'],
+                        'bonus'    => $data['bonus'],
                     ]);
                 } else {
                     $dokumen_kelas->note()->where('is_aktif', 1)->update([
@@ -165,6 +168,9 @@ class DokumenDikumpulController extends Controller
             $file->move($dokumen->path_multiple, $nama_dokumen);
         }
         
+        $file_dokumen=$dokumen->dokumen_dikumpul->file_dokumen;
+        // dd($file_dokumen);
+
         $dokumen->dokumen_dikumpul->update([
             'file_dokumen'      => $dokumen->nama_dokumen,
             'waktu_pengumpulan' => date('Y-m-d H:i:s'),
@@ -176,16 +182,41 @@ class DokumenDikumpulController extends Controller
             
             if($tahun_aktif->id_tahun_ajaran == $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_tahun_ajaran) {
                 $dokumen_matkul=DokumenMatkul::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_matkul);
-                if($dokumen_matkul->note == null) {
-                    $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
-                      
-                    $dokumen_matkul->scores()->update([
-                        'poin'       => $data['poin'],
-                    ]);
+                if($file_dokumen == null) {
+                    if($dokumen_matkul->note == null) {
+                        $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+                        
+                        $dokumen_matkul->scores()->update([
+                            'poin'       => $data['poin'],
+                            'bonus'      => $data['bonus'],
+                        ]);
+                    } else {
+                        $dokumen_matkul->note()->where('is_aktif', 1)->update([
+                            'is_aktif' => 0,
+                        ]);
+                    }
                 } else {
-                    $dokumen_matkul->note()->where('is_aktif', 1)->update([
-                        'is_aktif' => 0,
-                    ]);
+                    if($dokumen_matkul->note == null) {
+                        $tenggat=Carbon::parse($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu);
+                        $waktu_pengumpulan=Carbon::parse($dokumen_matkul->waktu_pengumpulan);
+                        if($waktu_pengumpulan->isBefore($tenggat)) {
+                            $poin=100;
+                        } else {
+                            $poin=-25;
+                        }
+
+                        $dokumen_matkul->scores()->update([
+                            'poin'       => $poin,
+                        ]);                       
+                        if($dokumen->dokumen_dikumpul->scores[0]->bonus != null) {
+                            updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
+                         }
+
+                    } else {
+                        $dokumen_matkul->note()->where('is_aktif', 1)->update([
+                            'is_aktif' => 0,
+                        ]);
+                    }
                 }
             }
 
@@ -193,20 +224,44 @@ class DokumenDikumpulController extends Controller
             
             if($tahun_aktif->id_tahun_ajaran == $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_tahun_ajaran) {
                 $dokumen_kelas=DokumenKelas::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_kelas);
-                if($dokumen_kelas->note == null) {    
-                    $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
-    
-                    $dokumen_kelas->scores()->update([
-                        'poin'           => $data['poin'],
-                    ]);
-                } else {
-                    $dokumen_kelas->note()->where('is_aktif', 1)->update([
-                        'is_aktif' => 0,
-                    ]);
+                if($file_dokumen == null) {
+                    if($dokumen_kelas->note == null) {    
+                        $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+        
+                        $dokumen_kelas->scores()->update([
+                            'poin'       => $data['poin'],
+                            'bonus'      => $data['bonus'],
+                        ]);
+                    } else {
+                        $dokumen_kelas->note()->where('is_aktif', 1)->update([
+                            'is_aktif' => 0,
+                        ]);
+                    }
+                }else {
+                    if($dokumen_kelas->note == null) {
+                        $tenggat=Carbon::parse($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu);
+                        $waktu_pengumpulan=Carbon::parse($dokumen_kelas->waktu_pengumpulan);
+                        if($waktu_pengumpulan->isBefore($tenggat)) {
+                            $poin=100;
+                        } else {
+                            $poin=-25;
+                        }
+
+                        $dokumen_kelas->scores()->update([
+                            'poin'       => $poin,
+                        ]);                       
+                        if($dokumen->dokumen_dikumpul->scores[0]->bonus != null) {
+                            updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
+                         }
+
+                    } else {
+                        $dokumen_kelas->note()->where('is_aktif', 1)->update([
+                            'is_aktif' => 0,
+                        ]);
+                    }
                 }
             }
         }
-
 
         return redirect()->back()->with('success', 'Dokumen berhasil dikumpulkan');
     }
@@ -345,7 +400,7 @@ class DokumenDikumpulController extends Controller
 
     public function deleteDokumenDikumpul($id_dokumen, Request $request) {
         $dokumen=$this->showProfilDokumen($id_dokumen);
-        $dokumen->dokumen_dikumpul->load('note');
+        $dokumen->dokumen_dikumpul->load(['scores', 'note']);
         // dd
         if($request->nama_dokumen) {
             // Cek apakah file ada di dalam folder
@@ -361,8 +416,13 @@ class DokumenDikumpulController extends Controller
                     ]);
 
                     if($dokumen->dokumen_dikumpul->note == null) {
+                        if($dokumen->dokumen_dikumpul->scores[0]->bonus != null) {
+                            updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
+                         }
+                         
                         $dokumen->dokumen_dikumpul->scores()->update([
                             'poin' => null,
+                            'bonus' => null,
                         ]);
                     }
                 }
@@ -384,8 +444,13 @@ class DokumenDikumpulController extends Controller
         ]);
 
         if($dokumen->dokumen_dikumpul->note == null) {
+            if($dokumen->dokumen_dikumpul->scores[0]->bonus != null) {
+                updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
+             }
+             
             $dokumen->dokumen_dikumpul->scores()->update([
                 'poin' => null,
+                'bonus' => null,
             ]);
         }
 

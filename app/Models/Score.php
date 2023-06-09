@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\TahunAjaran;
 use App\Models\Kelas;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Score extends Model
 {
@@ -19,6 +20,7 @@ class Score extends Model
         'scoreable_id',
         'scoreable_type',
         'poin',
+        'bonus',
     ];
 
     public function scopeScoreTahunAktif($query)
@@ -50,7 +52,7 @@ class Score extends Model
         return $this->belongsTo(TahunAjaran::class, 'id_tahun_ajaran');
     }
 
-    public function scoreable()
+    public function scoreable(): MorphTo
     {
         return $this->morphTo();
     }

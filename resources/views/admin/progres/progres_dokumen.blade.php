@@ -57,14 +57,11 @@
       </form>
 
       <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start mb-3">
-        <form class="mt-3 mt-md-0" action="/progres-pengumpulan/unduh-semua-dokumen" method="POST">
-          @csrf
-          <input type="hidden" name="id_tahun_ajaran" value="{{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}">
-
-          <button type="submit" class="btn btn-info">
+        <div class="mt-3 mt-md-0">
+          <a href="/progres-pengumpulan/unduh-semua-dokumen/{{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}" class="btn btn-info">
             <i class="fa fa-fw fa-download me-1"></i> Unduh Semua Dokumen
-          </button>
-        </form>
+          </a>
+        </div>
 
         <div class="mt-3 mt-md-0">
           <a class="btn btn-success" href="/progres-pengumpulan/resume-pengumpulan?tahun_ajaran={{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}">

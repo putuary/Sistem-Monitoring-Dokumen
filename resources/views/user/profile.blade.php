@@ -7,7 +7,7 @@
       <div class="bg-black-50">
         <div class="content content-full text-center">
           <div class="my-3">
-            <img class="img-avatar img-avatar-thumb" src="{{ auth()->user()->avatar == 'default.png' ? asset('storage/avatar/avatar13.jpg') : asset('storage/avatar/'.auth()->user()->avatar) }}" alt="" />
+            <img class="img-avatar img-avatar-thumb" src="{{ (auth()->user()->avatar == null) ? asset('storage/avatar/avatar13.jpg') : asset('storage/avatar/'.auth()->user()->avatar) }}" alt="" />
           </div>
           <h1 class="h2 text-white mb-0">{{ $user->nama }}</h1>
           <span class="text-white-75">{{ isset($user->aktif_role) ? ($user->aktif_role->is_dosen==0 ? namaPeran($user->role) : 'Dosen Pengampu') : namaPeran($user->role) }}</span>
@@ -58,7 +58,7 @@
                 <div class="mb-4">
                   <label class="form-label">Avatar</label>
                   <div class="mb-4">
-                    <img id="avatar-preview" class="img-avatar" src="{{ auth()->user()->avatar == 'default.png' ? asset('storage/avatar/avatar13.jpg') : asset('storage/avatar/'.auth()->user()->avatar) }}" alt="" />
+                    <img id="avatar-preview" class="img-avatar" src="{{ (auth()->user()->avatar == null) ? asset('storage/avatar/avatar13.jpg') : asset('storage/avatar/'.auth()->user()->avatar) }}" alt="Avatar" />
                   </div>
                   <div class="mb-4">
                     <label for="new_avatar" class="form-label">Update Avatar</label>

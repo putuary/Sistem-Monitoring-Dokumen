@@ -55,6 +55,9 @@ function dikumpul($data) {
 }
 
 function createTenggat($date, $default) {
+    if($default > 0) {
+        $default=$default-1;
+    }
     $tenggat=Carbon::createFromLocaleIsoFormat('D MMMM YYYY', 'id', $date, 'Asia/Jakarta')->addWeek($default)->format('Y-m-d');
     $dt=Carbon::parse($tenggat);
     
@@ -105,37 +108,37 @@ function statusPengumpulan($tenggat, $waktu_pengumpulan) {
 function submitScore($tenggat, $waktu_pengumpulan, $isDokumenMatkul, $id_dokumen_terkumpul, $id_dokumen_ditugaskan) {
     $tenggat=Carbon::parse($tenggat);
     $waktu_pengumpulan=Carbon::parse($waktu_pengumpulan);
-    
     if($waktu_pengumpulan->isBefore($tenggat)) {
         $poin=100;
     } else {
         $poin=-25;
     }
-
+    
+    $bonus=0;
     if($isDokumenMatkul) {
         $dokumen_matkul_terkumpul=DokumenMatkul::where('id_dokumen_ditugaskan', $id_dokumen_ditugaskan)->wherenotnull('waktu_pengumpulan')->orderBy('waktu_pengumpulan', 'asc')->get();
         foreach ($dokumen_matkul_terkumpul as $key => $item) {
             if($id_dokumen_terkumpul == $item->id_dokumen_matkul) {
                 if($key+1 == 1) {
-                    $poin+=50;
+                    $bonus+=50;
                 } else if ($key+1 == 2) {
-                    $poin+=25;
+                    $bonus+=30;
                 } else if ($key+1 == 3) {
-                    $poin+=10;
+                    $bonus+=15;
                 }
                 break;
             }
         }
     } else {
-        $dokumen_kelas_terkumpul=DokumenKelas::where('id_dokumen_ditugaskan', $id_dokumen_ditugaskan)->wherenotnull('waktu_pengumpulan')->orderBy('waktu_pengumpulan', 'asc')->get();
+        $dokumen_kelas_terkumpul=DokumenKelas::where('id_dokumen_ditugaskan', $id_dokumen_ditugaskan)->whereDoesntHave('note')->wherenotnull('waktu_pengumpulan')->orderBy('waktu_pengumpulan', 'asc')->get();
         foreach ($dokumen_kelas_terkumpul as $key => $item) {
             if($id_dokumen_terkumpul == $item->id_dokumen_kelas) {
                 if($key+1 == 1) {
-                    $poin+=50;
+                    $bonus+=50;
                 } else if ($key+1 == 2) {
-                    $poin+=25;
+                    $bonus+=30;
                 } else if ($key+1 == 3) {
-                    $poin+=10;
+                    $bonus+=15;
                 }
                 break;
             }
@@ -144,8 +147,50 @@ function submitScore($tenggat, $waktu_pengumpulan, $isDokumenMatkul, $id_dokumen
 
     return [
         'poin'      => $poin,
+        'bonus'     => $bonus,
     ];
 }
+
+function updateBonusDokumen($id_dokumen_ditugaskan, $dikumpulkan_per) {
+    if($dikumpulkan_per == 0) {
+        $dokumen_matkul_terkumpul=DokumenMatkul::where('id_dokumen_ditugaskan', $id_dokumen_ditugaskan)->whereDoesntHave('note')->wherenotnull('waktu_pengumpulan')->orderBy('waktu_pengumpulan', 'asc')->get();
+        // dd($dokumen_matkul_terkumpul);
+        foreach ($dokumen_matkul_terkumpul as $key => $item) {
+            if($key+1 == 1) {
+                $bonus=50;
+            } else if ($key+1 == 2) {
+                $bonus=30;
+            } else if ($key+1 == 3) {
+                $bonus=15;
+            } else {
+                $bonus=null;
+            }
+
+            $item->scores()->update([
+                'bonus' => $bonus,
+            ]);
+        }
+    } else {
+        $dokumen_kelas_terkumpul=DokumenKelas::where('id_dokumen_ditugaskan', $id_dokumen_ditugaskan)->wherenotnull('waktu_pengumpulan')->orderBy('waktu_pengumpulan', 'asc')->get();
+    
+        foreach ($dokumen_kelas_terkumpul as $key => $item) {
+            if($key+1 == 1) {
+                $bonus=50;
+            } else if ($key+1 == 2) {
+                $bonus=30;
+            } else if ($key+1 == 3) {
+                $bonus=15;
+            } else {
+                $bonus=null;
+            }
+            
+            $item->scores()->update([
+                'bonus' => $bonus,
+            ]);
+        }
+    }
+    return true;
+} 
 
 function isKelasDiampu($kode_kelas) {
     $kelas=Kelas::where('kode_kelas', $kode_kelas)->kelasDiampu()->first();
@@ -302,7 +347,7 @@ function like_match($pattern, $subject) {
 function showRank($users) {
     $leaderboard=array();
     foreach($users as $user) {
-        $late=$onTime=$sum_submited=$empty=$sum_score=0;
+        $late=$onTime=$sum_submited=$empty=$sum_poin=0;
         $task=count($user->score);
         // dd($user->score);
         foreach ($user->score as $score) {
@@ -320,7 +365,7 @@ function showRank($users) {
                 $empty++;
             }
             
-            $sum_score+=$score->poin;
+            $sum_poin+=$score->poin+$score->bonus;
         }
         try {
             $percent=round(($sum_submited/$task)*100, 1);
@@ -329,9 +374,9 @@ function showRank($users) {
         }
         
         try {
-            $point=round($sum_score/$task, 1);
+            $score=round($sum_poin/$task, 1);
         } catch (\Throwable $th) {
-            $point=0;
+            $score=0;
         }
 
         $leaderboard[]=(object) [
@@ -339,16 +384,18 @@ function showRank($users) {
             'late'  => $late,
             'onTime'=> $onTime,
             'empty' => $empty,
+            'total_terkumpul' => $sum_submited,
             'task'  => $task,
             'percent' => $percent,
-            'point' => $point,
+            'total_poin' => $sum_poin,
+            'score' => $score,
         ];
         
     }
     // dd($leaderboard);
 
     usort($leaderboard, function($a, $b) {
-        return $b->point <=> $a->point;
+        return $b->score <=> $a->score;
     });
 
     // dd($leaderboard);
@@ -574,6 +621,7 @@ function mergerDokumen($kelas)
             foreach($dokumen->scores as $score) {
                 if($score->kode_kelas == $kls->kode_kelas) {
                     $poin = $score->poin;
+                    $bonus = $score->bonus;
                 }
             }
             $dokumen_all[] = (object) [
@@ -583,6 +631,7 @@ function mergerDokumen($kelas)
                 'matkul_kelas'      => $kls->matkul->nama_matkul.' '.$kls->nama_kelas,
                 'dosen'             => $dosen,
                 'poin'              => $poin,
+                'bonus'             => $bonus,
                 'dikumpul'          => $dokumen->dokumen_ditugaskan->dikumpul,
                 'waktu_pengumpulan' => $dokumen->waktu_pengumpulan,
                 'tenggat_waktu'     => $dokumen->dokumen_ditugaskan->tenggat_waktu,
@@ -594,6 +643,7 @@ function mergerDokumen($kelas)
             foreach($dokumen->scores as $score) {
                 if($score->kode_kelas == $kls->kode_kelas) {
                     $poin = $score->poin;
+                    $bonus = $score->bonus;
                 }
             }
             $dokumen_all[] = (object) [
@@ -603,6 +653,7 @@ function mergerDokumen($kelas)
                 'matkul_kelas'      => $kls->matkul->nama_matkul.' '.$kls->nama_kelas,
                 'dosen'             => $dosen,
                 'poin'              => $poin,
+                'bonus'             => $bonus,
                 'dikumpul'          => $dokumen->dokumen_ditugaskan->dikumpul,
                 'waktu_pengumpulan' => $dokumen->waktu_pengumpulan,
                 'tenggat_waktu'     => $dokumen->dokumen_ditugaskan->tenggat_waktu,

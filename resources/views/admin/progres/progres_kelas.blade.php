@@ -21,17 +21,6 @@
           </div>
       @endif
 
-
-
-      {{-- <div class="row">
-        <div class="col-md mb-4 text-center">
-          <span class="p-2 btn-outline-dark bg-white rounded text-dark fw-semibold">TA : {{ $kelas[0]->tahun_ajaran->tahun_ajaran ?? '-' }}</span>
-        </div>
-      </div> --}}
-      {{-- @php
-          dd($kelas[0]->tahun_ajaran->id_tahun_ajaran);
-      @endphp --}}
-
       <form action="/progres-pengumpulan">
         <div class="block-content">
           <div class="row justify-content-center">
@@ -58,14 +47,11 @@
       </form>
 
       <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start mb-3">
-        <form class="mt-3 mt-md-0" action="/progres-pengumpulan/unduh-semua-dokumen" method="POST">
-          @csrf
-          <input type="hidden" name="id_tahun_ajaran" value="{{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}">
-
-          <button type="submit" class="btn btn-info">
+        <div class="mt-3 mt-md-0">
+          <a href="/progres-pengumpulan/unduh-semua-dokumen-kelas/{{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}" class="btn btn-info">
             <i class="fa fa-fw fa-download me-1"></i> Unduh Semua Dokumen
-          </button>
-        </form>
+          </a>
+        </div>
 
         <div class="mt-3 mt-md-0">
           <a class="btn btn-success" href="/progres-pengumpulan/resume-pengumpulan?tahun_ajaran={{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}">

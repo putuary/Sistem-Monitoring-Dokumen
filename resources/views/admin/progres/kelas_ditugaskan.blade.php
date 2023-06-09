@@ -41,21 +41,16 @@
           <h3 class="block-title">Dokumen {{ $kelas->matkul->nama_matkul.' '.$kelas->nama_kelas }} </h3>
         </div>
         <div class="block-content block-content-full">
-          <form class="block-content" action="/progres-pengumpulan/kelas" method="POST">
-            @csrf
-            <input type="hidden" name="id_tahun_ajaran" value="{{ $dokumen[0]->id_tahun_ajaran }}">
-            <input type="hidden" name="nama_matkul" value="{{ $kelas->matkul->nama_matkul }}">
-            <input type="hidden" name="nama_kelas" value="{{ $kelas->nama_kelas }}">
-            <div class="row justify-content-center">
-              <div class="col-md-2 col-lg-4">
-                <div class="mb-4 text-center">
-                  <button type="submit" class="btn btn-alt-info">
-                    <i class="fa fa-fw fa-download me-1"></i> Unduh Semua Dokumen
-                  </button>      
-                </div>
+          <div class="row">
+            <div class="col-md-2 col-lg-4">
+              <div class="mb-4 text-start">
+                <a href="/progres-pengumpulan/kelas/unduh-dokumen-kelas/{{ $kelas->kode_kelas }}" class="btn btn-alt-info">
+                  <i class="fa fa-fw fa-download me-1"></i> Unduh Semua Dokumen
+                </a>      
               </div>
             </div>
-          </form>
+          </div>
+  
           <!-- DataTables init on table by adding .js-dataTable-responsive class, functionality is initialized in js/pages/be_tables_datatables.min.js which was auto compiled from _js/pages/be_tables_datatables.js -->
           <table class="table table-bordered table-striped table-vcenter js-dataTable-responsive">
             <thead>
@@ -92,9 +87,11 @@
                     <a href="/progres-pengumpulan/kelas/unduh/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
                       <i class="fa fa-fw fa-download"></i>
                     </a>
-                    <button class="btn btn-sm btn-alt-danger bg-danger-light" onclick="refuseDokumen({{ $key }})" type="button"  data-bs-toggle="tooltip" title="Tolak Dokumen">
-                      <i class="fa fa-fw fa-times"></i>
-                    </button>
+                    @if(auth()->user()->role!='admin')
+                      <button class="btn btn-sm btn-alt-danger bg-danger-light" onclick="refuseDokumen({{ $key }})" type="button"  data-bs-toggle="tooltip" title="Tolak Dokumen">
+                        <i class="fa fa-fw fa-times"></i>
+                      </button>
+                    @endif
                   @endif
                 @else
                 <td class="text-center">
@@ -108,9 +105,11 @@
                   <a href="/progres-pengumpulan/kelas/unduh/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
                     <i class="fa fa-fw fa-download"></i>
                   </a>
-                  <button class="btn btn-sm btn-alt-danger bg-danger-light" onclick="refuseDokumen({{ $key }})" type="button"  data-bs-toggle="tooltip" title="Tolak Dokumen">
-                    <i class="fa fa-fw fa-times"></i>
-                  </button>
+                  @if(auth()->user()->role!='admin')
+                    <button class="btn btn-sm btn-alt-danger bg-danger-light" onclick="refuseDokumen({{ $key }})" type="button"  data-bs-toggle="tooltip" title="Tolak Dokumen">
+                      <i class="fa fa-fw fa-times"></i>
+                    </button>
+                  @endif
                   @endif
                 @endif
               </tr>

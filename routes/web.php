@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/set-session', [UserAuthController::class, 'setSession']);
 
     Route::get('/leaderboard', [LeaderBoardController::class, 'index']);
+    Route::get('/leaderboard/rincian-score/{id_user}', [LeaderBoardController::class, 'showDetailScore']);
     Route::get('/badge', [LeaderBoardController::class, 'showResultBadge']);
 });
 
@@ -67,6 +68,8 @@ Route::middleware(['auth', 'role:superAdmin'])->group(function () {
     Route::resource('/penugasan/dokumen-ditugaskan', DokumenDitugaskanController::class)->except(['create', 'show', 'edit']);
 
     Route::post('/penugasan/dokumen-ditugaskan/edit-pengumpulan', [DokumenDitugaskanController::class, 'editPengumpulan']);
+
+    Route::post('/progres-pengumpulan/dokumen/catatan', [ProgresController::class, 'storeCatatan']);
 
 
     Route::post('/leaderboard/badge', [LeaderBoardController::class, 'resultBadge']);
@@ -94,10 +97,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('/manajemen-data/badge', BadgeController::class)->except(['create', 'store', 'show', 'edit']);
 
     // Progres Pengumpulan
+    Route::get('/progres-pengumpulan/unduh-semua-dokumen-kelas/{id_tahun_ajaran}', [ProgresController::class, 'downloadAllDokumenKelas']);
+    Route::get('/progres-pengumpulan/unduh-semua-dokumen/{id_tahun_ajaran}', [ProgresController::class, 'downloadAllDokumen']);
     Route::get('/progres-pengumpulan', [ProgresController::class, 'index']);
-    Route::post('/progres-pengumpulan/unduh-semua-dokumen', [ProgresController::class, 'downloadArchiveDokumen']);
     Route::get('/progres-pengumpulan/resume-pengumpulan', [ProgresController::class, 'showReport']);
-    Route::post('/progres-pengumpulan/resume-pengumpulan/unduh', [ProgresController::class, 'generateReport']);
+    Route::get('/progres-pengumpulan/resume-pengumpulan/unduh', [ProgresController::class, 'generateReport']);
    
     Route::get('/progres-pengumpulan/kelas', [ProgresController::class, 'showProgresKelas']);
     Route::get('/progres-pengumpulan/kelas/{id_dokumen}', [DokumenDikumpulController::class, 'showDokumenDikumpul']);
@@ -107,10 +111,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/progres-pengumpulan/dokumen', [ProgresController::class, 'showProgresDokumen']);
     Route::get('/progres-pengumpulan/dokumen/{id_dokumen}', [DokumenDikumpulController::class, 'showDokumenDikumpul']);
     Route::get('/progres-pengumpulan/dokumen/unduh/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenDikumpul']);
-    Route::post('/progres-pengumpulan/dokumen/catatan', [ProgresController::class, 'storeCatatan']);
 
-    Route::post('/progres-pengumpulan/dokumen', [ProgresController::class, 'downloadDokumen']);
-    Route::post('/progres-pengumpulan/kelas', [ProgresController::class, 'downloadDokumenKelas']);
+    Route::get('/progres-pengumpulan/dokumen/unduh-dokumen/{id_dokumen}', [ProgresController::class, 'downloadFileDokumen']);
+    Route::get('/progres-pengumpulan/kelas/unduh-dokumen-kelas/{kode_kelas}', [ProgresController::class, 'downloadKelasDokumen']);
 
 
     // Riwayat Pengumpulan

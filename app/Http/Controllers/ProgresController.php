@@ -58,11 +58,9 @@ class ProgresController extends Controller
     {
         $id_dokumen = request('id');
         $dokumen=DokumenDitugaskan::with(['tahun_ajaran', 'dokumen_matkul' => function($query) {
-            $query->with('matkul');
+            $query->with('matkul')->orderByRaw("ISNULL(waktu_pengumpulan), waktu_pengumpulan ASC");
         }, 'dokumen_kelas' => function($query) {
-            $query->with(['kelas' => function($query) {
-                $query->with('matkul');
-            }]);
+            $query->with(['kelas' => ['matkul']])->orderByRaw("ISNULL(waktu_pengumpulan), waktu_pengumpulan ASC");
         }])->where('id_dokumen_ditugaskan', $id_dokumen)->first();
         // dd($dokumen);
         
@@ -72,7 +70,8 @@ class ProgresController extends Controller
     public function storeCatatan(Request $request)
     {
         $dokumen=DokumenDikumpulController::showProfilDokumen($request->id_dokumen_terkumpul);
-        
+        $dokumen->dokumen_dikumpul->load('scores');
+        // dd($dokumen->dokumen_dikumpul->scores);
         $dokumen->dokumen_dikumpul->note()->where('is_aktif', 0)->delete();
         
         $dokumen->dokumen_dikumpul->note()->create([
@@ -86,10 +85,15 @@ class ProgresController extends Controller
                 // Hapus file
                 unlink($dokumen->path_multiple . '/' . $request->nama_dokumen);
                 
+                if($dokumen->dokumen_dikumpul->scores[0]->bonus != null) {
+                    updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
+                 }
+
                 $dokumen->dokumen_dikumpul->scores()->update([
                     'poin' => -50,
+                    'bonus' => null,
                 ]);
-                            
+
                 $storage = array_diff(scandir($dokumen->path_multiple, SCANDIR_SORT_ASCENDING), array('.', '..'));
                 if(count($storage) == 0) {
                     $dokumen->dokumen_dikumpul->update([
@@ -109,14 +113,21 @@ class ProgresController extends Controller
         } else {
             File::deleteDirectory($dokumen->path_dokumen);
         }
+        
         $dokumen->dokumen_dikumpul->update([
             'file_dokumen'      => null,
             'waktu_pengumpulan' => null,
         ]);
-
+        
+        if($dokumen->dokumen_dikumpul->scores[0]->bonus != null) {
+            updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
+         }
+         
         $dokumen->dokumen_dikumpul->scores()->update([
             'poin' => -50,
+            'bonus' => null,
         ]);
+        
 
         return redirect()->back()->with('success', 'Catatan berhasil disimpan');
     }
@@ -125,20 +136,6 @@ class ProgresController extends Controller
         
         $tahun_ajaran = TahunAjaran::orderBy('id_tahun_ajaran', 'desc')->get();
         $tahun_aktif = TahunAjaran::tahunAktif()->first();
-        // union two table
-
-        // $dokumen_kelas=DokumenKelas::with(['kelas' => function($query) {
-        //     $query->with(['matkul', 'dosen_kelas']);
-        // },'dokumen_ditugaskan'])->whereHas('dokumen_ditugaskan', function($query) {
-        //     $query->dokumenTahun(request('tahun_ajaran'));
-        // })->filter(request('filter'))->get();
-        
-        // $dokumen_matkul=DokumenMatkul::with(['matkul', 'dokumen_ditugaskan', 'kelas_dokumen_matkul' => function($query) {
-        //     $query->with('dosen_kelas');
-        // }])->whereHas('dokumen_ditugaskan', function($query) {
-        //     $query->dokumenTahun(request('tahun_ajaran'));
-        // })->filter(request('filter'))->get();
-        // $dokumen_all=mergeDokumen($dokumen_kelas, $dokumen_matkul);
         
         $kelas = Kelas::with(['dokumen_kelas' => function($query) {
                 $query->with('dokumen_ditugaskan')->filter(request('filter'));
@@ -155,7 +152,7 @@ class ProgresController extends Controller
         ]);
     }
 
-    public function downloadArchiveDokumen(Request $request)
+    public function downloadAllDokumenKelas(Request $request)
     {
         $tahun_ajaran = TahunAjaran::find($request->id_tahun_ajaran);
 
@@ -205,243 +202,214 @@ class ProgresController extends Controller
         }
     }
 
-    public function downloadDokumen(Request $request)
+    public function downloadAllDokumen($id_tahun_ajaran) 
     {
-        $tahun_ajaran = TahunAjaran::find($request->id_tahun_ajaran);
-
-        // Get real path for our folder
         try {
-            $rootPath = storage_path('app/dokumen-perkuliahan/'.str_replace('/','-',$tahun_ajaran->tahun_ajaran));
-            // dd($rootPath);
-    
-            $files = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($rootPath),
-                \RecursiveIteratorIterator::LEAVES_ONLY
-            );
-    
-            $filearr=[];
-            foreach ($files as $name => $file)
-            {   
-                // Skip directories (they would be added automatically)
-                if (!$file->isDir())
-                {
-                    // Get real and relative path for current file
-                    if(like_match('%'.$request->nama_dokumen.'%', $file->getRealPath())){
-                        $filePath = $file->getRealPath();
-                        $filearr[]= $filePath;
-                    }
-                }
-            }
-            // dd($filearr);
+            $dokumens = DokumenDitugaskan::with(['tahun_ajaran', 'dokumen_matkul' => function($query) {
+                $query->whereNotNull('file_dokumen')->with('matkul');
+            }, 'dokumen_kelas' => function($query) {
+                $query->whereNotNull('file_dokumen')->with(['kelas' => function($query) {
+                    $query->with('matkul');
+                }]);
+            }])->whereHas('dokumen_matkul', function($query) {
+                $query->whereNotNull('file_dokumen');
+            })->orWhereHas('dokumen_kelas', function($query) {
+                $query->whereNotNull('file_dokumen');
+            })->where('id_tahun_ajaran', $id_tahun_ajaran)->get();
+            // dd($dokumens); 
+            // dd($dokumen);
             $zip = new \ZipArchive;
-            // dd($rootPath);
     
-            $fileName = $request->nama_dokumen.'.zip';
-        
-            if ($zip->open(storage_path('app/zip/'.$fileName), \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE)
-            {
-                $files = $filearr; //passing the above array
-    
-                if($request->dikumpul==0) {
-                    foreach ($files as $key => $value) {
-                        // dd($value);
-                        $relativeNameInZipFile = basename($value);
-                        $zip->addFile($value, $request->nama_dokumen.'/'.$relativeNameInZipFile);
+            $fileName = (($dokumens != null ) ? str_replace('/','-',$dokumens[0]->tahun_ajaran->tahun_ajaran) : 'dokumen').'.zip';
+            
+            $zip->open(storage_path('app/zip/'.$fileName), \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+
+            foreach($dokumens as $dokumen) {
+                if($dokumen->dikumpulkan_per == 0) {
+                    if($dokumen->dikumpul==0) {
+                        foreach($dokumen->dokumen_matkul as $dokumen_matkul) {
+                            // dd($dokumen_matkul);
+                            $filePathDokumen = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, true, $dokumen_matkul->matkul->nama_matkul).'/'.$dokumen_matkul->file_dokumen);
+                            $relativeNameInZipFile = basename($filePathDokumen);
+                            // dd($filePathDokumen);
+                            $zip->addFile($filePathDokumen, $dokumen->nama_dokumen.'/'.$relativeNameInZipFile);
+                        } 
+                    } else {
+                        foreach($dokumen->dokumen_matkul as $dokumen_matkul) {
+                            // dd($dokumen_matkul);
+                            $pathDokumen = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, true, $dokumen_matkul->matkul->nama_matkul).'/'.$dokumen->nama_dokumen);
+                            // dd($pathDokumen);
+                            $files = array_diff(scandir($pathDokumen, SCANDIR_SORT_ASCENDING), array('.', '..'));
+                            // dd($files);
+                            foreach($files as $file) {
+                                $filePathDokumen = $pathDokumen.'/'.$file;
+                                $relativeNameInZipFile = basename($filePathDokumen);
+                                $zip->addFile($filePathDokumen, $dokumen->nama_dokumen.'/'.$dokumen_matkul->matkul->nama_matkul.'/'.$relativeNameInZipFile);
+                            }
+                        }
                     }
                 } else {
-                    foreach ($files as $key => $value) {
-                        // dd($value);
-                        // dd($rootPath);
-                        $subPathToRemove = str_replace('/', '\\', $rootPath);
-                        // dd($subPathToRemove);
-
-                        $newPath = str_replace($subPathToRemove.'\\', '', $value);
-                        
-                        $zip->addFile($value, $newPath);
+                    if($dokumen->dikumpul==0) {
+                        foreach($dokumen->dokumen_kelas as $dokumen_kelas) {
+                            $filePathDokumen = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, false, $dokumen_kelas->kelas->matkul->nama_matkul, $dokumen_kelas->kelas->nama_kelas).'/'.$dokumen_kelas->file_dokumen);
+                            $relativeNameInZipFile = basename($filePathDokumen);
+                            $zip->addFile($filePathDokumen, $dokumen->nama_dokumen.'/'.$dokumen_kelas->kelas->matkul->nama_matkul.'/'.$relativeNameInZipFile);
+                        }
+                    } else {
+                        foreach($dokumen->dokumen_kelas as $dokumen_kelas) {
+                            $pathDokumen = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, false, $dokumen_kelas->kelas->matkul->nama_matkul, $dokumen_kelas->kelas->nama_kelas).'/'.$dokumen->nama_dokumen);
+                            $files = array_diff(scandir($pathDokumen, SCANDIR_SORT_ASCENDING), array('.', '..'));
+                            foreach($files as $file) {
+                                $filePathDokumen = $pathDokumen.'/'.$file;
+                                $relativeNameInZipFile = basename($filePathDokumen);
+                                $zip->addFile($filePathDokumen, $dokumen->nama_dokumen.'/'.$dokumen_kelas->kelas->matkul->nama_matkul.'/'.$dokumen_kelas->kelas->nama_kelas.'/'.$relativeNameInZipFile);
+                            }
+                        }
                     }
                 }
-    
-                $zip->close();
-                
             }
+
+            $zip->close();
+
+            return response()->download(storage_path('app/zip/'.$fileName));
+            
+        } catch (\Throwable $th) {
+            throw $th;
+            return redirect()->back()->with('failed', $th->getMessage());
+        }
+    }
+
+    public function downloadFileDokumen($id_dokumen_ditugaskan) {
+        // dd($request->all());
+        try {
+            $dokumen = DokumenDitugaskan::with('tahun_ajaran')->find($id_dokumen_ditugaskan);
+    
+            // dd($dokumen);
+            $zip = new \ZipArchive;
+    
+            $fileName = $dokumen->nama_dokumen.'.zip';
+
+            $zip->open(storage_path('app/zip/'.$fileName), \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+
+            if($dokumen->dikumpulkan_per == 0) {
+                $dokumen->load(['dokumen_matkul' => function($query) {
+                    $query->whereNotNull('file_dokumen')->with('matkul');
+                }]);
+                if($dokumen->dikumpul==0) {
+                    foreach($dokumen->dokumen_matkul as $dokumen_matkul) {
+                        // dd($dokumen_matkul);
+                        $filePathDokumen = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, true, $dokumen_matkul->matkul->nama_matkul).'/'.$dokumen_matkul->file_dokumen);
+                        $relativeNameInZipFile = basename($filePathDokumen);
+                        // dd($filePathDokumen);
+                        $zip->addFile($filePathDokumen, $dokumen->nama_dokumen.'/'.$relativeNameInZipFile);
+                    } 
+                } else {
+                    foreach($dokumen->dokumen_matkul as $dokumen_matkul) {
+                        $pathDokumen = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, true, $dokumen_matkul->matkul->nama_matkul).'/'.$dokumen->nama_dokumen);
+                        // dd($pathDokumen);
+                        $files = array_diff(scandir($pathDokumen, SCANDIR_SORT_ASCENDING), array('.', '..'));
+                        // dd($files);
+                        foreach($files as $file) {
+                            $filePathDokumen = $pathDokumen.'/'.$file;
+                            $relativeNameInZipFile = basename($filePathDokumen);
+                            $zip->addFile($filePathDokumen, $dokumen->nama_dokumen.'/'.$dokumen_matkul->matkul->nama_matkul.'/'.$relativeNameInZipFile);
+                        }
+                    }
+                }
+            } else {
+                $dokumen->load(['dokumen_kelas' => function($query) {
+                    $query->whereNotNull('file_dokumen')->with(['kelas' => function($query) {
+                        $query->with('matkul');
+                    }]);
+                }]);
+                if($dokumen->dikumpul==0) {
+                    foreach($dokumen->dokumen_kelas as $dokumen_kelas) {
+                        $filePathDokumen = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, false, $dokumen_kelas->kelas->matkul->nama_matkul, $dokumen_kelas->kelas->nama_kelas).'/'.$dokumen_kelas->file_dokumen);
+                        $relativeNameInZipFile = basename($filePathDokumen);
+                        $zip->addFile($filePathDokumen, $dokumen->nama_dokumen.'/'.$dokumen_kelas->kelas->matkul->nama_matkul.'/'.$relativeNameInZipFile);
+                    }
+                } else {
+                    foreach($dokumen->dokumen_kelas as $dokumen_kelas) {
+                        $pathDokumen = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, false, $dokumen_kelas->kelas->matkul->nama_matkul, $dokumen_kelas->kelas->nama_kelas).'/'.$dokumen->nama_dokumen);
+                        $files = array_diff(scandir($pathDokumen, SCANDIR_SORT_ASCENDING), array('.', '..'));
+                        foreach($files as $file) {
+                            $filePathDokumen = $pathDokumen.'/'.$file;
+                            $relativeNameInZipFile = basename($filePathDokumen);
+                            $zip->addFile($filePathDokumen, $dokumen->nama_dokumen.'/'.$dokumen_kelas->kelas->matkul->nama_matkul.'/'.$dokumen_kelas->kelas->nama_kelas.'/'.$relativeNameInZipFile);
+                        }
+                    }
+                }
+            }
+
+            $zip->close();
+
             return response()->download(storage_path('app/zip/'.$fileName));
             
         } catch (\Throwable $th) {
             // throw $th;
-            return redirect()->back()->with('failed', 'Gagal mengunduh dokumen, periksa kembali dokumen yang diunduh!');
+            return redirect()->back()->with('failed', $th->getMessage());
         }
+        
     }
 
-    public function downloadDokumenKelas(Request $request)
-    {
+    public function downloadKelasDokumen($kode_kelas) {
         try {
-            $tahun_ajaran = TahunAjaran::find($request->id_tahun_ajaran);
-    
-            // Get real path for our folder
-            $rootPath1 = storage_path('app/dokumen-perkuliahan/'.str_replace('/','-',$tahun_ajaran->tahun_ajaran).'/'.$request->nama_matkul.'/'.$request->nama_kelas);
-            // dd($rootPath);
-    
-            if(file_exists($rootPath1)) {
-                $files1 = new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($rootPath1),
-                    \RecursiveIteratorIterator::LEAVES_ONLY
-                );
+            $kelas=Kelas::with(['matkul', 'tahun_ajaran', 'dokumen_kelas' => function($query) {
+                $query->with('dokumen_ditugaskan')->whereNotNull('file_dokumen');
+                }, 'kelas_dokumen_matkul' => function($query) {
+                    $query->with('dokumen_ditugaskan')->whereNotNull('file_dokumen');
+                }])->find($kode_kelas);
         
-                $filearr=[];
-                foreach ($files1 as $name => $file)
-                {
-                    
-                    // Skip directories (they would be added automatically)
-                    if (!$file->isDir())
-                    {
-                        // Get real and relative path for current file
-                        $filePath = $file->getRealPath();
-                        
-                        $filearr[]= $filePath;
-                        
-                    }
-            
-                }
-            }
-    
-    
-            // Get real path for our folder
-            $rootPath2 = storage_path('app/dokumen-perkuliahan/'.str_replace('/','-',$tahun_ajaran->tahun_ajaran).'/'.$request->nama_matkul.'/dokumen-matkul');
-            // dd($rootPath);
-    
-            if(file_exists($rootPath2)) {
-                $files2 = new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($rootPath2),
-                    \RecursiveIteratorIterator::LEAVES_ONLY
-                );
-        
-                foreach ($files2 as $name => $file)
-                {
-                    
-                    // Skip directories (they would be added automatically)
-                    if (!$file->isDir())
-                    {
-                        // Get real and relative path for current file
-                        $filePath = $file->getRealPath();
-                        
-                        $filearr[]= $filePath;
-                        
-                    }
-                }
-            }
-    
-            // dd($filearr);
             $zip = new \ZipArchive;
-    
-            $fileName = $request->nama_matkul.'-'.$request->nama_kelas.'.zip';
-        
-            if ($zip->open(storage_path('app/zip/'.$fileName), \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE)
-            {
-                $files = $filearr; //passing the above array
-    
-                foreach ($files as $key => $value) {
-                    $parent_dir = dirname($value);
-                    if(like_match('%dokumen-matkul%', $value)) {
-                        if(basename($parent_dir) != 'dokumen-matkul') {
-                            $relativeNameInZipFile = basename($parent_dir).'/'.basename($value);
-                        } else {
-                            $relativeNameInZipFile =basename($value);
-                        }
-                    } else {
-                        if(basename($parent_dir) != $request->nama_kelas) {
-                            $relativeNameInZipFile = basename($parent_dir).'/'.basename($value);
-                        } else {
-                            $relativeNameInZipFile =basename($value);
-                        }
+            $fileName = $kelas->matkul->nama_matkul.'-'.$kelas->nama_kelas.'.zip';
+            $zip->open(storage_path('app/zip/'.$fileName), \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+            
+            foreach($kelas->kelas_dokumen_matkul as $dokumen_matkul) {
+                // dd($dokumen_matkul);
+                if($dokumen_matkul->dokumen_ditugaskan->dikumpul==0) {
+                    $filePathDokumen = storage_path(pathDokumen($kelas->tahun_ajaran->tahun_ajaran, true, $kelas->matkul->nama_matkul).'/'.$dokumen_matkul->file_dokumen);
+                    $relativeNameInZipFile = basename($filePathDokumen);
+                    // dd($filePathDokumen);
+                    $zip->addFile($filePathDokumen, ($kelas->matkul->nama_matkul.'-'.$kelas->nama_kelas).'/'.$relativeNameInZipFile);
+                } else {
+                    $pathDokumen = storage_path(pathDokumen($kelas->tahun_ajaran->tahun_ajaran, true, $kelas->matkul->nama_matkul).'/'.$dokumen_matkul->dokumen_ditugaskan->nama_dokumen);
+                    // dd($pathDokumen);
+                    $files = array_diff(scandir($pathDokumen, SCANDIR_SORT_ASCENDING), array('.', '..'));
+                    // dd($files);
+                    foreach($files as $file) {
+                        $filePathDokumen = $pathDokumen.'/'.$file;
+                        $relativeNameInZipFile = basename($filePathDokumen);
+                        $zip->addFile($filePathDokumen, ($kelas->matkul->nama_matkul.'-'.$kelas->nama_kelas).'/'.$dokumen_matkul->dokumen_ditugaskan->nama_dokumen.'/'.$relativeNameInZipFile);
                     }
-                    $zip->addFile($value, $request->nama_matkul.'-'.$request->nama_kelas.'/'.$relativeNameInZipFile);
                 }
-    
-                $zip->close();
             }
+
+            foreach($kelas->dokumen_kelas as $dokumen_kelas) {
+                if($dokumen_kelas->dokumen_ditugaskan->dikumpul==0) {
+                    $filePathDokumen = storage_path(pathDokumen($kelas->tahun_ajaran->tahun_ajaran, false, $kelas->matkul->nama_matkul, $kelas->nama_kelas).'/'.$dokumen_kelas->file_dokumen);
+                    $relativeNameInZipFile = basename($filePathDokumen);
+                    $zip->addFile($filePathDokumen, ($kelas->matkul->nama_matkul.'-'.$kelas->nama_kelas).'/'.$relativeNameInZipFile);
+                } else {
+                    $pathDokumen = storage_path(pathDokumen($kelas->tahun_ajaran->tahun_ajaran, false, $kelas->matkul->nama_matkul, $kelas->nama_kelas).'/'.$dokumen_kelas->dokumen_ditugaskan->nama_dokumen);
+                    $files = array_diff(scandir($pathDokumen, SCANDIR_SORT_ASCENDING), array('.', '..'));
+                    foreach($files as $file) {
+                        $filePathDokumen = $pathDokumen.'/'.$file;
+                        $relativeNameInZipFile = basename($filePathDokumen);
+                        $zip->addFile($filePathDokumen, ($kelas->matkul->nama_matkul.'-'.$kelas->nama_kelas).'/'.$dokumen_kelas->dokumen_ditugaskan->nama_dokumen.'/'.$relativeNameInZipFile);
+                    }
+                }
+            }
+
+            $zip->close();
+
             return response()->download(storage_path('app/zip/'.$fileName));
+
         } catch (\Throwable $th) {
             //throw $th;
-            return redirect()->back()->with('failed', 'Gagal mengunduh dokumen, periksa kembali dokumen yang diunduh!');
+            return redirect()->back()->with('failed', $th->getMessage());
         }
+        
     }
-
-    // private function makeZip() {
-    //     $zip = new \ZipArchive;
-        
-    //     $fileName = $request->nama_matkul.'-'.$request->nama_kelas.'.zip';
-        
-    //     if ($zip->open(storage_path('app/zip/'.$fileName), \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE)
-    //     {
-    //         foreach ($fileArr as $key => $file) {
-    //             $parent_dir = dirname($value);
-    //             if(like_match('%dokumen-matkul%', $value)) {
-    //                 if(basename($parent_dir) != 'dokumen-matkul') {
-    //                     $relativeNameInZipFile = basename($parent_dir).'/'.basename($value);
-    //                 } else {
-    //                     $relativeNameInZipFile =basename($value);
-    //                 }
-    //             } else {
-    //                 if(basename($parent_dir) != $request->nama_kelas) {
-    //                     $relativeNameInZipFile = basename($parent_dir).'/'.basename($value);
-    //                 } else {
-    //                     $relativeNameInZipFile =basename($value);
-    //                 }
-    //             }
-    //             $zip->addFile($value, $request->nama_matkul.'-'.$request->nama_kelas.'/'.$relativeNameInZipFile);
-    //         }
-
-    //         $zip->close();
-    //     }
-    //     return response()->download(storage_path('app/zip/'.$fileName));
-    // }
-
-    // public function downloadFileDokumen(Request $request) {
-    //     // dd($request->all());
-    //     $dokumen = DokumenDitugaskan::with('tahun_ajaran')->find($request->id_dokumen_ditugaskan);
-
-    //     $fileArr=[];
-    //     if($dokumen->dikumpulkan_per == 0) {
-    //         $dokumen->load(['dokumen_matkul' => function($query) {
-    //             $query->whereNotNull('file_dokumen')->with('matkul');
-    //         }]);
-    //         if($dokumen->dikumpul==0) {
-    //             foreach($dokumen->dokumen_matkul as $dokumen_matkul) {
-    //                 $fileArr[] = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, true, $dokumen_matkul->matkul->nama_matkul).'/'.$dokumen_matkul->nama_dokumen);
-    //             }
-    //             $fileZip=$this->makeZip($fileArr, $dokumen->nama_dokumen); 
-    //         } else {
-    //             foreach($dokumen->dokumen_matkul as $dokumen_matkul) {
-    //                 $pathDokumen = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, true, $dokumen_matkul->matkul->nama_matkul).'/'.$dokumen->nama_dokumen);
-    //                 // dd($pathDokumen);
-    //                 $files = array_diff(scandir($pathDokumen, SCANDIR_SORT_ASCENDING), array('.', '..'));
-    //                 foreach($files as $file) {
-    //                     $fileArr[] = $pathDokumen.'/'.$file;
-    //                 }
-    //             }
-    //         }
-    //     } else {
-    //         $dokumen->load(['dokumen_kelas' => function($query) {
-    //             $query->whereNotNull('file_dokumen')->with(['kelas' => function($query) {
-    //                 $query->with('matkul');
-    //             }]);
-    //         }]);
-    //         if($dokumen->dikumpul==0) {
-    //             foreach($dokumen->dokumen_kelas as $dokumen_kelas) {
-    //                 $fileArr[] = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, false, $dokumen_kelas->kelas->matkul->nama_matkul, $dokumen_kelas->kelas->nama_kelas).'/'.$dokumen_kelas->nama_dokumen);
-    //             }
-    //         } else {
-    //             foreach($dokumen->dokumen_kelas as $dokumen_kelas) {
-    //                 $pathDokumen = storage_path(pathDokumen($dokumen->tahun_ajaran->tahun_ajaran, false, $dokumen_kelas->kelas->matkul->nama_matkul, $dokumen_kelas->kelas->nama_kelas).'/'.$dokumen->nama_dokumen);
-    //                 $files = array_diff(scandir($pathDokumen, SCANDIR_SORT_ASCENDING), array('.', '..'));
-    //                 foreach($files as $file) {
-    //                     $fileArr[] = $pathDokumen.'/'.$file;
-    //                 }
-    //             }
-    //         }
-    //     }
-        
-    // }
 
     public function showReport() {
         $id_tahun_ajaran=request('tahun_ajaran');
@@ -468,8 +436,8 @@ class ProgresController extends Controller
         return view('admin.progres.tampil-resume', ['tahun_ajaran' => $tahun_ajaran, 'dokumen' => $dokumen_ditugaskan, 'report' => $report]);
     }
 
-    public function generateReport(Request $request) {
-        $id_tahun_ajaran=$request->id_tahun_ajaran;
+    public function generateReport() {
+        $id_tahun_ajaran=request('tahun_ajaran');
         $tahun_ajaran=TahunAjaran::find($id_tahun_ajaran);
         $dokumen_ditugaskan= DokumenDitugaskan::dokumenTahun($id_tahun_ajaran)->orderBy('id_dokumen_ditugaskan', 'asc')->get();
 

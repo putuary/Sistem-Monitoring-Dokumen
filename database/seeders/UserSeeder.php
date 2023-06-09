@@ -18,7 +18,6 @@ class UserSeeder extends Seeder
             'nama'      => 'Kaprodi',
             'email'     => 'kaprodi@if.itera.ac.id',
             'password'  => Hash::make('password'),
-            'avatar'    => 'default.png',
             'role'      => 'kaprodi',
         ]);
         $user->aktif_role()->create([
@@ -29,7 +28,6 @@ class UserSeeder extends Seeder
             'nama'      => 'GKMP',
             'email'     => 'gkmp@if.itera.ac.id',
             'password'  => Hash::make('password'),
-            'avatar'    => 'default.png',
             'role'      => 'gkmp',
         ]);
         $user->aktif_role()->create([
@@ -40,7 +38,6 @@ class UserSeeder extends Seeder
             'nama'      => 'Admin',
             'email'     => 'admin@if.itera.ac.id',
             'password'  => Hash::make('password'),
-            'avatar'    => 'default.png',
             'role'      => 'admin',
         ]);
 
@@ -48,7 +45,6 @@ class UserSeeder extends Seeder
             'nama'      => 'Dosen',
             'email'     => 'dosen@if.itera.ac.id',
             'password'  => Hash::make('password'),
-            'avatar'    => 'default.png',
             'role'      => 'dosen',
         ]);
     }

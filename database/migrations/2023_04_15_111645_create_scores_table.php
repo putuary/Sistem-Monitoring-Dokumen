@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('scoreable_id', 10);
             $table->string('scoreable_type');
             $table->integer('poin')->nullable();
+            $table->integer('bonus')->nullable()->default(null);
             $table->timestamps();
             
             $table->foreign('id_dosen')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');

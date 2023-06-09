@@ -18,14 +18,23 @@
 
 @section('content')
     <!-- Page Content -->
-     <!-- pop up success upload -->
-    @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
-        <strong>{{ session()->get('success') }}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
     <div class="content">
+
+      <!-- pop up success upload -->
+      @if (session()->has('success'))
+        <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+          <strong>{{ session()->get('success') }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      @endif
+
+      @if (session()->has('failed'))
+        <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+          <strong>{{ session()->get('failed') }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      @endif
+
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
@@ -93,7 +102,7 @@
                 <th class="text-center" >Dosen</th>
                 <th class="text-center" >Waktu Pengumpulan</th>
                 <th class="text-center" >Status</th>
-                <th class="text-center" >Poin</th>
+                <th class="text-center" style="width: 10%">Poin + Bonus</th>
               </tr>
             </thead>
             <tbody>
@@ -116,7 +125,7 @@
                 <td class="text-center">
                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill {{ backgroundStatus($item->tenggat_waktu, $item->waktu_pengumpulan) }} ">{{ statusPengumpulan($item->tenggat_waktu, $item->waktu_pengumpulan) }}</span>
                 </td>
-                <td class="text-center fs-sm">{{ $item->poin ?? '-'}}</td>
+                <td class="text-center fs-sm">{{ ($item->poin  != null) ? $item->poin : '-'}} {!! ($item->bonus !=null) ? "<sup class='text-success'><span class='fa-fw fa-plus'></span>".$item->bonus." </sup>" : '' !!}</td>
               </tr>
               @endforeach
             </tbody>
@@ -135,10 +144,6 @@
     <script src={{  URL::asset("assets/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons/dataTables.buttons.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-jszip/jszip.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons/buttons.print.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons/buttons.html5.min.js") }}></script>
 
      <!-- Page JS Code -->
@@ -153,6 +158,10 @@
       One.helpersOnLoad([
         "jq-select2",
       ]);
+
+      $(document).ready(function () {
+        $(".alert").delay(2000).fadeOut("slow");
+      });
     </script>
 
 @endsection

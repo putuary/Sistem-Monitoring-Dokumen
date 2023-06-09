@@ -48,8 +48,18 @@
                   <div class="row row-cols-lg-auto g-3 align-items-center">
                     <label class="col-lg-3 col-form-label" >Mata Kuliah</label>
                     <div class="col-md-2 col-lg-8">
+                      <div class="space-x-2 mb-2">
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="pilihan_matkul" id="semua-pilihan-matkul">
+                          <label class="form-check-label" for="example-radios-inline1">Semua</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="pilihan_matkul" id="pilih-manual-matkul">
+                          <label class="form-check-label" for="example-radios-inline2">Pilih Manual</label>
+                        </div>
+                      </div>
                       <select class="js-select2 form-select" id="matkul_dibuka" style="width: 100%;" data-placeholder="Pilih Mata Kuliah" multiple required>
-                        <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+                        <option id="placeholder-matkul"></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                         @foreach ($matkul as $key => $item)
                         <option value="{{ $key }}">{{ $item->nama_matkul }}</option>
                         @endforeach
@@ -71,9 +81,19 @@
                     <label class="form-label" for="example-select2-multiple">Dokumen Di Kumpulkan</label>
                   </div>
                   <div class="col-md-2 col-lg-8">
+                    <div class="space-x-2 mb-2">
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="pilihan" id="semua-pilihan">
+                        <label class="form-check-label" for="example-radios-inline1">Semua</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="pilihan" id="pilih-manual">
+                        <label class="form-check-label" for="example-radios-inline2">Pilih Manual</label>
+                      </div>
+                    </div>
                     <div class="mb-3">
-                      <select class="js-select2 form-select @error('dokumen') is-invalid @enderror" id="example-select2-multiple" name="dokumen[]" style="width: 100%;" data-placeholder="Masukkan dokumen yang akan dikumpulkan" multiple required>
-                        <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+                      <select class="js-select2 form-select @error('dokumen') is-invalid @enderror" id="select-document" name="dokumen[]" style="width: 100%;" data-placeholder="Masukkan dokumen yang akan dikumpulkan" multiple required>
+                        <option id='placeholder'></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
                         @foreach ($dokumen as $item)
                         <option value="{{ serialize([$item->id_dokumen, $item->nama_dokumen]) }}">{{ $item->nama_dokumen }}</option>
                         @endforeach
@@ -137,6 +157,43 @@
                       </div>`;
           });
           $("#matkul_dipilih").html(html);
+        });
+
+         // Inisialisasi Select2
+        $(".js-select2").select2();
+
+        // Ketika pilihan radio "Semua" dipilih
+        $("#semua-pilihan-matkul").click(function() {
+          if ($(this).is(":checked")) {
+            $("#matkul_dibuka option").prop("selected", true);
+            $("#placeholder-matkul").prop("selected", false);
+            $("#matkul_dibuka").trigger("change"); // Memperbarui Select2
+          }
+        });
+
+        // Ketika pilihan radio "Pilih Manual" dipilih
+        $("#pilih-manual-matkul").click(function() {
+          if ($(this).is(":checked")) {
+            $("#matkul_dibuka option").prop("selected", false);
+            $("#matkul_dibuka").trigger("change"); // Memperbarui Select2
+          }
+        });
+
+        // Ketika pilihan radio "Semua" dipilih
+        $("#semua-pilihan").click(function() {
+          if ($(this).is(":checked")) {
+            $("#select-document option").prop("selected", true);
+            $("#placeholder").prop("selected", false);
+            $("#select-document").trigger("change"); // Memperbarui Select2
+          }
+        });
+
+        // Ketika pilihan radio "Pilih Manual" dipilih
+        $("#pilih-manual").click(function() {
+          if ($(this).is(":checked")) {
+            $("#select-document option").prop("selected", false);
+            $("#select-document").trigger("change"); // Memperbarui Select2
+          }
         });
       });
      </script>
