@@ -165,8 +165,8 @@
                 <th class="text-center">No.</th>
                 <th class="text-center" >Nama Dokumen</th>
                 <th class="text-center" >Tenggat Waktu</th>
-                <th class="text-center" >Dikumpul</th>
-                <th class="text-center"  style="width: 15%;">Pengumpulan</th>
+                <th class="text-center" >Dokumen Dikumpulkan</th>
+                <th class="text-center"  style="width: 15%;">Menerima Pengumpulan</th>
                 @if(isset($tahun_aktif) && (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true))
                 <th class="text-center" style="width: 15%;">Aksi</th>
                 @endif

@@ -49,7 +49,7 @@ function isPraktikum($data) {
 
 function dikumpul($data) {
     if($data == 1) {
-        return 'Mulltiple Dokumen';
+        return 'Multiple Dokumen';
     }
     return 'Single Dokumen';
 }

@@ -156,7 +156,7 @@
                 <th class="text-center">No.</th>
                 <th class="text-center" >Mata Kuliah</th>
                 <th class="text-center" >Kode</th>
-                <th class="text-center"  style="width: 15%;">Bobot</th>
+                <th class="text-center"  style="width: 15%;">Jumlah SKS</th>
                 <th class="text-center"  style="width: 15%;">Praktikum</th>
                 <th class="text-center" style="width: 15%;">Aksi</th>
               </tr>

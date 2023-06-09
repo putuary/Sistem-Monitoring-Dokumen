@@ -149,7 +149,7 @@
               <tr>
                 <th class="text-center">No.</th>
                 <th class="text-center" >Nama Dokumen Perkuliahan</th>
-                <th class="text-center" >Tenggat Waktu</th>
+                <th class="text-center" >Minggu Tenggat Waktu</th>
                 <th class="text-center" >Dikumpulkan Per</th>
                 <th class="text-center" >Template</th>
                 <th class="text-center" >Aksi</th>
