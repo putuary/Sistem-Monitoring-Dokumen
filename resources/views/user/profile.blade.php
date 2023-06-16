@@ -35,6 +35,15 @@
 
     <!-- Page Content -->
     <div class="content content-boxed">
+      
+       <!-- pop up success upload -->
+      @if (session()->has('success'))
+      <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+        <strong>{{ session()->get('success') }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      @endif
+
       <!-- User Profile -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
@@ -132,6 +141,7 @@
 
 <script>
     $(document).ready(function() {
+        $(".alert").delay(2000).fadeOut("slow");
         $('#new_avatar').change(function() {
             var file = this.files[0];
             var reader = new FileReader();

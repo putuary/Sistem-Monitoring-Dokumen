@@ -57,9 +57,10 @@
               <tr>
                 <th class="text-center">No.</th>
                 <th class="text-center" >Nama Dokumen</th>
+                <th class="text-center" >Tenggat Waktu</th>
                 <th class="text-center" >Waktu Pengumpulan</th>
                 <th class="text-center" >Status Pengumpulan</th>
-                <th class="text-center" style="width: %;">Aksi</th>
+                <th class="text-center" style="width: 15%;">Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -68,6 +69,7 @@
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
                 <td class="fs-sm">{{ $item->nama_dokumen }}</td>
+                <td class="fs-sm text-center">{{ showWaktu($item->tenggat_waktu) }}</td>
                 <td class="fs-sm text-center">
                   @if ($item->dikumpulkan_per==0)
                   {{ showWaktu($item->dokumen_matkul[0]->waktu_pengumpulan) }}
@@ -81,10 +83,10 @@
                 </td>
                 <td class="text-center">
                   @if (isset($item->dokumen_matkul[0]->file_dokumen))
-                    <a href="/progres-pengumpulan/kelas/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($item->dikumpul==0) target="_blank" @endif>
+                    <a href="/progres-pengumpulan/kelas/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" class="btn btn-sm btn-alt-success bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($item->dikumpul==0) target="_blank" @endif>
                       <i class="fa fa-fw fa-eye"></i>
                     </a>
-                    <a href="/progres-pengumpulan/kelas/unduh/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                    <a href="/progres-pengumpulan/kelas/unduh/{{ $item->dokumen_matkul[0]->id_dokumen_matkul }}" class="btn btn-sm btn-alt-info bg-info-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
                       <i class="fa fa-fw fa-download"></i>
                     </a>
                     @if(auth()->user()->role!='admin')
@@ -99,10 +101,10 @@
                 </td>
                 <td class="text-center">
                   @if (isset($item->dokumen_kelas[0]->file_dokumen))
-                  <a href="/progres-pengumpulan/kelas/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($item->dikumpul==0) target="_blank" @endif>
+                  <a href="/progres-pengumpulan/kelas/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" class="btn btn-sm btn-alt-success bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($item->dikumpul==0) target="_blank" @endif>
                     <i class="fa fa-fw fa-eye"></i>
                   </a>
-                  <a href="/progres-pengumpulan/kelas/unduh/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                  <a href="/progres-pengumpulan/kelas/unduh/{{ $item->dokumen_kelas[0]->id_dokumen_kelas }}" class="btn btn-sm btn-alt-info bg-info-light" onclick="" data-bs-toggle="tooltip" title="Unduh Dokumen">
                     <i class="fa fa-fw fa-download"></i>
                   </a>
                   @if(auth()->user()->role!='admin')
@@ -154,7 +156,7 @@
                         type="submit"
                         class="btn btn-alt-primary"
                         data-bs-dismiss="modal">
-                        <i class="fa fa-check me-1"></i>Simpan
+                        <i class="fa fa-check me-1"></i>Submit
                       </button>
                     </div>
                   </form>

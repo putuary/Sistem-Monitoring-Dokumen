@@ -127,7 +127,7 @@
                       <button
                         type="submit"
                         class="btn btn-alt-primary">
-                        <i class="fa fa-check me-1"></i>Simpan
+                        <i class="fa fa-check me-1"></i>Submit
                       </button>
                     </div>
                   </form>
@@ -162,15 +162,15 @@
                 <td class="fs-sm">{{ $item->nama_dokumen }}</td>
                 <td class="fs-sm">{{ 'Minggu '.$item->tenggat_waktu_default }}</td>
                 <td class="text-center fw-semibold fs-sm">{{ $item->dikumpulkan_per==0 ? "Mata Kuliah" : "Kelas" }}</td>
-                <td class="text-center fw-semibold fs-sm"><i class="far fa-fw fa-{{ isset($item->template) ? 'square-check' : 'rectangle-xmark' }}"></i></td>
+                <td class="text-center fw-semibold fs-sm"><i class="fa fa-fw fa-{{ isset($item->template) ? 'check text-success' : 'xmark text-danger' }}"></i></td>
                 <td class="text-center">
                   <form action="/manajemen-data/dokumen-perkuliahan/{{ $item->id_dokumen }}" method="POST">
                     @csrf
                     @method('DELETE')
-                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editDokumen({{ $key }})" data-bs-toggle="tooltip" title="Edit">
+                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-warning-light" onclick="editDokumen({{ $key }})" data-bs-toggle="tooltip" title="Edit Dokumen">
                     <i class="fa fa-fw fa-pencil-alt"></i>
                   </a>
-                    <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Delete">
+                    <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus Dokumen">
                       <i class="fa fa-fw fa-times"></i>
                     </button>
                   </form>
@@ -184,7 +184,7 @@
               <div class="modal-content">
                 <div class="block block-rounded block-transparent mb-0">
                   <div class="block-header block-header-default">
-                    <h3 class="block-title">Edit Dokumen</h3>
+                    <h3 class="block-title">Edit Dokumen Perkuliahan</h3>
                     <div class="block-options">
                       <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
                         <i class="fa fa-fw fa-times"></i>
@@ -244,7 +244,7 @@
                         type="submit"
                         class="btn btn-alt-primary"
                         data-bs-dismiss="modal">
-                        <i class="fa fa-check me-1"></i>Simpan
+                        <i class="fa fa-check me-1"></i>Submit
                       </button>
                     </div>
                   </form>

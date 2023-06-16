@@ -38,7 +38,7 @@
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
-          <h3 class="block-title">Dosen Pengampu Pada Setiap Kelas</h3>
+          <h3 class="block-title">Dosen dan Tipe Dokumen</h3>
         </div>
         <div class="block-content block-content-full">
           <div class="row">
@@ -46,12 +46,12 @@
               <!-- Form Horizontal - Default Style -->
               <form class="space-y-1" action="{{ route('penugasan.store') }}" method="POST">
                 @csrf
-                <h4 class="border-bottom pb-2">Kelas</h4>
-                <div class="mb-4">
+                <h4 class="border-bottom pb-2">Dosen Pengampu Tiap Kelas</h4>
+                <div class="mb-5">
 
-                @foreach ($data['nama_matkul'] as $key => $kelas)
-                  <h5 class="mt-3">{{ $kelas }}</h5>
-                  <div class="mb-4">
+                  @foreach ($data['nama_matkul'] as $key => $kelas)
+                    <h5 class="mt-3">{{ $kelas }}</h5>
+                    <div class="mb-4">
                       <?php $a='A'; ?>
                       @for ($i = 0; $i < $data['jumlah'][$key]; $i++)
                       <div class="row row-cols-lg-auto g-3 align-items-center mb-3">
@@ -71,37 +71,39 @@
                       </div>
                       <?php $a++;?>
                       @endfor
-                  </div>
+                    </div>
                  
-                @endforeach
-              </div>
-              <div class="row">
-                <h4 class="border-bottom pb-2">Dokumen Perkuliahan</h4>
-                <div class="mb-4">
-                @foreach ($data['dokumen'] as $key => $dokumen)
-                  <div class="row row-cols-lg-auto g-3 align-items-center mb-3">
-                    <input type="hidden" name="id_dokumen[]" value="{{ unserialize($dokumen)[0] }}">
-                    <label class="col-sm-4 col-form-label">Dokumen</label>
-                    <div class="col-md-2 col-lg-4">
-                      <div class="form-control">{{ unserialize($dokumen)[1] }}</div>
-                    </div> 
-                    <label class="col-sm-4 col-form-label" >Dikumpul</label>
-                    <div class="space-x-2">
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" id="example-radios-inline1" name="dikumpul[{{ $key }}]" value=0 checked>
-                        <label class="form-check-label" for="example-radios-inline1">Single</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" id="example-radios-inline2" name="dikumpul[{{ $key }}]" value=1>
-                        <label class="form-check-label" for="example-radios-inline2">Multiple</label>
+                  @endforeach
+                </div>
+
+                <div class="row">
+                  <h4 class="border-bottom pb-2">Tipe Pengumpulan Dokumen Perkuliahan</h4>
+                  <div class="mb-4">
+                  @foreach ($data['dokumen'] as $key => $dokumen)
+                    <div class="row row-cols-lg-auto g-3 align-items-center mb-3">
+                      <input type="hidden" name="id_dokumen[]" value="{{ unserialize($dokumen)[0] }}">
+                      <label class="col-sm-4 col-form-label">Dokumen</label>
+                      <div class="col-md-2 col-lg-4">
+                        <div class="form-control">{{ unserialize($dokumen)[1] }}</div>
+                      </div> 
+                      <label class="col-sm-4 col-form-label" >Dikumpul</label>
+                      <div class="space-x-2">
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="example-radios-inline1" name="dikumpul[{{ $key }}]" value=0 checked>
+                          <label class="form-check-label" for="example-radios-inline1">Single</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="example-radios-inline2" name="dikumpul[{{ $key }}]" value=1>
+                          <label class="form-check-label" for="example-radios-inline2">Multiple</label>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                @endforeach
-                
-                <div class="row mt-6">
-                  <div class="col text-center">
-                    <button type="submit" id="btn-submit" class="btn btn-success">Submit</button>
+                  @endforeach
+                  
+                  <div class="row mt-6">
+                    <div class="col text-center">
+                      <button type="submit" id="btn-submit" class="btn btn-success">Submit</button>
+                    </div>
                   </div>
                 </div>
               </form>

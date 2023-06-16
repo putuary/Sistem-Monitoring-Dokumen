@@ -124,7 +124,7 @@
                     type="submit"
                     class="btn btn-alt-primary"
                     data-bs-dismiss="modal">
-                    <i class="fa fa-check me-1"></i>Simpan
+                    <i class="fa fa-check me-1"></i>Submit
                   </button>
                 </div>
               </form>
@@ -162,12 +162,12 @@
                 </td>
                 <td class="text-center">
                   <form action="{{ route('manajemen-pengguna.destroy', $item->id) }}" method="POST">
-                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="edit_pengguna({{ $key }})" data-bs-toggle="tooltip" title="Edit">
+                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-warning-light" onclick="edit_pengguna({{ $key }})" data-bs-toggle="tooltip" title="Edit Pengguna">
                     <i class="fa fa-fw fa-pencil-alt"></i>
                   </a>
                     @csrf
                     @method('DELETE')
-                    <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Delete">
+                    <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus Pengguna">
                       <i class="fa fa-fw fa-times"></i>
                     </button>
                   </form>
@@ -244,7 +244,7 @@
                         type="submit"
                         class="btn btn-alt-primary"
                         data-bs-dismiss="modal">
-                        <i class="fa fa-check me-1"></i>Simpan
+                        <i class="fa fa-check me-1"></i>Submit
                       </button>
                     </div>
                   </form>

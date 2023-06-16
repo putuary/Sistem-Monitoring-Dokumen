@@ -61,7 +61,8 @@
               <tr>
                 <th class="text-center">No.</th>
                 <th class="text-center" >Nama Dokumen</th>
-                <th class="text-center" >Mata Kuliah/Kelas</th>
+                <th class="text-center" >Mata Kuliah</th>
+                <th class="text-center" >Kelas</th>
                 <th class="text-center" >Dosen</th>
                 <th class="text-center" style="width: 15%;">Aksi</th>
               </tr>
@@ -72,7 +73,8 @@
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
                 <td class="fs-sm">{{ $item->nama_dokumen }}</td>
-                <td class="fs-sm">{{ $item->matkul_kelas }}</td>
+                <td class="fs-sm">{{ $item->matkul }}</td>
+                <td class="fs-sm text-center">{{ $item->kelas }}</td>
                 <td class="fs-sm">
                   <ul>
                   @foreach ($item->dosen as $nama_dosen)
@@ -81,10 +83,10 @@
                   </ul>
                 </td>
                 <td class="text-center">
-                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" href="/dokumen-perkuliahan/{{ $item->id_dokumen }}" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($item->dikumpul==0) target="_blank" @endif>
+                  <a type="button" class="btn btn-sm btn-alt-success bg-success-light" href="/dokumen-perkuliahan/{{ $item->id_dokumen }}" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($item->dikumpul==0) target="_blank" @endif>
                     <i class="fa fa-fw fa-eye"></i>
                   </a>
-                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" href="/dokumen-perkuliahan/unduh/{{ $item->id_dokumen }}" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                  <a type="button" class="btn btn-sm btn-alt-info bg-info-light" href="/dokumen-perkuliahan/unduh/{{ $item->id_dokumen }}" data-bs-toggle="tooltip" title="Unduh Dokumen">
                     <i class="fa fa-fw fa-download"></i>
                   </a>
                 </td>

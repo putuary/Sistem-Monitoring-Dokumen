@@ -65,7 +65,7 @@
                 <td class="text-center"><img class="img img-fluid" src="/storage/badges/{{ $badge->gambar }}" alt="" /></td>
                 <td class="fs-sm">{{ $badge->deskripsi }}</td>
                 <td class="text-center">
-                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editBadge({{ $key }})" data-bs-toggle="tooltip" title="Edit">
+                  <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-warning-light" onclick="editBadge({{ $key }})" data-bs-toggle="tooltip" title="Edit Badge">
                     <i class="fa fa-fw fa-pencil-alt"></i>
                   </a>
                 </td>
@@ -126,7 +126,7 @@
                         type="submit"
                         class="btn btn-alt-primary"
                         data-bs-dismiss="modal">
-                        <i class="fa fa-check me-1"></i>Simpan
+                        <i class="fa fa-check me-1"></i>Submit
                       </button>
                     </div>
                   </form>

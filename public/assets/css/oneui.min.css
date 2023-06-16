@@ -29565,21 +29565,22 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination {
 .progresses ul li::after {
     position: absolute;
     top: 35px;
-    left: -15px;
+    text-align: center;
+    left: -40px;
     font-size: 0.8rem;
-    width: 90px;
+    width: 120px;
 }
 
 #step-1::after {
-    content: "Tahun Ajaran";
+    content: "Pembukaan Tahun Ajaran";
 }
 
 #step-2::after {
-    content: "Mata Kuliah";
+    content: "Jumlah Kelas dan Dokumen";
 }
 
 #step-3::after {
-    content: "Kelas Dibuka";
+    content: "Dosen dan Tipe Dokumen";
 }
 
 .progresses .progress {

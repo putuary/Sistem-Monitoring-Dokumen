@@ -55,10 +55,10 @@
                 <td class="text-center fs-sm">{{ $no }}</td>
                 <td class="fs-sm">{{ $file }}</td>
                 <td class="text-center">
-                  <a href="/dokumen-perkuliahan/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
+                  <a href="/dokumen-perkuliahan/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-sm btn-alt-success bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
                     <i class="fa fa-fw fa-eye"></i>
                   </a>
-                  <a href="/dokumen-perkuliahan/unduh/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                  <a href="/dokumen-perkuliahan/unduh/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-sm btn-alt-info bg-info-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
                     <i class="fa fa-fw fa-download"></i>
                   </a>
                 </td>

@@ -55,7 +55,7 @@
               </div>
             </div>
           </div>
-          @if(isset($tahun_aktif) && (count($users) !=0) && in_array(auth()->user()->role, ['kaprodi', 'gkmp']))
+          {{-- @if(isset($tahun_aktif) && (count($users) !=0) && in_array(auth()->user()->role, ['kaprodi', 'gkmp']))
             @if (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true) 
               @if(auth()->user()->aktif_role->is_dosen==0)
               <form class="row" action="/leaderboard/badge" method="POST">
@@ -72,7 +72,7 @@
               </form>
               @endif
             @endif
-          @endif
+          @endif --}}
           <!-- DataTables init on table by adding .js-dataTable-responsive class, functionality is initialized in js/pages/be_tables_datatables.min.js which was auto compiled from _js/pages/be_tables_datatables.js -->
           <table class="table table-bordered table-striped table-vcenter js-dataTable-responsive">
             <thead>

@@ -38,7 +38,7 @@
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
-          <h3 class="block-title">Riwayat Pengumpulan</h3>
+          <h3 class="block-title">Riwayat Pengumpulan dan Poin</h3>
           <div class="block-options">
             <div class="dropdown">
               <button type="button" class="btn-block-option" id="dropdown-ecom-filters" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Filter">
@@ -71,7 +71,7 @@
           <div class="block-content">
             <div class="row justify-content-center">
               <div class="col-md-2 col-lg-3">
-              <form action="/riwayat-pengumpulan">
+              <form action="/riwayat-pengumpulan-poin">
                 <div class="mb-4 d-flex">
                   @if(request('filter'))
                   <input type="hidden" name="filter" value="{{ request('filter') }}">
@@ -98,6 +98,7 @@
               <tr>
                 <th class="text-center">No.</th>
                 <th class="text-center" >Dokumen</th>
+                <th class="text-center" >Mata Kuliah</th>
                 <th class="text-center" >Kelas</th>
                 <th class="text-center" >Dosen</th>
                 <th class="text-center" >Waktu Pengumpulan</th>
@@ -111,7 +112,8 @@
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
                 <td class="fs-sm"><a href="/progres-pengumpulan/kelas?id={{ $item->kode_kelas }}">{{ $item->nama_dokumen }}</a></td>
-                <td class="fs-sm">{{ $item->matkul_kelas }}</td>
+                <td class="fs-sm">{{ $item->matkul}}</td>
+                <td class="fs-sm text-center">{{ $item->kelas }}</td>
                 <td class="fs-sm">
                   <ul>
                     @foreach ($item->dosen as $dosen)

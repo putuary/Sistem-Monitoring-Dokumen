@@ -14,7 +14,7 @@
     <div class="bg-body-light">
       <div class="content content-full">
           <div class="progresses py-4">
-            <ul class="d-flex align-items-center justify-content-between">
+            <ul class="d-flex align-items-center justify-content-between row">
                 <li id="step-1" class="blue"></li>
                 <li id="step-2" ></li>
                 <li id="step-3" ></li>
@@ -32,7 +32,7 @@
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
-          <h3 class="block-title">Tahun Ajaran Baru</h3>
+          <h3 class="block-title">Pembukaan Tahun Ajaran</h3>
         </div>
         <div class="block-content block-content-full">
           <div class="row">

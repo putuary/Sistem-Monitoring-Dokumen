@@ -120,7 +120,7 @@
                     type="submit"
                     class="btn btn-alt-primary"
                     data-bs-dismiss="modal">
-                    <i class="fa fa-check me-1"></i>Simpan
+                    <i class="fa fa-check me-1"></i>Submit
                   </button>
                 </div>
               </form>
@@ -189,12 +189,12 @@
                 @if(isset($tahun_aktif) && (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true))
                 <td class="text-center">
                   <form action="{{ route('dokumen-ditugaskan.destroy', $item->id_dokumen_ditugaskan) }}" method="POST">
-                    <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editPengingat({{ $key }})" data-bs-toggle="tooltip" title="Edit">
+                    <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-warning-light" onclick="editPengingat({{ $key }})" data-bs-toggle="tooltip" title="Edit Tenggat Waktu">
                       <i class="fa fa-fw fa-pencil-alt"></i>
                     </a>
                     @csrf
                     @method('DELETE')
-                      <button class="btn btn-hapus btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Delete">
+                      <button class="btn btn-hapus btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus Dokumen">
                         <i class="fa fa-fw fa-times"></i>
                       </button>
                     </form>
@@ -239,7 +239,7 @@
                         type="submit"
                         class="btn btn-alt-primary"
                         data-bs-dismiss="modal">
-                        <i class="fa fa-check me-1"></i>Simpan
+                        <i class="fa fa-check me-1"></i>Submit
                       </button>
                     </div>
                   </form>

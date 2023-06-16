@@ -8,9 +8,9 @@
 </li>
 
 <li class="nav-main-item">
-    <a class="nav-main-link {{ Request::is('riwayat-pengumpulan-perolehan-score') ? 'active' : '' }}" href="/riwayat-pengumpulan-perolehan-score">
+    <a class="nav-main-link {{ Request::is('riwayat-pengumpulan-perolehan-poin') ? 'active' : '' }}" href="/riwayat-pengumpulan-perolehan-poin">
       <i class="nav-main-link-icon far fa-clock"></i>
-      <span class="nav-main-link-name">Riwayat Pengumpulan dan Perolehan Score</span>
+      <span class="nav-main-link-name">Riwayat Pengumpulan dan Perolehan Poin</span>
     </a>
   </li>
 

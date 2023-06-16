@@ -76,9 +76,9 @@
                 <div id="matkul_dipilih"></div>
 
                 <div class="row mt-5">
-                  <h4 class="border-bottom pb-2">Dokumen</h4>
+                  <h4 class="border-bottom pb-2">Dokumen Perkuliahan Dikumpulkan</h4>
                   <div class="col-lg-3">
-                    <label class="form-label" for="example-select2-multiple">Dokumen Di Kumpulkan</label>
+                    <label class="form-label" for="example-select2-multiple">Dokumen</label>
                   </div>
                   <div class="col-md-2 col-lg-8">
                     <div class="space-x-2 mb-2">

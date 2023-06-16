@@ -55,16 +55,18 @@
                 <td class="text-center fs-sm">{{ $no }}</td>
                 <td class="fs-sm">{{ $file }}</td>
                 <td class="text-center">
-                  <a href="/progres-pengumpulan/kelas/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
+                  <a href="/progres-pengumpulan/kelas/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-sm btn-alt-success bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
                     <i class="fa fa-fw fa-eye"></i>
                   </a>
-                  <a href="/progres-pengumpulan/kelas/unduh/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                  <a href="/progres-pengumpulan/kelas/unduh/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-sm btn-alt-info bg-info-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
                     <i class="fa fa-fw fa-download"></i>
                   </a>
-                  <input type="hidden" name="nama_dokumen" value="{{ $file }}">
+                  
+                  @if(auth()->user()->role!='admin')
                   <button class="btn btn-sm btn-alt-danger bg-danger-light" type="button" onclick="refuseDokumen({{ $key }})"  data-bs-toggle="tooltip" title="Tolak Dokumen">
                     <i class="fa fa-fw fa-times"></i>
                   </button>
+                  @endif
               </tr>
               @php
                   $no++;
@@ -77,7 +79,7 @@
               <div class="modal-content">
                 <div class="block block-rounded block-transparent mb-0">
                   <div class="block-header block-header-default">
-                    <h3 class="block-title title">Penolakan Dokumen</h3>
+                    <h3 class="block-title title">Catatan Penolakan Dokumen</h3>
                     <div class="block-options">
                       <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
                         <i class="fa fa-fw fa-times"></i>
@@ -110,7 +112,7 @@
                         type="submit"
                         class="btn btn-alt-primary"
                         data-bs-dismiss="modal">
-                        <i class="fa fa-check me-1"></i>Simpan
+                        <i class="fa fa-check me-1"></i>Submit
                       </button>
                     </div>
                   </form>

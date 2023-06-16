@@ -200,10 +200,14 @@ class PenugasanController extends Controller
         $tahun_ajaran=TahunAjaran::orderBy('id_tahun_ajaran', 'desc')->get();
         $tahun_aktif=TahunAjaran::tahunAktif()->first();
 
-        $matkul= MatkulDibuka::with('kelas')->withCount(['kelas as banyak_kelas'])->matkulTahun(request('tahun_ajaran'))->get();
+        $matkul= MatkulDibuka::with('kelas')->withCount(['kelas as banyak_kelas'])
+                ->matkulTahun(request('tahun_ajaran'))->get();
 
-        // dd($matkul);
 
-        return view('super-admin.penugasan.daftar-jumlah-kelas', ['matkul' => $matkul, 'tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif]);
+        return view('super-admin.penugasan.daftar-jumlah-kelas', [
+            'matkul'       => $matkul,
+            'tahun_ajaran' => $tahun_ajaran,
+            'tahun_aktif'  => $tahun_aktif
+        ]);
     }
 }

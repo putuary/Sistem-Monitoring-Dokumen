@@ -62,8 +62,8 @@
                 <td class="fs-sm">{{ $item->scoreable->dokumen_ditugaskan->nama_dokumen }}</td>
                 <td class="fs-sm">{{ $item->kelas->matkul->nama_matkul }}</td>
                 <td class="text-center fs-sm">{{ $item->kelas->nama_kelas }}</td>
-                <td class="fs-sm">{{ showWaktu($item->scoreable->dokumen_ditugaskan->tenggat_waktu) }}</td>
-                <td class="fs-sm">{{ showWaktu($item->scoreable->waktu_pengumpulan) }}</td>
+                <td class="fs-sm text-center">{{ showWaktu($item->scoreable->dokumen_ditugaskan->tenggat_waktu) }}</td>
+                <td class="fs-sm text-center">{{ showWaktu($item->scoreable->waktu_pengumpulan) }}</td>
                 <td class="text-center fs-sm">{{ ($item->poin  != null) ? $item->poin : '-'}} {!! ($item->bonus !=null) ? "<sup class='text-success'><span class='fa-fw fa-plus'></span>".$item->bonus." </sup>" : '' !!}</td>
               </tr>
               @endif

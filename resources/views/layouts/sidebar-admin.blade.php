@@ -33,9 +33,9 @@
 </li>
 
 <li class="nav-main-item">
-  <a class="nav-main-link {{ Request::is('riwayat-pengumpulan-score') ? 'active' : '' }}" href="/riwayat-pengumpulan-score">
+  <a class="nav-main-link {{ Request::is('riwayat-pengumpulan-poin') ? 'active' : '' }}" href="/riwayat-pengumpulan-poin">
     <i class="nav-main-link-icon far fa-clock"></i>
-    <span class="nav-main-link-name">Riwayat Pengumpulan dan Score</span>
+    <span class="nav-main-link-name">Riwayat Pengumpulan dan Poin</span>
   </a>
 </li>
 

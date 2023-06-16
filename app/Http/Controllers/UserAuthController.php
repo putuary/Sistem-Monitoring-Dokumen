@@ -36,12 +36,11 @@ class UserAuthController extends Controller
 
         if(Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            // dd(Auth::user()->nama);
             return redirect()->intended('/')->with('success', 'Login Berhasil!');
         }
-       // $request->session()->flash('flash', 'Welcome!');
+       
         $errors = new MessageBag(['password' => ['username atau password salah.']]);
-        return back()->withErrors($errors)->withSuccess('Login details are not valid');
+        return back()->withErrors($errors);
     }
 
     public function logout()

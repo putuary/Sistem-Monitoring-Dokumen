@@ -129,7 +129,7 @@
                     type="submit"
                     class="btn btn-alt-primary btn-submit"
                     data-bs-dismiss="modal">
-                    <i class="fa fa-check me-1"></i>Simpan
+                    <i class="fa fa-check me-1"></i>Submit
                   </button>
                 </div>
               </form>
@@ -172,8 +172,8 @@
             <thead>
               <tr>
                 <th class="text-center">No.</th>
-                <th class="text-center" >Kelas</th>
                 <th class="text-center" >Mata Kuliah</th>
+                <th class="text-center" >Kelas</th>
                 <th class="text-center" >Dosen Pengampu</th>
                 @if(isset($tahun_aktif) && (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true))
                 <th class="text-center" style="width: 15%;">Aksi</th>
@@ -184,8 +184,8 @@
               @foreach ($kelas as $key => $item)
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="text-center fs-sm">{{ $item->nama_kelas }}</td>
                 <td class="fs-sm">{{ $item->matkul->nama_matkul }}</td>
+                <td class="text-center fs-sm">{{ $item->nama_kelas }}</td>
                 <td class="fs-sm">
                   <ul>
                     @foreach ($item->dosen_kelas as $dosen_pengampu)
@@ -196,12 +196,12 @@
                 @if(isset($tahun_aktif) && (request('tahun_ajaran') ? (request('tahun_ajaran') == $tahun_aktif->id_tahun_ajaran ? true :false) : true))
                 <td class="text-center">
                   <form action="{{ route('daftar-kelas.destroy', $item->kode_kelas) }}" method="POST">
-                    <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editKelas({{ $key }})" data-bs-toggle="tooltip" title="Edit">
+                    <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-warning-light" onclick="editKelas({{ $key }})" data-bs-toggle="tooltip" title="Edit Kelas">
                       <i class="fa fa-fw fa-pencil-alt"></i>
                     </a>
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-hapus btn-sm btn-alt-danger bg-danger-light"  data-bs-toggle="tooltip" title="Delete">
+                    <button type="submit" class="btn btn-hapus btn-sm btn-alt-danger bg-danger-light"  data-bs-toggle="tooltip" title="Hapus Kelas">
                       <i class="fa fa-fw fa-times"></i>
                     </button>
                   </form>
@@ -269,7 +269,7 @@
                         type="submit"
                         class="btn btn-alt-primary"
                         data-bs-dismiss="modal">
-                        <i class="fa fa-check me-1"></i>Simpan
+                        <i class="fa fa-check me-1"></i>Submit
                       </button>
                     </div>
                   </form>

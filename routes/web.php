@@ -117,7 +117,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 
     // Riwayat Pengumpulan
-    Route::get('/riwayat-pengumpulan-score', [ProgresController::class, 'showRiwayat']);
+    Route::get('/riwayat-pengumpulan-poin', [ProgresController::class, 'showRiwayat']);
 });
 
 Route::middleware(['auth', 'role:dosen'])->group(function () {
@@ -134,7 +134,7 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::delete('/kelas-diampu/dokumen/{id_dokumen}', [DokumenDikumpulController::class, 'deleteDokumenDikumpul']);
 
     // Riwayat Pengumpulan
-    Route::get('/riwayat-pengumpulan-perolehan-score', [KelasDiampuController::class, 'showRiwayat']);
+    Route::get('/riwayat-pengumpulan-perolehan-poin', [KelasDiampuController::class, 'showRiwayat']);
 
     // Score
     // Route::get('/perolehan-score', [LeaderboardController::class, 'showUserScore']);
