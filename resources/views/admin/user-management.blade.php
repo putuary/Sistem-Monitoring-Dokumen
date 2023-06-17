@@ -155,8 +155,8 @@
               @foreach ($data as $key => $item)
               <tr>
                 <td class="text-center fs-sm">{{ $key+1 }}</td>
-                <td class="text-center fs-sm">{{ $item->nama }}</td>
-                <td class="text-center fw-semibold fs-sm">{{ $item->email }}</td>
+                <td class="fs-sm">{{ $item->nama }}</td>
+                <td class="fw-semibold fs-sm">{{ $item->email }}</td>
                 <td class="text-center">
                   <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill <?php if($item->role=="kaprodi") {echo "bg-success-light text-success"; } else if ($item->role=="gkmp") {echo "bg-warning-light text-warning"; } else if($item->role=="dosen") {echo "bg-danger-light text-danger"; } else if($item->role=="admin") {echo "bg-primary-light text-primary"; } ?>">{{ NamaPeran($item->role) }}</span>
                 </td>

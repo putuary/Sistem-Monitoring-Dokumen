@@ -6,7 +6,6 @@ use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\DataManagementController;
 use App\Http\Controllers\PenugasanController;
 use App\Http\Controllers\ProgresController;
-use App\Http\Controllers\PengingatController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\KelasDiampuController;
 use App\Http\Controllers\DokumenDikumpulController;

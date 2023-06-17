@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\DokumenKelas;
 use App\Models\DokumenMatkul;
 use App\Models\DokumenPerkuliahan;
+use App\Models\Gamifikasi;
 use App\Models\TahunAjaran;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class DokumenDikumpulController extends Controller
 {
@@ -117,7 +119,7 @@ class DokumenDikumpulController extends Controller
             if($tahun_aktif->id_tahun_ajaran == $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_tahun_ajaran) {
                 $dokumen_matkul=DokumenMatkul::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_matkul);
                 if($dokumen_matkul->note == null) {
-                    $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+                    $data=Gamifikasi::submitScoreWithBonus($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
                       
                     $dokumen_matkul->scores()->update([
                         'poin'       => $data['poin'],
@@ -136,7 +138,7 @@ class DokumenDikumpulController extends Controller
             if($tahun_aktif->id_tahun_ajaran == $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_tahun_ajaran) {
                 $dokumen_kelas=DokumenKelas::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_kelas);
                 if($dokumen_kelas->note == null) {
-                    $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+                    $data=Gamifikasi::submitScoreWithBonus($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
         
                     $dokumen_kelas->scores()->update([
                         'poin'     => $data['poin'],
@@ -184,7 +186,7 @@ class DokumenDikumpulController extends Controller
                 $dokumen_matkul=DokumenMatkul::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_matkul);
                 if($file_dokumen == null) {
                     if($dokumen_matkul->note == null) {
-                        $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+                        $data=Gamifikasi::submitScoreWithBonus($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
                         
                         $dokumen_matkul->scores()->update([
                             'poin'       => $data['poin'],
@@ -197,19 +199,12 @@ class DokumenDikumpulController extends Controller
                     }
                 } else {
                     if($dokumen_matkul->note == null) {
-                        $tenggat=Carbon::parse($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu);
-                        $waktu_pengumpulan=Carbon::parse($dokumen_matkul->waktu_pengumpulan);
-                        if($waktu_pengumpulan->isBefore($tenggat)) {
-                            $poin=100;
-                        } else {
-                            $poin=-25;
-                        }
-
+                        $poin=Gamifikasi::submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan);
                         $dokumen_matkul->scores()->update([
                             'poin'       => $poin,
                         ]);                       
                         if($dokumen->dokumen_dikumpul->scores[0]->bonus != null) {
-                            updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
+                            Gamifikasi::updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
                          }
 
                     } else {
@@ -226,7 +221,7 @@ class DokumenDikumpulController extends Controller
                 $dokumen_kelas=DokumenKelas::with('note')->find($dokumen->dokumen_dikumpul->id_dokumen_kelas);
                 if($file_dokumen == null) {
                     if($dokumen_kelas->note == null) {    
-                        $data=submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
+                        $data=Gamifikasi::submitScoreWithBonus($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan);
         
                         $dokumen_kelas->scores()->update([
                             'poin'       => $data['poin'],
@@ -239,19 +234,13 @@ class DokumenDikumpulController extends Controller
                     }
                 }else {
                     if($dokumen_kelas->note == null) {
-                        $tenggat=Carbon::parse($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu);
-                        $waktu_pengumpulan=Carbon::parse($dokumen_kelas->waktu_pengumpulan);
-                        if($waktu_pengumpulan->isBefore($tenggat)) {
-                            $poin=100;
-                        } else {
-                            $poin=-25;
-                        }
+                        $poin=Gamifikasi::submitScore($dokumen->dokumen_dikumpul->dokumen_ditugaskan->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan);
 
                         $dokumen_kelas->scores()->update([
                             'poin'       => $poin,
                         ]);                       
                         if($dokumen->dokumen_dikumpul->scores[0]->bonus != null) {
-                            updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
+                            Gamifikasi::updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
                          }
 
                     } else {
@@ -356,19 +345,19 @@ class DokumenDikumpulController extends Controller
             
             $storage = array_diff(scandir($dokumen->path_multiple, SCANDIR_SORT_ASCENDING), array('.', '..'));
 
-            if(\Request::is('kelas-diampu/*')) {
+            if(FacadesRequest::is('kelas-diampu/*')) {
                 return view('dosen.kelas-diampu.tampil-dokumen-multiple', [
                     'title'      => $dokumen->nama_dokumen,
                     'id_dokumen' => $id_dokumen,
                     'nama_files' => $storage
                 ]);
-            }else if(\Request::is('dokumen-perkuliahan/*')) {
+            }else if(FacadesRequest::is('dokumen-perkuliahan/*')) {
                 return view('dosen.dokumen.tampil-dokumen-multiple', [
                     'title'      => $dokumen->nama_dokumen,
                     'id_dokumen' => $id_dokumen,
                     'nama_files' => $storage
                 ]);
-            } else if(\Request::is('progres-pengumpulan/*')) {
+            } else if(FacadesRequest::is('progres-pengumpulan/*')) {
                 return view('admin.progres.tampil-dokumen-multiple', [
                     'title'      => $dokumen->nama_dokumen,
                     'id_dokumen' => $id_dokumen,
@@ -417,7 +406,7 @@ class DokumenDikumpulController extends Controller
 
                     if($dokumen->dokumen_dikumpul->note == null) {
                         if($dokumen->dokumen_dikumpul->scores[0]->bonus != null) {
-                            updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
+                            Gamifikasi::updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
                          }
                          
                         $dokumen->dokumen_dikumpul->scores()->update([
@@ -445,7 +434,7 @@ class DokumenDikumpulController extends Controller
 
         if($dokumen->dokumen_dikumpul->note == null) {
             if($dokumen->dokumen_dikumpul->scores[0]->bonus != null) {
-                updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
+                Gamifikasi::updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
              }
              
             $dokumen->dokumen_dikumpul->scores()->update([

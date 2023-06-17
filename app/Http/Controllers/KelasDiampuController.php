@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\DokumenDitugaskan;
 use App\Models\Kelas;
 use App\Models\TahunAjaran;
-use App\Models\DokumenKelas;
-use App\Models\DokumenMatkul;
 
 class KelasDiampuController extends Controller
 {
@@ -15,11 +13,16 @@ class KelasDiampuController extends Controller
     {
         $tahun_ajaran = TahunAjaran::orderBy('id_tahun_ajaran', 'desc')->get();
         $tahun_aktif = TahunAjaran::tahunAktif()->first();
-        $kelas = Kelas::with(['tahun_ajaran', 'dokumen_kelas', 'matkul','kelas_dokumen_matkul'])
-                ->kelasDiampu()->kelasTahun(request('tahun_ajaran'))
+        $kelas = Kelas::with(['matkul', 'dokumen_kelas' => function($query) {
+                    $query->with('dokumen_ditugaskan');
+                }, 'kelas_dokumen_matkul' => function($query) {
+                    $query->with('dokumen_ditugaskan');
+                }])->kelasDiampu()->kelasTahun(request('tahun_ajaran'))
                 ->searchKelas(request('search'))->orderBy('kode_kelas', 'asc')->get();
+
+                $summary=kelasSummary($kelas);
         
-        return view('dosen.kelas-diampu.index', ['kelas' => $kelas, 'tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif]);
+        return view('dosen.kelas-diampu.index', ['classes' => $summary->daftar_kelas, 'tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif]);
     }
 
     public function showDokumenDitugaskan($kode_kelas)
@@ -52,18 +55,7 @@ class KelasDiampuController extends Controller
         
         $tahun_ajaran = TahunAjaran::orderBy('id_tahun_ajaran', 'desc')->get();
         $tahun_aktif = TahunAjaran::tahunAktif()->first();
-        // union two table
-
-        // $kelas = Kelas::with(['dokumen_kelas' => function($query) {
-        //             $query->with(['dokumen_ditugaskan', 'scores' => function($query) {
-        //                 $query->where('id_dosen', auth()->user()->id)->whereColumn('scores.kode_kelas', 'kelas.kode_kelas'); 
-        //             }])->filter(request('filter'));
-        //         }, 'matkul','dosen_kelas','kelas_dokumen_matkul' => function($query) {
-        //             $query->with(['dokumen_ditugaskan', 'scores' => function($query) {
-        //                 $query->where('id_dosen', auth()->user()->id)->whereColumn('scores.kode_kelas', 'kelas.kode_kelas');
-        //             }])->filter(request('filter'));
-        //         }])->kelasDiampu()->kelasTahun(request('tahun_ajaran'))->get();
-        //                 dd($kelas);
+        
         $kelas = Kelas::with(['dokumen_kelas' => function($query) {
             $query->with(['dokumen_ditugaskan', 'scores' => function($query) {
                 $query->where('id_dosen', auth()->user()->id);
@@ -82,10 +74,6 @@ class KelasDiampuController extends Controller
             'dokumen' => $dokumen,
         ]);
 
-        // return view('dosen.riwayat.index', [
-        //     'tahun_ajaran' => $tahun_ajaran,
-        //     'tahun_aktif' => $tahun_aktif,
-        //     'kelas' => $kelas,
-        // ]);
+       
     }
 }

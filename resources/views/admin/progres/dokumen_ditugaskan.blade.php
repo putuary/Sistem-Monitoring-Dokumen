@@ -41,6 +41,7 @@
           <h3 class="block-title">Dokumen {{ $dokumen->nama_dokumen ?? 'Undefine' }} </h3>
         </div>
         <div class="block-content block-content-full">
+          @if($isDownloadable)
           <div class="row">
             <div class="col-md-2 col-lg-4">
               <div class="mb-4 text-start">
@@ -50,8 +51,7 @@
               </div>
             </div>
           </div>
-          <div class="block-content">
-          </div>
+          @endif
 
           <!-- DataTables init on table by adding .js-dataTable-responsive class, functionality is initialized in js/pages/be_tables_datatables.min.js which was auto compiled from _js/pages/be_tables_datatables.js -->
           <table class="table table-bordered table-striped table-vcenter js-dataTable-responsive">

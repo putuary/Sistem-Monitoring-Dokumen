@@ -57,11 +57,13 @@
       </form>
 
       <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start mb-3">
+        @if($isDownloadable)
         <div class="mt-3 mt-md-0">
           <a href="/progres-pengumpulan/unduh-semua-dokumen/{{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}" class="btn btn-info">
             <i class="fa fa-fw fa-download me-1"></i> Unduh Semua Dokumen
           </a>
         </div>
+        @endif
 
         <div class="mt-3 mt-md-0">
           <a class="btn btn-success" href="/progres-pengumpulan/resume-pengumpulan?tahun_ajaran={{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}">
@@ -102,7 +104,7 @@
         </div>
       </div>
 
-      @if (count($dokumen) == 0)
+      @if (count($dokumens) == 0)
       <div class="alert alert-danger" role="alert">
         <h4 class="alert-heading">Dokumen tidak ditemukan!</h4>
         <p>Maaf, Dokumen tidak ada di dalam database.</p>
@@ -112,40 +114,37 @@
       <!-- Overview -->
       <div class="row items-push">
 
-        @foreach ($dokumen as $item)
+        @foreach ($dokumens as $dokumen)
 
-        <?php
-          $status = dokumenSummary($item);
-        ?>
-            <!-- Progres Mata Kuliah -->
+        <!-- Progres Mata Kuliah -->
         <div class="col-sm-6 col-xxl-3">
-          <a class="block block-rounded d-flex flex-column h-100 mb-0" href="/progres-pengumpulan/dokumen?id={{ $item->id_dokumen_ditugaskan }}">
+          <a class="block block-rounded d-flex flex-column h-100 mb-0" href="/progres-pengumpulan/dokumen?id={{ $dokumen->id_dokumen_ditugaskan }}">
             <div
               class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
               <dl class="mb-0 text-justify">
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
-                  Terlewat <span class="badge bg-danger rounded-pill"> {{ $status->terlewat }}</span>
+                  Terlewat <span class="badge bg-danger rounded-pill"> {{ $dokumen->terlewat }}</span>
                 </dd>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
-                  Telat <span class="badge bg-warning rounded-pill"> {{ $status->telat }}</span>
+                  Telat <span class="badge bg-warning rounded-pill"> {{ $dokumen->telat }}</span>
                 </dd>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
-                  Terkumpul <span class="badge bg-success rounded-pill"> {{ $status->terkumpul }}</span>
+                  Terkumpul <span class="badge bg-success rounded-pill"> {{ $dokumen->terkumpul }}</span>
                 </dd>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
-                  Ditugaskan <span class="badge bg-info rounded-pill"> {{ $status->ditugaskan }}</span>
+                  Ditugaskan <span class="badge bg-info rounded-pill"> {{ $dokumen->ditugaskan }}</span>
                 </dd>
               </dl>
               <div class="item item-2x item-circle bg-body-light">
                 <!-- Pie Chart Container -->
-                <div class="js-pie-chart pie-chart" data-percent={{ $status->persentase_dikumpul }} data-line-width="3" data-size="100" data-bar-color="#fadb7d" data-track-color="#eeeeee" data-scale-color="#dddddd">
-                  <span>{{ $status->persentase_dikumpul.'%' }}</span>
+                <div class="js-pie-chart pie-chart" data-percent={{ $dokumen->persentase_dikumpul }} data-line-width="3" data-size="100" data-bar-color="#fadb7d" data-track-color="#eeeeee" data-scale-color="#dddddd">
+                  <span>{{ $dokumen->persentase_dikumpul.'%' }}</span>
                 </div>
               </div>
             </div>
             <div class="bg-body-light rounded-bottom">
               <div class="block-content block-content-full block-content-sm text-center fs-sm fw-medium">
-                <span>{{ $item->nama_dokumen }}</span>
+                <span>{{ $dokumen->nama_dokumen }}</span>
               </div>
             </div>
           </a>

@@ -62,7 +62,7 @@
         </div>
       </div>
 
-      @if (count($kelas) == 0)
+      @if (count($classes) == 0)
         <div class="alert alert-danger" role="alert">
           <h4 class="alert-heading">Kelas tidak ditemukan!</h4>
           <p>Maaf, Kelas tidak ada di dalam database.</p>
@@ -72,40 +72,37 @@
       <!-- Overview -->
       <div class="row items-push">
 
-        @foreach ($kelas as $item)
-        @php
-          $status = kelasSummary($item->dokumen_kelas, $item->kelas_dokumen_matkul);
-          // dd($status);
-        @endphp
-            <!-- Progres Mata Kuliah -->
+        @foreach ($classes as $class)
+       
+        <!-- Progres Mata Kuliah -->
         <div class="col-sm-6 col-xxl-3">
-          <a class="block block-rounded d-flex flex-column h-100 mb-0" href="/kelas-diampu/{{ $item->kode_kelas }}">
+          <a class="block block-rounded d-flex flex-column h-100 mb-0" href="/kelas-diampu/{{ $class->kode_kelas }}">
             <div
               class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
               <dl class="mb-0 text-justify">
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
-                  Terlewat <span class="badge bg-danger rounded-pill"> {{ $status->terlewat }}</span>
+                  Terlewat <span class="badge bg-danger rounded-pill"> {{ $class->terlewat }}</span>
                 </dd>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
-                  Telat <span class="badge bg-warning rounded-pill"> {{ $status->telat }}</span>
+                  Telat <span class="badge bg-warning rounded-pill"> {{ $class->telat }}</span>
                 </dd>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
-                  Terkumpul <span class="badge bg-success rounded-pill"> {{ $status->terkumpul }}</span>
+                  Terkumpul <span class="badge bg-success rounded-pill"> {{ $class->terkumpul }}</span>
                 </dd>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
-                  Ditugaskan <span class="badge bg-info rounded-pill"> {{ $status->ditugaskan }}</span>
+                  Ditugaskan <span class="badge bg-info rounded-pill"> {{ $class->ditugaskan }}</span>
                 </dd>
               </dl>
               <div class="item item-2x item-circle bg-body-light">
                 <!-- Pie Chart Container -->
-                <div class="js-pie-chart pie-chart" data-percent={{ $status->persentase_dikumpul }} data-line-width="3" data-size="100" data-bar-color="#fadb7d" data-track-color="#eeeeee" data-scale-color="#dddddd">
-                  <span>{{ $status->persentase_dikumpul.'%' }}</span>
+                <div class="js-pie-chart pie-chart" data-percent={{ $class->persentase_dikumpul }} data-line-width="3" data-size="100" data-bar-color="#fadb7d" data-track-color="#eeeeee" data-scale-color="#dddddd">
+                  <span>{{ $class->persentase_dikumpul.'%' }}</span>
                 </div>
               </div>
             </div>
             <div class="bg-body-light rounded-bottom">
               <div class="block-content block-content-full block-content-sm text-center fs-sm fw-medium">
-                <span>{{ $item->matkul->nama_matkul.' '.$item->nama_kelas }}</span>
+                <span>{{ $class->nama_kelas }}</span>
               </div>
             </div>
           </a>

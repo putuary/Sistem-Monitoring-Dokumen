@@ -9,79 +9,13 @@ use App\Models\UserBadge;
 use App\Models\DokumenDitugaskan;
 use App\Models\DokumenKelas;
 use App\Models\DokumenMatkul;
+use App\Models\Gamifikasi;
 use App\Models\LeaderBoard;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Http\Request;
 
 class LeaderBoardController extends Controller
 {
-    public static function storeResultBadge($id_tahun_ajaran) {
-        DokumenDitugaskan::where('id_tahun_ajaran', $id_tahun_ajaran)->update(['pengumpulan' => 0]);
-        Score::whereHas('scoreable', function($query) {
-            $query->whereNull('file_dokumen');
-        })->scoreTahun($id_tahun_ajaran)->update(['poin'  => -100]);
-
-        // Score::whereNull('poin')->where('id_tahun_ajaran', $request->id_tahun_ajaran)->update(['poin'  => -100]);
-
-        $users=User::with(['score' => function($query) {
-            $query->with('scoreable')->whereHas('tahun_ajaran', function($query) {
-                $query->tahunAktif();
-            });
-        }])->whereHas('dosen_kelas', function($query) {
-            $query->kelasAktif();
-        })->where('role', '!=', 'admin')->get();
-
-        // dd($users);
-
-        $tahun_aktif_badge=UserBadge::where('is_aktif', 1)->first();
-
-        if($id_tahun_ajaran == ($tahun_aktif_badge->id_tahun_ajaran ?? null)) {
-            UserBadge::where('id_tahun_ajaran', $id_tahun_ajaran)->delete();
-        }
-
-        $lecturers=showRank($users);
-
-        UserBadge::where('is_aktif', 1)->update(['is_aktif' => 0]);
-        LeaderBoard::where('id_tahun_ajaran', $id_tahun_ajaran)->delete();
-        foreach ($lecturers as $key => $lecturer) {
-            LeaderBoard::create([
-                'id_dosen'        => $lecturer->user->id,
-                'id_tahun_ajaran' => $id_tahun_ajaran,
-                'tepat_waktu'     => $lecturer->onTime,
-                'terlambat'       => $lecturer->late,
-                'kosong'          => $lecturer->empty,
-                'skor'            => $lecturer->score,
-            ]);
-            
-            if($key === 0) {
-                giveBadge($lecturer->user->id, 1, $id_tahun_ajaran);
-            } else if($key == 1) {
-                giveBadge($lecturer->user->id, 2, $id_tahun_ajaran);
-            } else if($key == 2) {
-                giveBadge($lecturer->user->id, 3, $id_tahun_ajaran);
-            } else if($key == (count($lecturers) - 1)) {
-                giveBadge($lecturer->user->id, 4, $id_tahun_ajaran);
-            } else if($key == (count($lecturers) - 2)) {
-                giveBadge($lecturer->user->id, 5, $id_tahun_ajaran);
-            } else if($key == (count($lecturers) - 3)) {
-                giveBadge($lecturer->user->id, 6, $id_tahun_ajaran);
-            }
-
-            if($lecturer->onTime == $lecturer->task) {
-                giveBadge($lecturer->user->id, 7, $id_tahun_ajaran);
-            }
-
-            if($lecturer->late >= (0.5 * $lecturer->task)) {
-                giveBadge($lecturer->user->id, 8, $id_tahun_ajaran);
-            }
-
-            if($lecturer->empty >= 1) {
-                giveBadge($lecturer->user->id, 9, $id_tahun_ajaran);
-            }
-        }
-        return true;
-    }
-
     public function index()
     {
         $tahun_aktif=TahunAjaran::tahunAktif()->first();
@@ -97,7 +31,7 @@ class LeaderBoardController extends Controller
 
         // dd($users[0]);
 
-        $leaderboards=showRank($users);
+        $leaderboards=Gamifikasi::showRank($users);
         // dd($leaderboards[0]->score[0]->scoreable->nama_matkul);
 
        return view('user.leaderboard.tampil-leaderboard', ['tahun_aktif' => $tahun_aktif, 'tahun_ajaran' => $tahun_ajaran, 'leaderboards' => $leaderboards]);
@@ -136,7 +70,7 @@ class LeaderBoardController extends Controller
             $query->with(['scoreable' => ['dokumen_ditugaskan'], 'kelas' => ['matkul']])
             ->scoreTahun(request('tahun_ajaran'))->orderBy('updated_at', 'desc');
         }])->where('id', $id_dosen)->get();
-        $detail=showRank($user);
+        $detail=Gamifikasi::showRank($user);
         // dd($detail[0]);
         return view('user.leaderboard.detail-score', ['detail' => $detail[0]]);
     }
@@ -188,7 +122,7 @@ class LeaderBoardController extends Controller
         })->scoreTahun($request->tahun_ajaran)->update(['poin' => null]);
         Score::whereHas('scoreable', function($query) {
             $query->whereHas('note');
-        })->scoreTahun($request->tahun_ajaran)->update(['poin' => -50]);
+        })->scoreTahun($request->tahun_ajaran)->update(['poin' => Gamifikasi::getPointDokumenSalah()]);
         return redirect('/badge')->with('success', 'Berhasil menghapus badge');
     }
 }

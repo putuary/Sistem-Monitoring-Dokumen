@@ -2,12 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AktifRole;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
 class UserManagementController extends Controller
 {
+    private function CreateorDeleteAktifRole($id, $role, $requestRole) {
+        if($role != $requestRole) {
+            if(in_array($role, ['kaprodi', 'gkmp']) && in_array($requestRole, ['dosen', 'admin'])) {
+                AktifRole::where('id_user', $id)->delete();
+            } else if (in_array($role, ['dosen', 'admin']) && in_array($requestRole, ['kaprodi', 'gkmp'])) {
+                AktifRole::create([
+                    'id_user'   => $id,
+                    'is_dosen'  => 0,
+                ]);
+            }
+        }
+    }
+
     public function index()
     {
         $data=User::get();
@@ -63,7 +77,7 @@ class UserManagementController extends Controller
                 'role'      => $request->role,
             ]);
 
-            CreateorDeleteAktifRole($id, $pengguna->role, $request->role);
+            $this->CreateorDeleteAktifRole($id, $pengguna->role, $request->role);
 
         } else {
             User::where('id', $id)->update([
@@ -73,7 +87,7 @@ class UserManagementController extends Controller
                 'role'      => $request->role,
             ]);
 
-            CreateorDeleteAktifRole($request->id, $pengguna->role, $request->role, $request->id);
+            $this->CreateorDeleteAktifRole($id, $pengguna->role, $request->role);
         }
 
         return redirect()->back()->with('success', 'Data berhasil diubah');

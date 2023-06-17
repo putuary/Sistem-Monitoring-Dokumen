@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\CatatanPenolakan;
 use App\Models\DokumenDitugaskan;
 use App\Models\Kelas;
 use App\Models\TahunAjaran;
-use App\Models\DokumenMatkul;
-use App\Models\DokumenKelas;
+use App\Models\Gamifikasi;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\File;
@@ -21,25 +19,30 @@ class ProgresController extends Controller
         $tahun_aktif=TahunAjaran::tahunAktif()->first();
 
         if(request('filter')== null || request('filter')== 'kelas') {
-            $kelas = Kelas::with(['dosen_kelas', 'tahun_ajaran', 'matkul','dokumen_kelas'=> function($query) {
+            $kelas = Kelas::with(['matkul','dokumen_kelas'=> function($query) {
                 $query->with('dokumen_ditugaskan');
             }, 'kelas_dokumen_matkul' => function($query) {
                 $query->with('dokumen_ditugaskan');
             }])->kelasTahun(request('tahun_ajaran'))->searchKelas(request('search'))->orderBy('id_matkul_dibuka', 'asc')->get();
-            // dd($kelas);
-            return view('admin.progres.progres_kelas', ['kelas' => $kelas, 'tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif]);
+            
+            $summary=kelasSummary($kelas);
+
+            return view('admin.progres.progres_kelas', ['tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif, 'classes' => $summary->daftar_kelas, 'isDownloadable' => $summary->isDownloadable]);
         } else if(request('filter') == 'dokumen') {
-            $dokumen = DokumenDitugaskan::with(['dokumen_matkul', 'dokumen_kelas'])
+            $dokumens = DokumenDitugaskan::with(['dokumen_matkul', 'dokumen_kelas'])
             ->dokumenTahun(request('tahun_ajaran'))->searchDokumen(request('search'))->get();
-            // dd($dokumen);
-            return view('admin.progres.progres_dokumen', ['dokumen' => $dokumen, 'tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif]);
+            
+            $summary=dokumenSummary($dokumens);
+            // dd($daftar_dokumen);
+
+            return view('admin.progres.progres_dokumen', ['tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif, 'dokumens' => $summary->daftar_dokumen, 'isDownloadable' => $summary->isDownloadable]);
         }
     }
 
     public function showProgresKelas()
     {
         $kode_kelas = request('id');
-        $kelas=Kelas::with('matkul')->find($kode_kelas);
+        $kelas=Kelas::with(['matkul', 'dokumen_kelas'])->find($kode_kelas);
             
         $dokumen=DokumenDitugaskan::with(['dokumen_matkul' => function($query) use ($kode_kelas) {
             $query->dokumenKelas($kode_kelas);
@@ -51,7 +54,22 @@ class ProgresController extends Controller
             $query->where('kode_kelas', $kode_kelas);
         })->get();
 
-        return view('admin.progres.kelas_ditugaskan', ['kelas' => $kelas,'dokumen' => $dokumen]);
+        $isDownloadable = false;
+        foreach($dokumen as $dok) {
+            if($dok->dikumpulkan_per == 0) {
+                if($dok->dokumen_matkul[0]->file_dokumen != null && $isDownloadable == false) {
+                    $isDownloadable = true;
+                    break;
+                }
+            } else {
+                if($dok->dokumen_kelas[0]->file_dokumen != null && $isDownloadable == false) {
+                    $isDownloadable = true;
+                    break;
+                }
+            }
+        }
+
+        return view('admin.progres.kelas_ditugaskan', ['kelas' => $kelas,'dokumen' => $dokumen, 'isDownloadable' => $isDownloadable]);
     }
 
     public function showProgresDokumen()
@@ -63,8 +81,25 @@ class ProgresController extends Controller
             $query->with(['kelas' => ['matkul']])->orderByRaw("ISNULL(waktu_pengumpulan), waktu_pengumpulan ASC");
         }])->where('id_dokumen_ditugaskan', $id_dokumen)->first();
         // dd($dokumen);
+
+        $isDownloadable = false;
+        if($dokumen->dikumpulkan_per == 0) {
+            foreach($dokumen->dokumen_matkul as $dok) {
+                if($dok->file_dokumen != null && $isDownloadable == false) {
+                    $isDownloadable = true;
+                    break;
+                }
+            }
+        } else {
+            foreach($dokumen->dokumen_kelas as $dok) {
+                if($dok->file_dokumen != null && $isDownloadable == false) {
+                    $isDownloadable = true;
+                    break;
+                }
+            }
+        }
         
-        return view('admin.progres.dokumen_ditugaskan', ['dokumen' => $dokumen]);
+        return view('admin.progres.dokumen_ditugaskan', ['dokumen' => $dokumen, 'isDownloadable' => $isDownloadable]);
     }
 
     public function storeCatatan(Request $request)
@@ -86,11 +121,11 @@ class ProgresController extends Controller
                 unlink($dokumen->path_multiple . '/' . $request->nama_dokumen);
                 
                 if($dokumen->dokumen_dikumpul->scores[0]->bonus != null) {
-                    updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
+                    Gamifikasi::updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
                  }
 
                 $dokumen->dokumen_dikumpul->scores()->update([
-                    'poin' => -50,
+                    'poin' => Gamifikasi::getPointDokumenSalah(),
                     'bonus' => null,
                 ]);
 
@@ -120,11 +155,11 @@ class ProgresController extends Controller
         ]);
         
         if($dokumen->dokumen_dikumpul->scores[0]->bonus != null) {
-            updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
+            Gamifikasi::updateBonusDokumen($dokumen->dokumen_dikumpul->dokumen_ditugaskan->id_dokumen_ditugaskan, $dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpulkan_per);
          }
          
         $dokumen->dokumen_dikumpul->scores()->update([
-            'poin' => -50,
+            'poin' => Gamifikasi::getPointDokumenSalah(),
             'bonus' => null,
         ]);
         

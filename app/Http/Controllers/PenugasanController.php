@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DokumenDitugaskan;
 use App\Models\User;
 use App\Models\DokumenPerkuliahan;
+use App\Models\Gamifikasi;
 use App\Models\Kelas;
 use App\Models\MataKuliah;
 use App\Models\MatkulDibuka;
@@ -87,7 +88,7 @@ class PenugasanController extends Controller
 
         $tahun_aktif=TahunAjaran::where('is_aktif', 1)->first();
         if($tahun_aktif) {
-            LeaderBoardController::storeResultBadge($tahun_aktif->id_tahun_ajaran);
+            Gamifikasi::storeResultBadge($tahun_aktif->id_tahun_ajaran);
             $tahun_aktif->update(['is_aktif' => 0]);
         }
 
