@@ -53,7 +53,7 @@ class UserManagementController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Data berhasil ditambahkan');
+        return redirect()->back()->with('success', 'Data pengguna berhasil ditambahkan');
     }
 
     public function update(Request $request, $id)
@@ -80,6 +80,9 @@ class UserManagementController extends Controller
             $this->CreateorDeleteAktifRole($id, $pengguna->role, $request->role);
 
         } else {
+            $request->validate([
+                'password'  => 'required|min:5|max:30',
+            ]);
             User::where('id', $id)->update([
                 'nama'      => $request->nama,
                 'email'     => $request->email,
@@ -90,7 +93,7 @@ class UserManagementController extends Controller
             $this->CreateorDeleteAktifRole($id, $pengguna->role, $request->role);
         }
 
-        return redirect()->back()->with('success', 'Data berhasil diubah');
+        return redirect()->back()->with('success', 'Data pengguna berhasil diubah');
     }
 
     public function destroy($id)
@@ -101,6 +104,6 @@ class UserManagementController extends Controller
             return redirect()->back()->with('failed', 'Tidak dapat menghapus parent data');
         }
     
-        return redirect()->back()->with('success', 'Data berhasil dihapus');
+        return redirect()->back()->with('success', 'Data pengguna berhasil dihapus');
     }
 }

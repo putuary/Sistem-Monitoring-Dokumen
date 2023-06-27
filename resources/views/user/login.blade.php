@@ -4,16 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-    <title>Sistem Informasi Monitoring Dokumen</title>
+    <title>Sistem Monitoring Kelengkapan Dokumen Perkuliahan</title>
 
-    <meta name="description" content="Sistem Monitoring Dokumen Perkuliahan Pogram Studi Teknik Informatika Institut Teknologi Sumatera">
+    <meta name="description" content="Sistem Monitoring Kelengkapan Dokumen Perkuliahan Pogram Studi Teknik Informatika Institut Teknologi Sumatera">
     <meta name="author" content="Putu Ary Kusuma Yudha IF'19">
     <meta name="robots" content="noindex, nofollow">
 
     <!-- Open Graph Meta -->
     <meta property="og:title" content="Pogram Studi Teknik Informatika Institut Teknologi Sumatera">
     <meta property="og:site_name" content="">
-    <meta property="og:description" content="Sistem Monitoring Dokumen Perkuliahan Pogram Studi Teknik Informatika Institut Teknologi Sumatera">
+    <meta property="og:description" content="Sistem Monitoring Kelengkapan Dokumen Perkuliahan Pogram Studi Teknik Informatika Institut Teknologi Sumatera">
     <meta property="og:type" content="website">
     <meta property="og:url" content="">
     <meta property="og:image" content="">

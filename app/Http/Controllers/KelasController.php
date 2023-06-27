@@ -33,7 +33,9 @@ class KelasController extends Controller
         $dosen=User::where('role', '!=', 'admin')->get();
         // dd($dosen);
 
-        $kelas= Kelas::with(['tahun_ajaran', 'matkul', 'dosen_kelas'])->kelasTahun(request('tahun_ajaran'))->orderBy('id_matkul_dibuka', 'asc')->get();
+        $kelas= Kelas::with(['tahun_ajaran', 'matkul', 'dosen_kelas' => function($query){
+            $query->withTrashed();
+        }])->kelasTahun(request('tahun_ajaran'))->orderBy('id_matkul_dibuka', 'asc')->get();
         // dd($kelas);
 
         return view('super-admin.penugasan.daftar-kelas', ['tahun_ajaran' => $tahun_ajaran, 'tahun_aktif' => $tahun_aktif, 'matkul' => ($matkul ?? [] ), 'dosen' => $dosen, 'kelas' => $kelas,]);
@@ -134,12 +136,15 @@ class KelasController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', 'Data berhasil ditambahkan');
+        return redirect()->back()->with('success', 'Kelas berhasil ditambahkan');
     }
 
     public function update(Request $request, $id)
     {
-        $kelas=Kelas::with(['dosen_kelas','kelas_dokumen_matkul', 'dokumen_kelas'])->find($id);
+        $kelas=Kelas::with(['dosen_kelas' => function($query) {
+            $query->withTrashed();
+        },'kelas_dokumen_matkul', 'dokumen_kelas'])->find($id);
+        // dd($kelas);
         $dokumen_kelas_not_null=$kelas->dokumen_kelas->where('file_dokumen', '!=', null)->count();
         $kelas_dokumen_matkul_not_null=$kelas->kelas_dokumen_matkul->where('file_dokumen', '!=', null)->count();
        
@@ -220,7 +225,7 @@ class KelasController extends Controller
                 }
             }
         }
-        return redirect()->back()->with('success', 'Data berhasil diubah');
+        return redirect()->back()->with('success', 'Kelas berhasil diubah');
     }
 
     public function destroy($id)
@@ -237,6 +242,6 @@ class KelasController extends Controller
         }
         $kelas->delete();
 
-        return redirect()->back()->with('success', 'Data berhasil dihapus');
+        return redirect()->back()->with('success', 'Kelas berhasil dihapus');
     }
 }

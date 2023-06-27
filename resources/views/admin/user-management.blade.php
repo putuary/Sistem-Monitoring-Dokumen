@@ -11,6 +11,8 @@
    <link
      rel="stylesheet"
      href={{ URL::asset("assets/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css")}} />
+
+     <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/sweetalert2/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{ URL::asset('assets/js/plugins/select2/css/select2.min.css') }}">
 @endsection
 
@@ -33,6 +35,20 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
       @endif
+
+      @error('email')
+          <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <strong>{{ $message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      @enderror
+
+      @error('password')
+          <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <strong>{{ $message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      @enderror
 
       <!-- Quick Overview -->
       <div class="row">
@@ -91,28 +107,31 @@
                             class="form-control"
                             placeholder="Masukkan Nama"
                             name="nama"
+                            value="{{ old('nama') }}"
                             required />
                         <label class="mt-2" for="example-text-input">Email</label>
                         <input
                             type="email"
-                            class="form-control"
+                            class="form-control @error('email') is-invalid @enderror"
                             placeholder="Masukkan Email"
+                            value="{{ old('email') }}"
                             name="email"
                             required />
-                        <label class="mt-2" for="example-text-input">Password</label>
+                        <label class="mt-2" for="example-text-input">Password (min: 5 char, max: 30 char)</label>
                         <input
                             type="password"
-                            class="form-control"
+                            class="form-control @error('password') is-invalid @enderror"
                             placeholder="Masukkan Password"
+                            value="{{ old('password') }}"
                             name="password"
                             required />
                         <label class="mt-2" for="example-text-input">Peran</label>
                         <select class="js-select2 form-select select2insidemodal" name="role" style="width: 100%;" data-placeholder="Pilih Peran" required>
                           <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-                          <option value="kaprodi">Koordinator Prodi</option>
-                          <option value="gkmp">Gugus Kendali Mutu Prodi</option>
-                          <option value="dosen">Dosen Pengampu</option>
-                          <option value="admin">Administrator Prodi</option>
+                          <option value="kaprodi" @selected(old('role') == 'kaprodi')>Koordinator Prodi</option>
+                          <option value="gkmp" @selected(old('role') == 'gkmp')>Gugus Kendali Mutu Prodi</option>
+                          <option value="dosen" @selected(old('role') == 'dosen')>Dosen Pengampu</option>
+                          <option value="admin" @selected(old('role') == 'admin')>Administrator Prodi</option>
                         </select>
                       </div>
                     </div>
@@ -167,7 +186,7 @@
                   </a>
                     @csrf
                     @method('DELETE')
-                    <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus Pengguna">
+                    <button class="btn btn-hapus btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus Pengguna">
                       <i class="fa fa-fw fa-times"></i>
                     </button>
                   </form>
@@ -209,7 +228,7 @@
                             <label class="mt-2" for="example-text-input">Email</label>
                             <input
                                 type="email"
-                                class="form-control"
+                                class="form-control @error('email') is-invalid @enderror"
                                 placeholder="Masukkan Email"
                                 id="email"
                                 name="email"
@@ -274,6 +293,7 @@
 
       <!-- Page JS Plugins -->
     <script src={{  URL::asset("assets/js/plugins/select2/js/select2.full.min.js") }}></script>
+    <script src="{{ URL::asset('assets/js/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 
     <!-- Page JS Helpers (Select2 + Bootstrap Maxlength + CKEditor plugins) -->
     <script>
@@ -313,6 +333,24 @@
           dropdownParent: $(".modal-edit")
         });
 
+        $('.btn-hapus').click(function (e){
+          e.preventDefault();
+          let form = $(this).parents('form');
+          Swal.fire({
+            title: 'Apakah anda sudah yakin untuk menghapus akun Pengguna ?',
+            text: 'Akun pengguna tidak dapat digunakan lagi oleh pengguna!',
+            icon: 'warning',
+            showDenyButton: true,
+            confirmButtonText: 'Yakin',
+            denyButtonText: `Batal`,
+            }).then((result) => {
+              /* Read more about isConfirmed, isDenied below */
+              if (result.isConfirmed) {
+                form.submit();
+              }
+            });
+          });
+
         $(".select2insidemodal").select2({
           dropdownParent: $("#modal-tambah-pengguna")
         });
@@ -324,8 +362,8 @@
 
         $("#ubah-password1").click(function () {
           $("#ubah-password").html(
-            `<label for="example-text-input">Password</label>
-            <input type="password" class="form-control" placeholder="Kosongkan Password Jika Tidak Diubah" name="password" />`
+            `<label for="example-text-input">Password (min: 5 char, max: 30 char)</label>
+            <input type="password" class="form-control @error('password') is-invalid @enderror" placeholder="Kosongkan Password Jika Tidak Diubah" name="password" />`
           );
         });
         $("#ubah-password2").click(function () {

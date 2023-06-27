@@ -120,11 +120,12 @@
      <!-- Page JS Plugins -->
      <script src={{  URL::asset("assets/js/plugins/select2/js/select2.full.min.js") }}></script>
      <script src="{{ URL::asset('assets/js/plugins/flatpickr/flatpickr.min.js') }}"></script>
+     <script src="{{ URL::asset('assets/js/plugins/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
      <script src="{{ URL::asset('assets/js/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 
      <!-- Page JS Helpers (Select2 + Bootstrap Maxlength + CKEditor plugins) -->
  
-     <script>One.helpersOnLoad(["js-flatpickr", "jq-select2"]);</script>
+     <script>One.helpersOnLoad(["jq-notify", "js-flatpickr", "jq-select2"]);</script>
 
      <script>
        $(document).ready(function () {
@@ -132,19 +133,23 @@
         $('#btn-submit').click(function (e){
             e.preventDefault();
             let form = $(this).parents('form');
-            Swal.fire({
-              title: 'Apakah anda sudah yakin ?',
-              text: 'Anda tidak akan bisa mengubah data ini lagi!',
-              icon: 'warning',
-              showDenyButton: true,
-              confirmButtonText: 'Yakin',
-              denyButtonText: `Batal`,
+            
+            if (form[0].checkValidity()) { // Melakukan validasi form
+              Swal.fire({
+                title: 'Apakah anda sudah yakin ?',
+                text: 'Anda tidak akan bisa mengubah data ini lagi!',
+                icon: 'warning',
+                showDenyButton: true,
+                confirmButtonText: 'Yakin',
+                denyButtonText: 'Batal',
               }).then((result) => {
-                /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
                   form.submit();
                 }
-            });
+              });
+            } else {
+              One.helpers('jq-notify', {type: 'danger', icon: 'fa fa-times me-1', "Harap isi semua form"});
+            }
         });
 
       });

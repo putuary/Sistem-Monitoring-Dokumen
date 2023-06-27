@@ -94,26 +94,28 @@
                                 class="form-control mb-2"
                                 placeholder="Masukkan Nama Dokumen Perkuliahan"
                                 name="nama_dokumen"
+                                value="{{ old('nama_dokumen') }}"
                                 required />
-                            <label for="example-text-input">Tenggat Waktu Default</label>
+                            <label for="example-text-input">Minggu Tenggat Waktu</label>
                             <input
                                 type="number"
                                 class="form-control mb-2"
-                                placeholder="Masukkan Tenggat Waktu Default"
+                                placeholder="Masukkan Minggu Tenggat Waktu"
                                 name="tenggat_waktu_default"
+                                value="{{ old('tenggat_waktu_default') }}"
                                 required />
                             <label class="form-label">Dikumpulkan Per</label>
                             <div class="space-x-2 mb-2">
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="example-radios-inline1" name="dikumpulkan_per" value=0 required>
+                                <input class="form-check-input" type="radio" id="example-radios-inline1" name="dikumpulkan_per" value=0 @checked(old('dikumpulkan_per') == 0) required>
                                 <label class="form-check-label" for="example-radios-inline1">Mata Kuliah</label>
                               </div>
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="example-radios-inline2" name="dikumpulkan_per" value=1 required>
+                                <input class="form-check-input" type="radio" id="example-radios-inline2" name="dikumpulkan_per" value=1 @checked(old('dikumpulkan_per') == 1) required>
                                 <label class="form-check-label" for="example-radios-inline2">Kelas</label>
                               </div>
                             </div>
-                            <label for="example-text-input">Template Dokumen Perkuliahan (.docx .doc .xls .xlsx .zip max: 2MB)</label>
+                            <label for="example-text-input">Template Dokumen Perkuliahan (.docx .doc .xls .xlsx .zip max: 2MB) (optional)</label>
                             <input
                                 type="file"
                                 class="form-control mb-2 @error('template') is-invalid @enderror"
@@ -209,11 +211,11 @@
                                 id="nama_dokumen"
                                 name="nama_dokumen"
                                 required />
-                            <label for="example-text-input">Tenggat Waktu Default</label>
+                            <label for="example-text-input">Minggu Tenggat Waktu</label>
                             <input
                                 type="number"
                                 class="form-control mb-2"
-                                placeholder="Masukkan Tenggat Waktu Default"
+                                placeholder="Masukkan Minggu Tenggat Waktu"
                                 id="tenggat_waktu_default"
                                 name="tenggat_waktu_default"
                                 required />
@@ -267,12 +269,7 @@
     <script src={{  URL::asset("assets/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons/dataTables.buttons.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-jszip/jszip.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js") }}></script>
-    <script src={{  URL::asset("assets/js/plugins/datatables-buttons/buttons.print.min.js") }}></script>
     <script src={{  URL::asset("assets/js/plugins/datatables-buttons/buttons.html5.min.js") }}></script>
-    <script src={{ URL::asset("assets/js/plugins/bootstrap-notify/bootstrap-notify.min.js") }}></script>
 
      <!-- Page JS Code -->
      <script src={{  URL::asset("assets/js/pages/be_tables_datatables.min.js") }}></script>
@@ -290,9 +287,11 @@
         $('#nama_dokumen').val(jsfiles[id].nama_dokumen);
         $('#tenggat_waktu_default').val(jsfiles[id].tenggat_waktu_default);
         if(jsfiles[id].dikumpulkan_per === 0){
-          $('#mata-kuliah').attr('checked', 'checked');
+          $('#kelas').prop('checked', false);
+          $('#mata-kuliah').prop('checked', true);
         }else{
-          $('#kelas').attr('checked', 'checked');
+          $('#mata-kuliah').prop('checked', false);
+          $('#kelas').prop('checked', true);
         }
       }
 

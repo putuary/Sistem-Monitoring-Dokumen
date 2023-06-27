@@ -255,35 +255,7 @@ class DokumenDikumpulController extends Controller
         return redirect()->back()->with('success', 'Dokumen berhasil dikumpulkan');
     }
 
-    // public function showDokumenMultiple($id_dokumen) {
-       
-    //     $dokumen=$this->showProfilDokumen($id_dokumen);
-    //     // $data=scandir('D:\Kuliah\TA\Program\scele-if - Copy\storage\app/Dokumen_Perkuliahan/2023-2024 Ganjil/Teori Bahasa Formal dan Otomata/Portofolio Perkuliahan_Teori Bahasa Formal dan Otomata', SCANDIR_SORT_ASCENDING);
-    //     // dd($data);
-
-    //     $storage = array_diff(scandir($dokumen->path_multiple, SCANDIR_SORT_ASCENDING), array('.', '..'));
-
-    //     return view('dosen.kelas-diampu.tampil-dokumen-multiple', [
-    //         'title'      => $dokumen->nama_dokumen,
-    //         'id_dokumen' => $id_dokumen,
-    //         'nama_files' => $storage
-    //     ]);
-    // }
     
-    // public function readDokumenDikumpulMultiple($id_dokumen)
-    // {
-    //     $nama_dokumen=request('dokumen');
-
-    //     $dokumen=$this->showProfilDokumen($id_dokumen);
-
-    //     // Cek apakah file ada di dalam folder
-    //     if (file_exists($dokumen->path_multiple . '/' . $nama_dokumen)) {
-    //         // mengembalikan response sebuah file
-    //         return response()->file($dokumen->path_multiple . '/' . $nama_dokumen);
-    //     } else{
-    //         return redirect()->back()->with('failed', 'File dokumen tidak ada');
-    //     }
-    // }
 
     public function renameDokumenDikumpulMultiple(Request $request, $id_dokumen)
     {
@@ -303,29 +275,6 @@ class DokumenDikumpulController extends Controller
             return redirect()->back()->with('failed', 'File dokumen tidak ada');
         }
     }
-
-    // public function deleteDokumenDikumpulMultiple(Request $request, $id_dokumen)
-    // {
-    //     $dokumen=$this->showProfilDokumen($id_dokumen);
-
-    //     // Cek apakah file ada di dalam folder
-    //     if (file_exists($dokumen->path_multiple . '/' . $request->nama_dokumen)) {
-    //         // Hapus file
-    //         unlink($dokumen->path_multiple . '/' . $request->nama_dokumen);
-
-    //         $storage = array_diff(scandir($dokumen->path_multiple, SCANDIR_SORT_ASCENDING), array('.', '..'));
-    //         if(count($storage) == 0) {
-    //             $dokumen->dokumen_dikumpul->update([
-    //                 'file_dokumen'      => null,
-    //                 'waktu_pengumpulan' => null,
-    //             ]);
-    //         }
-        
-    //         return redirect()->back()->with('success', 'File dokumen berhasil dihapus');
-    //     } else{
-    //         return redirect()->back()->with('failed', 'File dokumen tidak ada');
-    //     }
-    // }
 
     public function showDokumenDikumpul($id_dokumen)
     {

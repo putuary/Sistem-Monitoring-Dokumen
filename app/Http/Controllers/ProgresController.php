@@ -174,7 +174,9 @@ class ProgresController extends Controller
         
         $kelas = Kelas::with(['dokumen_kelas' => function($query) {
                 $query->with('dokumen_ditugaskan')->filter(request('filter'));
-                }, 'matkul','dosen_kelas','kelas_dokumen_matkul' => function($query) {
+                }, 'matkul','dosen_kelas' => function($query) {
+                    $query->withTrashed();
+                }, 'kelas_dokumen_matkul' => function($query) {
                     $query->with('dokumen_ditugaskan')->filter(request('filter'));
                 }])->kelasTahun(request('tahun_ajaran'))->get();
         $dokumen_all=mergerDokumen($kelas);
@@ -451,11 +453,13 @@ class ProgresController extends Controller
         $tahun_ajaran=TahunAjaran::find($id_tahun_ajaran);
         $dokumen_ditugaskan= DokumenDitugaskan::dokumenTahun($id_tahun_ajaran)->orderBy('id_dokumen_ditugaskan', 'asc')->get();
 
-        $kelas=Kelas::with(['dosen_kelas', 'matkul','dokumen_kelas' => function($query) use($id_tahun_ajaran) {
-            $query->with(['dokumen_ditugaskan' => function($query) use($id_tahun_ajaran) {
-                $query->dokumenTahun($id_tahun_ajaran);
-                }]);
-            }, 'kelas_dokumen_matkul' => function($query) use($id_tahun_ajaran) {
+        $kelas=Kelas::with(['dosen_kelas' =>function($query) {
+                $query->withTrashed();
+                }, 'matkul','dokumen_kelas' => function($query) use($id_tahun_ajaran) {
+                $query->with(['dokumen_ditugaskan' => function($query) use($id_tahun_ajaran) {
+                    $query->dokumenTahun($id_tahun_ajaran);
+                    }]);
+                }, 'kelas_dokumen_matkul' => function($query) use($id_tahun_ajaran) {
                 $query->with(['dokumen_ditugaskan' => function($query) use($id_tahun_ajaran) {
                     $query->dokumenTahun($id_tahun_ajaran);
                     }]);
@@ -476,11 +480,13 @@ class ProgresController extends Controller
         $tahun_ajaran=TahunAjaran::find($id_tahun_ajaran);
         $dokumen_ditugaskan= DokumenDitugaskan::dokumenTahun($id_tahun_ajaran)->orderBy('id_dokumen_ditugaskan', 'asc')->get();
 
-        $kelas=Kelas::with(['dosen_kelas', 'matkul','dokumen_kelas' => function($query) use($id_tahun_ajaran) {
-            $query->with(['dokumen_ditugaskan' => function($query) use($id_tahun_ajaran) {
-                $query->dokumenTahun($id_tahun_ajaran);
-                }]);
-            }, 'kelas_dokumen_matkul' => function($query) use($id_tahun_ajaran) {
+        $kelas=Kelas::with(['dosen_kelas'=>function($query) {
+                $query->withTrashed();
+                }, 'matkul','dokumen_kelas' => function($query) use($id_tahun_ajaran) {
+                $query->with(['dokumen_ditugaskan' => function($query) use($id_tahun_ajaran) {
+                    $query->dokumenTahun($id_tahun_ajaran);
+                    }]);
+                }, 'kelas_dokumen_matkul' => function($query) use($id_tahun_ajaran) {
                 $query->with(['dokumen_ditugaskan' => function($query) use($id_tahun_ajaran) {
                     $query->dokumenTahun($id_tahun_ajaran);
                     }]);

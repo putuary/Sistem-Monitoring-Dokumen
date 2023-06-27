@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->command('delete:zip-files')->dailyAt('21:16');
         
-        $schedule->command('reminder:email')->withoutOverlapping()->dailyAt('16:16');
+        $schedule->command('reminder:email')->withoutOverlapping()->timezone('Asia/Jakarta')->dailyAt('22:40');
     }
 
     /**

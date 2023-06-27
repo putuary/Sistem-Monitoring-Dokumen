@@ -39,6 +39,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       @enderror
+      
           <!-- Quick Overview -->
            <div class="row">
             <div class="col-6 col-lg-3">
@@ -95,32 +96,32 @@
                                 class="form-control mb-2 @error('kode_matkul') is-invalid @enderror"
                                 placeholder="Masukkan Kode Mata Kuliah"
                                 name="kode_matkul"
+                                value="{{ old('kode_matkul') }}"
                                 required />
-                                @error('kode_matkul')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
                             <label for="example-text-input">Nama Mata Kuliah</label>
                             <input
                                 type="text"
                                 class="form-control mb-2"
                                 placeholder="Masukkan Nama Mata Kuliah"
                                 name="nama_matkul"
+                                value="{{ old('nama_matkul') }}"
                                 required />
-                            <label for="example-text-input">Bobot SKS</label>
+                            <label for="example-text-input">Jumlah SKS</label>
                             <input
                                 type="number"
                                 class="form-control mb-2"
                                 placeholder="Masukkan Bobot SKS"
                                 name="bobot_sks"
+                                value="{{ old('bobot_sks') }}"
                                 required />
                             <label class="form-label fw-8">Praktikum</label>
                             <div class="space-x-2 mb-2">
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="example-radios-inline1" name="praktikum" value=1 checked>
+                                <input class="form-check-input" type="radio" id="example-radios-inline1" name="praktikum" value=1 @checked(old('praktikum') == 1) required>
                                 <label class="form-check-label" for="example-radios-inline1">Ya</label>
                               </div>
                               <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="example-radios-inline2" name="praktikum" value=0>
+                                <input class="form-check-input" type="radio" id="example-radios-inline2" name="praktikum" value=0 @checked(old('praktikum') == 0) required>
                                 <label class="form-check-label" for="example-radios-inline2">Tidak</label>
                               </div>
                             </div>
@@ -154,8 +155,8 @@
             <thead>
               <tr>
                 <th class="text-center">No.</th>
-                <th class="text-center" >Mata Kuliah</th>
-                <th class="text-center" >Kode</th>
+                <th class="text-center" >Nama Mata Kuliah</th>
+                <th class="text-center" >Kode Mata Kuliah</th>
                 <th class="text-center"  style="width: 15%;">Jumlah SKS</th>
                 <th class="text-center"  style="width: 15%;">Praktikum</th>
                 <th class="text-center" style="width: 15%;">Aksi</th>
@@ -228,7 +229,7 @@
                                 id="nama_matkul"
                                 name="nama_matkul"
                                 required />
-                            <label for="example-text-input">Bobot SKS</label>
+                            <label for="example-text-input">Jumlah SKS</label>
                             <input
                                 type="number"
                                 class="form-control mb-3"
@@ -286,8 +287,8 @@
      <script src={{  URL::asset("assets/js/pages/be_tables_datatables.min.js") }}></script>
 
      <script>
-      let jsfiles = @json($matkul)
-
+      let jsfiles = @json($matkul);
+      
       //modal
       function editMatkul(id) {
         $('.modal-edit').modal({backdrop: 'static', keyboard: false});
@@ -296,10 +297,13 @@
         $('#kode_matkul').val(jsfiles[id].kode_matkul);
         $('#nama_matkul').val(jsfiles[id].nama_matkul);
         $('#bobot_sks').val(jsfiles[id].bobot_sks);
-        if(jsfiles[id].praktikum === 1){
-          $('#praktikum_ya').attr('checked', 'checked');
-        }else{
-          $('#praktikum_tidak').attr('checked', 'checked');
+        
+        if (jsfiles[id].praktikum === 1) {
+          $('#praktikum_tidak').prop('checked', false);
+          $('#praktikum_ya').prop('checked', true);
+        } else {
+          $('#praktikum_ya').prop('checked', false);
+          $('#praktikum_tidak').prop('checked', true);
         }
       }
 

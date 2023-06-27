@@ -25,7 +25,7 @@ class LeaderBoardController extends Controller
             $query->with(['scoreable' => function($query) {
                 $query->with('dokumen_ditugaskan');
             }])->scoreTahun(request('tahun_ajaran'));
-        }])->whereHas('dosen_kelas', function($query) {
+        }])->withTrashed()->whereHas('dosen_kelas', function($query) {
             $query->kelasTahun(request('tahun_ajaran'));
         })->where('role', '!=', 'admin')->get();
 
@@ -69,7 +69,7 @@ class LeaderBoardController extends Controller
         $user=User::with(['score' => function($query) {
             $query->with(['scoreable' => ['dokumen_ditugaskan'], 'kelas' => ['matkul']])
             ->scoreTahun(request('tahun_ajaran'))->orderBy('updated_at', 'desc');
-        }])->where('id', $id_dosen)->get();
+        }])->withTrashed()->where('id', $id_dosen)->get();
         $detail=Gamifikasi::showRank($user);
         // dd($detail[0]);
         return view('user.leaderboard.detail-score', ['detail' => $detail[0]]);
@@ -105,7 +105,7 @@ class LeaderBoardController extends Controller
         $users=LeaderBoard::with(['user' => function($query) use($tahun_aktif) {
             $query->with(['user_badge' => function($query) use ($tahun_aktif) {
                 $query->where('id_tahun_ajaran', (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran));
-            }]);
+            }])->withTrashed();
         }])->leaderboardTahun(request('tahun_ajaran'))->orderBy('skor', 'desc')->get();
         // dd(count($users !=0));
 

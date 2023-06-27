@@ -180,6 +180,11 @@ class UserAuthController extends Controller
         }
 
         if($request->hasFile('avatar')) {
+
+            $request->validate([
+                'avatar'    => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
+
             Storage::delete('public/avatar/' . Auth::user()->avatar);
             $fileName = Auth::user()->nama.'-'.Auth::user()->id.'.' . $request->file('avatar')->getClientOriginalExtension();
             $request->file('avatar')->storeAs('public/avatar/', $fileName);
@@ -196,7 +201,7 @@ class UserAuthController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Data berhasil diubah');
+        return redirect()->back()->with('success', 'Data profil berhasil diubah');
     }
 
     public function updatePassword(Request $request)
@@ -225,7 +230,7 @@ class UserAuthController extends Controller
         } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Password lama tidak sesuai'
+                'message' => 'Password sekarang salah'
             ]);
         }
     }

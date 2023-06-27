@@ -99,7 +99,7 @@
                         </div>
                         <label for="example-text-input">Tenggat Waktu</label>
                         <input type="datetime-local" class="form-control mb-2" min="{{ date('Y-m-d\TH:i') }}" name="tenggat_waktu" id="tenggat_waktu"/>
-                        <label class="form-label fw-8">Dikumpul</label>
+                        <label class="form-label fw-8">Dokumen Dikumpulkan</label>
                         <div class="space-x-2 mb-2">
                           <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" id="example-radios-inline1" name="dikumpul" value=0 checked>

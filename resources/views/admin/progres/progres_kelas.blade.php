@@ -47,18 +47,17 @@
       </form>
 
       <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start mb-3">
-        @if($isDownloadable)
         <div class="mt-3 mt-md-0">
-          <a href="/progres-pengumpulan/unduh-semua-dokumen-kelas/{{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}" class="btn btn-info">
-            <i class="fa fa-fw fa-download me-1"></i> Unduh Semua Dokumen
-          </a>
-        </div>
-        @endif
-
-        <div class="mt-3 mt-md-0">
-          <a class="btn btn-success" href="/progres-pengumpulan/resume-pengumpulan?tahun_ajaran={{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}">
-            <i class="fa fa-fw fa-rectangle-list me-1"></i> Tampilkan Resume Pengumpulan
-          </a>
+          @if($isDownloadable)
+            <a href="/progres-pengumpulan/unduh-semua-dokumen-kelas/{{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}" class="btn btn-info">
+              <i class="fa fa-fw fa-download me-1"></i> Unduh Semua Dokumen
+            </a>
+          @endif
+          @if (count($classes) != 0)
+            <a class="btn btn-success" href="/progres-pengumpulan/resume-pengumpulan?tahun_ajaran={{ ($tahun_aktif != null) ? (request('tahun_ajaran') ?? $tahun_aktif->id_tahun_ajaran) : '' }}">
+              <i class="fa fa-fw fa-rectangle-list me-1"></i> Tampilkan Resume Pengumpulan
+            </a>
+          @endif
         </div>
 
         <div class="mt-md-0 ms-md-3 space-x-1">
@@ -113,16 +112,16 @@
               class="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
               <dl class="mb-0 text-justify">
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
-                  Terlewat <span class="badge bg-danger rounded-pill"> {{ $class->terlewat }}</span>
+                  Terlewat <span class="badge bg-danger rounded-pill ms-2"> {{ $class->terlewat }}</span>
                 </dd>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
-                  Telat <span class="badge bg-warning rounded-pill"> {{ $class->telat }}</span>
+                  Telat <span class="badge bg-warning rounded-pill ms-2"> {{ $class->telat }}</span>
                 </dd>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
-                  Terkumpul <span class="badge bg-success rounded-pill"> {{ $class->terkumpul }}</span>
+                  Terkumpul <span class="badge bg-success rounded-pill ms-2"> {{ $class->terkumpul }}</span>
                 </dd>
                 <dd class="fs-sm fw-medium fs-sm fw-medium text-muted mb-0 d-flex align-items-center justify-content-between">
-                  Ditugaskan <span class="badge bg-info rounded-pill"> {{ $class->ditugaskan }}</span>
+                  Ditugaskan <span class="badge bg-info rounded-pill ms-2"> {{ $class->ditugaskan }}</span>
                 </dd>
               </dl>
               <div class="item item-2x item-circle bg-body-light">

@@ -36,7 +36,7 @@ class DataManagementController extends Controller
 
         MataKuliah::create($data);
         
-        return redirect()->back()->with('success', 'Data berhasil ditambahkan');
+        return redirect()->back()->with('success', 'Data mata kuliah berhasil ditambahkan');
     }
 
     public function editMatkul(Request $request, $kode_matkul)
@@ -55,7 +55,7 @@ class DataManagementController extends Controller
             'praktikum'   => $request->praktikum,
         ]);
 
-        return redirect()->back()->with('success', 'Data berhasil diubah');
+        return redirect()->back()->with('success', 'Data mata kuliah berhasil diubah');
       
     }
 
@@ -67,7 +67,7 @@ class DataManagementController extends Controller
             return redirect()->back()->with('failed', 'Tidak dapat menghapus parent data');
         }
     
-        return redirect()->back()->with('success', 'Data berhasil dihapus');
+        return redirect()->back()->with('success', 'Data mata kuliah berhasil dihapus');
       
     }
 
@@ -111,7 +111,7 @@ class DataManagementController extends Controller
         ]);
         }
         
-        return redirect()->back()->with('success', 'Data berhasil ditambahkan');
+        return redirect()->back()->with('success', 'Data dokumen perkuliahan berhasil ditambahkan');
     }
 
     public function editDokumen(Request $request, $id_dokumen)
@@ -146,7 +146,7 @@ class DataManagementController extends Controller
             ]);
         }
         
-        return redirect()->back()->with('success', 'Data berhasil diubah');
+        return redirect()->back()->with('success', 'Data dokumen perkuliahan berhasil diubah');
     }
 
     public function deleteDokumen($id_dokumen)
@@ -159,6 +159,6 @@ class DataManagementController extends Controller
             return redirect()->back()->with('failed', 'Tidak dapat menghapus parent data');
         }
 
-        return redirect()->back()->with('success', 'Data berhasil dihapus');
+        return redirect()->back()->with('success', 'Data dokumen perkuliahan berhasil dihapus');
     }
 }

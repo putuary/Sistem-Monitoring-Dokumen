@@ -29,7 +29,7 @@ class Gamifikasi
         return self::$poin_dokumen_kosong;
     }
 
-    public function giveBadge($id_user, $id_badge, $id_tahun_ajaran) {
+    public static function giveBadge($id_user, $id_badge, $id_tahun_ajaran) {
         $user=User::find($id_user);
         $user->user_badge()->attach($id_badge,['is_aktif' => 1, 'id_tahun_ajaran' => $id_tahun_ajaran]);
     

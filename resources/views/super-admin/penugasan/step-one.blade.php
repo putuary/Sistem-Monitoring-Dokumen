@@ -49,16 +49,16 @@
                     <div class="col-lg-2 col-xl-4">
                       <div class="mb-4">
                         <div class="input-daterange input-group">
-                          <input type="text" class="js-datepicker form-control" id="tahun1" name="tahun1" placeholder="Dari" required>
+                          <input type="text" class="js-datepicker form-control" id="tahun1" name="tahun1" placeholder="Dari" value="{{ old('tahun1') }}" required>
                           <span class="input-group-text fw-semibold">
                             /
                           </span>
-                          <input type="text" class="js-datepicker form-control" id="tahun2" name="tahun2" placeholder="Ke" required>
+                          <input type="text" class="js-datepicker form-control" id="tahun2" name="tahun2" placeholder="Ke" value="{{ old('tahun2') }}" required>
                           <select class="js-select2 form-select" name="jenis" data-placeholder="Jenis" required>
                             <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-                            <option value="Ganjil">Ganjil</option>
-                            <option value="Genap">Genap</option>
-                            <option value="Pendek">Pendek</option>
+                            <option value="Ganjil" @selected(old('jenis') == 'Ganjil')>Ganjil</option>
+                            <option value="Genap" @selected(old('jenis') == 'Genap')>Genap</option>
+                            <option value="Pendek" @selected(old('jenis') == 'Pendek')>Pendek</option>
                           </select>
                         </div>
                       </div>
@@ -70,7 +70,7 @@
                     </div>
                     <div class="col-lg-8 col-xl-4">
                       <div class="mb-3">
-                        <input type="text" class="js-flatpickr form-control @error('tanggal_mulai_kuliah') is-invalid @enderror"  name="tanggal_mulai_kuliah" placeholder="Masukkan tanggal mulai perkuliahan" data-date-format="j F Y" required>
+                        <input type="text" class="js-flatpickr form-control @error('tanggal_mulai_kuliah') is-invalid @enderror"  name="tanggal_mulai_kuliah" placeholder="Masukkan tanggal mulai perkuliahan" data-date-format="j F Y" value="{{ old('tanggal_mulai_kuliah') }}" required>
                         @error('tanggal_mulai_kuliah')
                             <div class="alert alert-danger">{{ $message }}</div>
                         @enderror

@@ -18,25 +18,12 @@ class DokumenPerkuliahanController extends Controller
 
         $kelas = Kelas::with(['dokumen_kelas' => function($query) {
             $query->with('dokumen_ditugaskan')->whereNotNull('file_dokumen');
-            }, 'matkul','dosen_kelas','kelas_dokumen_matkul' => function($query) {
+            }, 'matkul','dosen_kelas'=>function($query) {
+                $query->withTrashed();
+            }, 'kelas_dokumen_matkul' => function($query) {
                 $query->with('dokumen_ditugaskan')->whereNotNull('file_dokumen');
             }])->kelasTahun(request('tahun_ajaran'))->get();
         $dokumen_all=mergerDokumen($kelas);
-
-        // $dokumen_matkul=DokumenMatkul::with(['dokumen_ditugaskan', 'matkul', 'kelas_dokumen_matkul' => function($query) {
-        //     $query->with('dosen_kelas');
-        // }])->whereNotNull('file_dokumen')->whereHas('dokumen_ditugaskan', function ($query) {
-        //     $query->dokumenTahun(request('tahun_ajaran'));
-        //     })->orderBy('waktu_pengumpulan', 'asc')->get();
-
-        // $dokumen_kelas=DokumenKelas::with(['dokumen_ditugaskan','kelas' => function($query) {
-        //     $query->with(['matkul', 'dosen_kelas']);
-        //     }])->whereNotNull('file_dokumen')->whereHas('dokumen_ditugaskan', function ($query) {
-        //     $query->dokumenTahun(request('tahun_ajaran'));
-        //     })->orderBy('waktu_pengumpulan', 'asc')->get();
-
-        // $dokumen=mergeDokumen($dokumen_kelas, $dokumen_matkul);
-        // dd($dokumen_kelas);
 
         return view('dosen.dokumen.dokumen-perkuliahan', ['tahun_aktif' => $tahun_aktif, 'tahun_ajaran' => $tahun_ajaran, 'dokumen' => $dokumen_all]);
     }

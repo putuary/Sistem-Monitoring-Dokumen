@@ -84,13 +84,6 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'nama'      => 'Ahmad Luky Ramdani S.Komp., M.Kom.',
-            'email'     => 'ahmadluky@if.itera.ac.id',
-            'password'  => Hash::make('password'),
-            'role'      => 'dosen',
-        ]);
-
-        User::create([
             'nama'      => 'Imam Ekowicaksono S.Si., M.Si.',
             'email'     => 'imam.wicaksono@if.itera.ac.id',
             'password'  => Hash::make('password'),

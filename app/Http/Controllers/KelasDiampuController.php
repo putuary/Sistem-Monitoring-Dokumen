@@ -57,14 +57,16 @@ class KelasDiampuController extends Controller
         $tahun_aktif = TahunAjaran::tahunAktif()->first();
         
         $kelas = Kelas::with(['dokumen_kelas' => function($query) {
-            $query->with(['dokumen_ditugaskan', 'scores' => function($query) {
-                $query->where('id_dosen', auth()->user()->id);
-            }])->filter(request('filter'));
-        }, 'matkul', 'dosen_kelas', 'kelas_dokumen_matkul' => function($query) {
-            $query->with(['dokumen_ditugaskan', 'scores' => function($query) {
-                $query->where('id_dosen', auth()->user()->id);
-            }])->filter(request('filter'));
-        }])->kelasDiampu()->kelasTahun(request('tahun_ajaran'))->get();
+                $query->with(['dokumen_ditugaskan', 'scores' => function($query) {
+                    $query->where('id_dosen', auth()->user()->id);
+                }])->filter(request('filter'));
+            }, 'matkul', 'dosen_kelas'=>function($query) {
+                $query->withTrashed();
+            }, 'kelas_dokumen_matkul' => function($query) {
+                $query->with(['dokumen_ditugaskan', 'scores' => function($query) {
+                    $query->where('id_dosen', auth()->user()->id);
+                }])->filter(request('filter'));
+            }])->kelasDiampu()->kelasTahun(request('tahun_ajaran'))->get();
         // dd($kelas);
         $dokumen=mergerDokumen($kelas);
 

@@ -6,6 +6,7 @@ use App\Models\DokumenDitugaskan;
 use App\Models\DokumenKelas;
 use App\Models\DokumenMatkul;
 use App\Models\DokumenPerkuliahan;
+use App\Models\Gamifikasi;
 use App\Models\Kelas;
 use App\Models\MatkulDibuka;
 use App\Models\Score;
@@ -13,7 +14,6 @@ use App\Models\TahunAjaran;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 
 class DokumenDitugaskanController extends Controller
 {
@@ -108,7 +108,7 @@ class DokumenDitugaskanController extends Controller
                 }
             }
         }
-        return redirect()->back()->with('success', 'Data berhasil ditambahkan');
+        return redirect()->back()->with('success', 'Dokumen berhasil ditugaskan');
     }
 
     public function update(Request $request, $id)
@@ -135,7 +135,7 @@ class DokumenDitugaskanController extends Controller
 
         if($dokumen->dikumpulkan_per == 0) {
             foreach($dokumen->dokumen_matkul as $dokumen_matkul) {
-                $data=submitScore($request->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->id_dokumen_ditugaskan);
+                $data=Gamifikasi::submitScore($request->tenggat_waktu, $dokumen_matkul->waktu_pengumpulan, true, $dokumen_matkul->id_dokumen_matkul, $dokumen->id_dokumen_ditugaskan);
                   
                 $dokumen_matkul->scores()->update([
                     'poin'       => $data['poin'],
@@ -144,7 +144,7 @@ class DokumenDitugaskanController extends Controller
 
         } else {
             foreach($dokumen->dokumen_kelas as $dokumen_kelas) {
-                $data=submitScore($request->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->id_dokumen_ditugaskan);
+                $data=Gamifikasi::submitScore($request->tenggat_waktu, $dokumen_kelas->waktu_pengumpulan, false, $dokumen_kelas->id_dokumen_kelas, $dokumen->id_dokumen_ditugaskan);
 
                 $dokumen_kelas->scores()->update([
                     'poin'           => $data['poin'],
@@ -178,7 +178,7 @@ class DokumenDitugaskanController extends Controller
             return response()->json([
                 'pengumpulan' => true,
                 'status' => 'success',
-                'message' => 'Pengumpulan dihidupkan!',
+                'message' => 'Pengumpulan diaktifkan!',
             ]);
         }
     }
@@ -225,6 +225,6 @@ class DokumenDitugaskanController extends Controller
         }
         $dokumen->delete();
 
-        return redirect()->back()->with('success', 'Data berhasil dihapus');
+        return redirect()->back()->with('success', 'Dokumen ditugaskan berhasil dihapus');
     }
 }

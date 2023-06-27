@@ -44,6 +44,20 @@
       </div>
       @endif
 
+      @error('email')
+          <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <strong>{{ $message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      @enderror
+
+      @error('avatar')
+          <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <strong>{{ $message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      @enderror
+
       <!-- User Profile -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
@@ -62,7 +76,7 @@
                 </div>
                 <div class="mb-4">
                   <label class="form-label" for="one-profile-edit-email">Email</label>
-                  <input type="email" class="form-control" id="one-profile-edit-email" name="email" placeholder="Masukkan email anda" value="{{ $user->email }}" required/>
+                  <input type="email" class="form-control @error('email') is-invalid @enderror" id="one-profile-edit-email" name="email" placeholder="Masukkan email anda" value="{{ $user->email }}" required/>
                 </div>
                 <div class="mb-4">
                   <label class="form-label">Avatar</label>
@@ -70,8 +84,8 @@
                     <img id="avatar-preview" class="img-avatar" src="{{ (auth()->user()->avatar == null) ? asset('storage/avatar/avatar13.jpg') : asset('storage/avatar/'.auth()->user()->avatar) }}" alt="Avatar" />
                   </div>
                   <div class="mb-4">
-                    <label for="new_avatar" class="form-label">Update Avatar</label>
-                    <input id="new_avatar" class="form-control" type="file" name="avatar" />
+                    <label for="new_avatar" class="form-label">Update Avatar (format: jpeg,png,jpg,gif,svg Max: 2MB)</label>
+                    <input id="new_avatar" class="form-control @error('avatar') is-invalid @enderror" type="file" name="avatar" />
                   </div>
                 </div>
                 <div class="mb-4">
@@ -98,18 +112,18 @@
               <div class="col-lg-8 col-xl-5">
                 <div class="mb-4">
                   <label class="form-label" for="one-profile-edit-password">Password Sekarang</label>
-                  <input type="password" class="form-control" name="old_password" />
+                  <input type="password" class="form-control" name="old_password" required/>
                 </div>
                 <div class="row mb-4">
                   <div class="col-12">
                     <label class="form-label" for="one-profile-edit-password-new">Password Baru</label>
-                    <input type="password" class="form-control" name="new_password" id="new_password" />
+                    <input type="password" class="form-control" name="new_password" id="new_password" required/>
                   </div>
                 </div>
                 <div class="row mb-4">
                   <div class="col-12">
                     <label class="form-label" for="one-profile-edit-password-new-confirm">Konfirmasi Password Baru</label>
-                    <input type="password" class="form-control" name="new_password_confirm" id="new_password_confirm" />
+                    <input type="password" class="form-control" name="new_password_confirm" id="new_password_confirm" required/>
                     <div id="different"></div>
                   </div>
                 </div>
@@ -157,7 +171,7 @@
             if ($('#new_password').val() === $('#new_password_confirm').val()) {
               $('#different').html('');
             } else {
-                $('#different').html('<div class="alert alert-danger" role="alert">Password tidak sama</div>');
+                $('#different').html('<div class="alert alert-danger" role="alert">Konfirmasi password baru tidak sama</div>');
             }
           });
 

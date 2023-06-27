@@ -33,9 +33,9 @@
           </div>
       @endif
 
-      @error('kode_matkul')
+      @error('gambar')
       <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
-        <strong>Kode mata kuliah tidak boleh sama</strong>
+        <strong>{{ $message }}</strong>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       @enderror
@@ -106,7 +106,7 @@
                             <label for="example-text-input">Gambar (.jpeg .png .jpg .gif .svg max: 3MB)</label>
                             <input
                                 type="file"
-                                class="form-control mb-2"
+                                class="form-control mb-2 @error('gambar') is-invalid @enderror"
                                 placeholder="Masukkan gambar badge"
                                 name="gambar"/>
                             <label for="example-text-input">Deskripsi</label>
