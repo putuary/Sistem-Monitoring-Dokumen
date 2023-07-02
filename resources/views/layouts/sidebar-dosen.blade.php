@@ -21,6 +21,23 @@
     </a>
 </li>
 
+<li class="nav-main-heading">PENILAIAN DAN BADGE YANG AKAN DIPEROLEH</li>
+
+<li class="nav-main-item">
+    <a class="nav-main-link {{ Request::is('indikator-penilaian') ? 'active' : '' }}" href="/indikator-penilaian">
+        <i class="nav-main-link-icon fa fa-file-pen"></i>
+        <span class="nav-main-link-name">Indikator Penilaian</span>
+    </a>
+</li>
+
+<li class="nav-main-item">
+    <a class="nav-main-link {{ Request::is('daftar-badge') ? 'active' : '' }}" href="/daftar-badge">
+        <i class="nav-main-link-icon fa fa-rectangle-list"></i>
+        <span class="nav-main-link-name">Daftar Badge</span>
+    </a>
+</li>
+
+
 <li class="nav-main-heading">PERINGKAT PENGUMPULAN</li>
 
 <li class="nav-main-item">

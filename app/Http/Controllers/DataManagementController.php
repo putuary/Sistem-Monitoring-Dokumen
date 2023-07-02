@@ -161,4 +161,9 @@ class DataManagementController extends Controller
 
         return redirect()->back()->with('success', 'Data dokumen perkuliahan berhasil dihapus');
     }
+
+    public function showIndikatorPenilaian()
+    {
+        return view('user.gamifikasi.indikator_penilaian');
+    }
 }

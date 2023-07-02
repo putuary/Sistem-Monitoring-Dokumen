@@ -21,12 +21,32 @@ class Gamifikasi
     protected static $poin_bonus2 = 30;
     protected static $poin_bonus3 = 15;
 
+    public static function getPointOntime() {
+        return self::$poin_ontime;
+    }
+
+    public static function getPointTerlambat() {
+        return self::$poin_terlambat;
+    }
+
     public static function getPointDokumenSalah() {
         return self::$poin_dokumen_salah;
     }
 
     public static function getPointDokumenKosong() {
         return self::$poin_dokumen_kosong;
+    }
+
+    public static function getPointBonus1() {
+        return self::$poin_bonus1;
+    }
+
+    public static function getPointBonus2() {
+        return self::$poin_bonus2;
+    }
+
+    public static function getPointBonus3() {
+        return self::$poin_bonus3;
     }
 
     public static function giveBadge($id_user, $id_badge, $id_tahun_ajaran) {
@@ -168,11 +188,18 @@ class Gamifikasi
             } catch (\Throwable $th) {
                 $score=0;
             }
+
+            try {
+                $onTimeRate=$onTime/$task;
+            } catch (\Throwable $th) {
+                $onTimeRate=0;
+            }
     
             $leaderboard[]=(object) [
                 'user' => $user,
                 'late'  => $late,
                 'onTime'=> $onTime,
+                'onTimeRate' => $onTimeRate,
                 'empty' => $empty,
                 'total_terkumpul' => $sum_submited,
                 'task'  => $task,
@@ -184,11 +211,30 @@ class Gamifikasi
         }
         // dd($leaderboard);
     
-        usort($leaderboard, function($a, $b) {
-            return $b->score <=> $a->score;
+        // usort($leaderboard, function($a, $b) {
+        //     return $b->score <=> $a->score;
+        // });
+
+        usort($leaderboard, function ($a, $b) {
+            // Jika skor berbeda, urutkan berdasarkan skor secara menurun
+            if ($a->score != $b->score) {
+                return $b->score <=> $a->score;
+            } else {
+                // Jika skor sama, urutkan berdasarkan tepat_waktu secara menurun
+                return $b->onTimeRate <=> $a->onTimeRate;
+            }
         });
-    
-        // dd($leaderboard);
+
+        $rank=1;
+
+        foreach ($leaderboard as $key => $value) {
+            if($value->score == ($leaderboard[$key-1]->score ?? null) && $value->onTimeRate == ($leaderboard[$key-1]->onTimeRate ?? null)) {
+                $value->rank=$leaderboard[$key-1]->rank;
+            } else {
+                $leaderboard[$key]->rank=$rank;
+                $rank++;
+            }
+        }
         
         return $leaderboard;
     }
@@ -218,6 +264,7 @@ class Gamifikasi
         }
 
         $lecturers=self::showRank($users);
+        // dd($lecturers);
 
         UserBadge::where('is_aktif', 1)->update(['is_aktif' => 0]);
         LeaderBoard::where('id_tahun_ajaran', $id_tahun_ajaran)->delete();
@@ -231,18 +278,12 @@ class Gamifikasi
                 'skor'            => $lecturer->score,
             ]);
             
-            if($key === 0) {
+            if($lecturer->rank == 1) {
                 self::giveBadge($lecturer->user->id, 1, $id_tahun_ajaran);
-            } else if($key == 1) {
+            } else if($lecturer->rank == 2) {
                 self::giveBadge($lecturer->user->id, 2, $id_tahun_ajaran);
-            } else if($key == 2) {
+            } else if($lecturer->rank == 3) {
                 self::giveBadge($lecturer->user->id, 3, $id_tahun_ajaran);
-            } else if($key == (count($lecturers) - 1)) {
-                self::giveBadge($lecturer->user->id, 4, $id_tahun_ajaran);
-            } else if($key == (count($lecturers) - 2)) {
-                self::giveBadge($lecturer->user->id, 5, $id_tahun_ajaran);
-            } else if($key == (count($lecturers) - 3)) {
-                self::giveBadge($lecturer->user->id, 6, $id_tahun_ajaran);
             }
 
             if($lecturer->onTime == $lecturer->task) {
@@ -255,6 +296,22 @@ class Gamifikasi
 
             if($lecturer->empty >= 1) {
                 self::giveBadge($lecturer->user->id, 9, $id_tahun_ajaran);
+            }
+        }
+
+        $rank_max=$lecturers[count($lecturers)-1]->rank;
+        for($i=count($lecturers)-1; $i>=0; $i--) {
+
+            if($lecturers[$i]->rank > 3  && $lecturers[$i]->rank >= $rank_max-3) {
+                if($lecturers[$i]->rank == $rank_max) {
+                    self::giveBadge($lecturer->user->id, 6, $id_tahun_ajaran);
+                } else if($lecturers[$i]->rank == $rank_max-1) {
+                    self::giveBadge($lecturer->user->id, 5, $id_tahun_ajaran);
+                } else if($lecturers[$i]->rank == $rank_max-2) {
+                    self::giveBadge($lecturer->user->id, 4, $id_tahun_ajaran);
+                }
+            } else {
+                break;
             }
         }
         return true;

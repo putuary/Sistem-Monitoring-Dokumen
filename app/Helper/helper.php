@@ -35,9 +35,9 @@ function isPraktikum($data) {
 
 function dikumpul($data) {
     if($data == 1) {
-        return 'Multiple Dokumen';
+        return 'Banyak Dokumen';
     }
-    return 'Single Dokumen';
+    return 'Satu Dokumen';
 }
 
 function createTenggat($date, $default) {

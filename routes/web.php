@@ -95,6 +95,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::resource('/manajemen-data/badge', BadgeController::class)->except(['create', 'store', 'show', 'edit']);
 
+    Route::get('/manajemen-data/indikator-penilaian', [DataManagementController::class, 'showIndikatorPenilaian']);
+
+    
+
     // Progres Pengumpulan
     Route::get('/progres-pengumpulan/unduh-semua-dokumen-kelas/{id_tahun_ajaran}', [ProgresController::class, 'downloadAllDokumenKelas']);
     Route::get('/progres-pengumpulan/unduh-semua-dokumen/{id_tahun_ajaran}', [ProgresController::class, 'downloadAllDokumen']);
@@ -134,6 +138,10 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
 
     // Riwayat Pengumpulan
     Route::get('/riwayat-pengumpulan-perolehan-poin', [KelasDiampuController::class, 'showRiwayat']);
+
+    // 
+    Route::get('/indikator-penilaian', [DataManagementController::class, 'showIndikatorPenilaian']);
+    Route::get('/daftar-badge', [BadgeController::class, 'showAllBadge']);
 
     // Score
     // Route::get('/perolehan-score', [LeaderboardController::class, 'showUserScore']);

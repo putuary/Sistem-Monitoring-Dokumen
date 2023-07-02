@@ -76,7 +76,7 @@ class LeaderBoardController extends Controller
     }
 
     public function resultBadge(Request $request) {
-        if($this->storeResultBadge($request->id_tahun_ajaran)) {
+        if(Gamifikasi::storeResultBadge($request->id_tahun_ajaran)) {
 
             return redirect('/badge')->with('success', 'Berhasil memberikan badge');
         }

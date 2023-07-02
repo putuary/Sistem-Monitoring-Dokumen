@@ -46,4 +46,11 @@ class BadgeController extends Controller
         }
         return redirect()->back()->with('success', 'Data badge berhasil diubah');
     }
+
+    public function showAllBadge()
+    {
+        $badges=Badge::all();
+        
+        return view('user.gamifikasi.badge', ['badges' => $badges]);
+    }
 }

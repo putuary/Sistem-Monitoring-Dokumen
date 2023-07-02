@@ -32,11 +32,11 @@ class BadgeSeeder extends Seeder
         ]);
 
         Badge::create([
-            'nama_badge'=> 'Bottom One',
-            'gambar'    => 'Bottom_1.png',
-            'deskripsi' => 'Dosen yang mendapatkan peringkat terendah pertama pada leaderboard di akhir tahun ajaran',
+            'nama_badge'=> 'Bottom Three',
+            'gambar'    => 'Bottom_3.png',
+            'deskripsi' => 'Dosen yang mendapatkan peringkat terendah ketiga pada leaderboard di akhir tahun ajaran',
         ]);
-
+        
         Badge::create([
             'nama_badge'=> 'Bottom Two',
             'gambar'    => 'Bottom_2.png',
@@ -44,9 +44,9 @@ class BadgeSeeder extends Seeder
         ]);
 
         Badge::create([
-            'nama_badge'=> 'Bottom Three',
-            'gambar'    => 'Bottom_3.png',
-            'deskripsi' => 'Dosen yang mendapatkan peringkat terendah ketiga pada leaderboard di akhir tahun ajaran',
+            'nama_badge'=> 'Bottom One',
+            'gambar'    => 'Bottom_1.png',
+            'deskripsi' => 'Dosen yang mendapatkan peringkat terendah pertama pada leaderboard di akhir tahun ajaran',
         ]);
 
         Badge::create([

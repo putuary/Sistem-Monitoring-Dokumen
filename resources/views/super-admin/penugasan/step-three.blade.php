@@ -86,15 +86,15 @@
                       <div class="col-md-2 col-lg-4">
                         <div class="form-control">{{ unserialize($dokumen)[1] }}</div>
                       </div> 
-                      <label class="col-sm-4 col-form-label" >Dikumpul</label>
+                      <label class="col-sm-4 col-form-label" >Dokumen Dikumpulkan</label>
                       <div class="space-x-2">
                         <div class="form-check form-check-inline">
                           <input class="form-check-input" type="radio" id="example-radios-inline1" name="dikumpul[{{ $key }}]" value=0 checked>
-                          <label class="form-check-label" for="example-radios-inline1">Single</label>
+                          <label class="form-check-label" for="example-radios-inline1">Satu Dokumen</label>
                         </div>
                         <div class="form-check form-check-inline">
                           <input class="form-check-input" type="radio" id="example-radios-inline2" name="dikumpul[{{ $key }}]" value=1>
-                          <label class="form-check-label" for="example-radios-inline2">Multiple</label>
+                          <label class="form-check-label" for="example-radios-inline2">Banyak Dokumen</label>
                         </div>
                       </div>
                     </div>

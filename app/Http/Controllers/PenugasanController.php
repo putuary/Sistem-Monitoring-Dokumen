@@ -34,6 +34,13 @@ class PenugasanController extends Controller
             'tanggal_mulai_kuliah' => 'required',
         ]);
 
+        $tahun_ajaran=$request->tahun1.'/'.$request->tahun2.' '.$request->jenis;
+
+        $data_tahun_ajaran=TahunAjaran::where('tahun_ajaran', $tahun_ajaran)->first();
+        if($data_tahun_ajaran) {
+            return redirect()->back()->with('failed', 'Tahun ajaran sudah ada!');
+        }
+
         $request->session()->put('tahun_ajaran', $request->all());
         
         return redirect('/penugasan/buat-penugasan-baru/form-kedua');

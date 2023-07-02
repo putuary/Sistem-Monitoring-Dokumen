@@ -72,6 +72,23 @@
         </div>
         <!-- Badge -->
 
+        <!-- Indikator Penilaian -->
+        <div class="col-md-6 col-lg-4 col-xl-3">
+          <a class="block block-rounded block-link-pop h-100 mb-0" href="/manajemen-data/indikator-penilaian">
+            <div class="block-content block-content-full text-center bg-default-light">
+              <div class="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
+                <i class="fa fa-file-pen fa-2x text-white-75"></i>
+              </div>
+            </div>
+            <div class="bg-body-light rounded-bottom">
+              <div class="block-content block-content-full block-content-sm text-center fs-sm fw-medium">
+                <span>Indikator Penilaian</span>
+              </div>
+            </div>
+          </a>
+        </div>
+        <!-- Indikator Penilaian -->
+
       </div>
       <!-- END Overview -->
     </div>

@@ -29,6 +29,14 @@
 
     <!-- Page Content -->
     <div class="content">
+
+      @if (session()->has('failed'))
+        <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+          <strong>{{ session()->get('failed') }}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      @endif
+
       <!-- All Products -->
       <div class="block block-rounded">
         <div class="block-header block-header-default">
@@ -70,7 +78,7 @@
                     </div>
                     <div class="col-lg-8 col-xl-4">
                       <div class="mb-3">
-                        <input type="text" class="js-flatpickr form-control @error('tanggal_mulai_kuliah') is-invalid @enderror"  name="tanggal_mulai_kuliah" placeholder="Masukkan tanggal mulai perkuliahan" data-date-format="j F Y" value="{{ old('tanggal_mulai_kuliah') }}" required>
+                        <input type="text" class="js-flatpickr form-control @error('tanggal_mulai_kuliah') is-invalid @enderror"  name="tanggal_mulai_kuliah" placeholder="Masukkan tanggal mulai perkuliahan" data-date-format="j F Y" data-min-date="today" value="{{ old('tanggal_mulai_kuliah') }}" required>
                         @error('tanggal_mulai_kuliah')
                             <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
@@ -103,11 +111,20 @@
   <!-- Page JS Helpers (Select2 + Bootstrap Maxlength + CKEditor plugins) -->
 
   <script>
-  $(".js-datepicker").datepicker({
+
+   $("#tahun1").datepicker({
       format: "yyyy",
       viewMode: "years", 
-      minViewMode: "years"
-  });
+      minViewMode: "years",
+      startDate: new Date().getFullYear().toString(),
+    });
+
+    $("#tahun2").datepicker({
+      format: "yyyy",
+      viewMode: "years", 
+      minViewMode: "years",
+      startDate: (new Date().getFullYear() +1 ).toString(),
+    });
   
     One.helpersOnLoad([
     "js-flatpickr",
@@ -117,6 +134,7 @@
 
   <script>
     $(document).ready(function() {
+      $(".alert").delay(2000).fadeOut("slow");
       $('#tahun1').on('change', function() {
         var tahun1 = $(this).val();
         var tahun2 = parseInt(tahun1) + 1;
