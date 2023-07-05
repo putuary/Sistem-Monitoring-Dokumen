@@ -29,7 +29,7 @@ class LeaderBoardController extends Controller
             $query->kelasTahun(request('tahun_ajaran'));
         })->where('role', '!=', 'admin')->get();
 
-        // dd($users[0]);
+        // dd($users);
 
         $leaderboards=Gamifikasi::showRank($users);
         // dd($leaderboards[0]->score[0]->scoreable->nama_matkul);

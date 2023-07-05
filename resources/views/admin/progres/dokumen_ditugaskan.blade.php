@@ -81,22 +81,19 @@
                     <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill {{ backgroundStatus($dokumen->tenggat_waktu, $item->waktu_pengumpulan) }} ">{{ statusPengumpulan($dokumen->tenggat_waktu, $item->waktu_pengumpulan) }}</span>
                   </td>
                   <td class="text-center">
-                    <form action="/manajemen-pengguna/delete" method="POST">
-                      @csrf
-                      @if (isset($item->file_dokumen))
-                        <a href="/progres-pengumpulan/dokumen/{{ $item->id_dokumen_matkul }}" class="btn btn-sm btn-alt-success bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($dokumen->dikumpul==0) target="_blank" @endif>
-                          <i class="fa fa-fw fa-eye"></i>
-                        </a>
-                        <a href="/progres-pengumpulan/dokumen/unduh/{{ $item->id_dokumen_matkul }}" class="btn btn-sm btn-alt-info bg-info-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
-                          <i class="fa fa-fw fa-download"></i>
-                        </a>
-                        @if(auth()->user()->role!='admin')
-                          <button class="btn btn-sm btn-alt-danger bg-danger-light" onclick="refuseDokumen({{ $key }})" type="button"  data-bs-toggle="tooltip" title="Tolak Dokumen">
-                            <i class="fa fa-fw fa-times"></i>
-                          </button>
-                        @endif
+                    @if (isset($item->file_dokumen))
+                      <a href="/progres-pengumpulan/dokumen/{{ $item->id_dokumen_matkul }}" class="btn btn-sm btn-alt-success bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" @if($dokumen->dikumpul==0) target="_blank" @endif>
+                        <i class="fa fa-fw fa-eye"></i>
+                      </a>
+                      <a href="/progres-pengumpulan/dokumen/unduh/{{ $item->id_dokumen_matkul }}" class="btn btn-sm btn-alt-info bg-info-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
+                        <i class="fa fa-fw fa-download"></i>
+                      </a>
+                      @if(auth()->user()->role!='admin')
+                        <button class="btn btn-sm btn-alt-danger bg-danger-light" onclick="refuseDokumen({{ $key }})" type="button"  data-bs-toggle="tooltip" title="Tolak Dokumen">
+                          <i class="fa fa-fw fa-times"></i>
+                        </button>
                       @endif
-                    </form>
+                    @endif
                   </td>
                 </tr>
                 @endforeach

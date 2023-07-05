@@ -39,7 +39,7 @@ class UserAuthController extends Controller
             return redirect()->intended('/')->with('success', 'Login Berhasil!');
         }
        
-        $errors = new MessageBag(['password' => ['username atau password salah.']]);
+        $errors = new MessageBag(['password' => ['Email atau password salah.']]);
         return back()->withErrors($errors);
     }
 

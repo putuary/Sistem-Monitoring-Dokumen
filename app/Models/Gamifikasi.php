@@ -226,13 +226,17 @@ class Gamifikasi
         });
 
         $rank=1;
-
         foreach ($leaderboard as $key => $value) {
-            if($value->score == ($leaderboard[$key-1]->score ?? null) && $value->onTimeRate == ($leaderboard[$key-1]->onTimeRate ?? null)) {
-                $value->rank=$leaderboard[$key-1]->rank;
-            } else {
-                $leaderboard[$key]->rank=$rank;
+            if($key == 0) {
+                $value->rank=$rank;
                 $rank++;
+            } else {
+                if($value->score == $leaderboard[$key-1]->score && $value->onTimeRate == $leaderboard[$key-1]->onTimeRate) {
+                    $value->rank=$leaderboard[$key-1]->rank;
+                } else {
+                    $leaderboard[$key]->rank=$rank;
+                    $rank++;
+                }
             }
         }
         

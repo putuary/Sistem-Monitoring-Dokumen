@@ -201,5 +201,41 @@ class UserSeeder extends Seeder
             'password'  => Hash::make('password'),
             'role'      => 'dosen',
         ]);
+
+        $user=User::create([
+            'nama'      => 'Testing kaprodi',
+            'email'     => 'kaprodi@if.itera.ac.id',
+            'password'  => Hash::make('password'),
+            'role'      => 'kaprodi',
+        ]);
+
+        $user->aktif_role()->create([
+            'is_dosen'  => 0,
+        ]);
+
+        $user=user::create([
+            'nama'      => 'Testing gkmp',
+            'email'     => 'gkmp@if.itera.ac.id',
+            'password'  => Hash::make('password'),
+            'role'      => 'gkmp',
+        ]);
+
+        $user->aktif_role()->create([
+            'is_dosen'  => 0,
+        ]);
+
+        User::create([
+            'nama'      => 'Testing dosen',
+            'email'     => 'dosen@if.itera.ac.id',
+            'password'  => Hash::make('password'),
+            'role'      => 'dosen',
+        ]);
+
+        User::create([
+            'nama'      => 'Testing admin',
+            'email'     => 'admin@if.itera.ac.id',
+            'password'  => Hash::make('password'),
+            'role'      => 'admin',
+        ]);
     }
 }

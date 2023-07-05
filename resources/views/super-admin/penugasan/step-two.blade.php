@@ -67,8 +67,9 @@
                     </div>
                   </div>
                 </div>
-                <div class="row mt-3 mb-4 text-center">
-                  <div class="col">
+                <div class="row mt-5 mb-4">
+                  <label class="col-lg-3 col-form-label" >Pilih Jumlah Kelas</label>
+                  <div class="col text-center">
                     <button type="button" class="btn btn-primary btn-kelas">Jumlah Kelas</button>
                   </div>
                 </div>
