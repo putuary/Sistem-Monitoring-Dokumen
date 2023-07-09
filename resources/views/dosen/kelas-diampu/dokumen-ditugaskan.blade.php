@@ -110,7 +110,7 @@
                           <i class="fa fa-fw fa-download"></i>
                         </a>
                         <!-- Button delete dokumen Matkul -->
-                        <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Batalkan Pengumpulan">
+                        <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus Dokumen">
                           <i class="fa fa-fw fa-times"></i>
                         </button>
                     @else
@@ -166,7 +166,7 @@
                           <i class="fa fa-fw fa-download"></i>
                         </a>
                         <!-- Button delete dokumen kelas -->
-                        <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Batalkan Pengumpulan">
+                        <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus Dokumen">
                           <i class="fa fa-fw fa-times"></i>
                         </button>
                       @else
@@ -236,7 +236,7 @@
                         <div class="col-lg-12">
                           <div class="form-group">
                             <input type="hidden" name="id_dokumen" id="id_dokumen">
-                            <label for="example-text-input">File Dokumen (Single Dokumen .pdf max: 10MB)</label>
+                            <label for="example-text-input">File Dokumen (Satu Dokumen .pdf max: 10MB)</label>
                             <input
                                 type="file"
                                 class="form-control @error('file_dokumen') is-invalid @enderror"
@@ -287,7 +287,7 @@
                           <div class="form-group">
                             <div class="previews"></div>
                             <input type="hidden" name="id_dokumen" id="id_dokumen_multiple">
-                            <label for="example-text-input">File Dokumen <br> (Multiple Dokumen .pdf max: 10MB note: ikuti perintah penamaan file)</label>
+                            <label for="example-text-input">File Dokumen <br> (Banyak Dokumen .pdf max: 10MB note: ikuti perintah penamaan file)</label>
                             <input
                                 type="file"
                                 class="form-control @error('file_dokumen') is-invalid @enderror"
@@ -385,12 +385,6 @@
 
       $(document).ready(function () {
         $(".alert").delay(2000).fadeOut("slow");
-
-        $(".button-tambah-pengguna").on("click", function () {
-          $("#modal-tambah-pengguna").modal("show");
-        });
-
-        $(".modal-edit").attr("id", "modal-edit");
       });
       
     </script>

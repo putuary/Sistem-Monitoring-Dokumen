@@ -18,7 +18,7 @@ return new class extends Migration
             $table->bigInteger('id_tahun_ajaran')->unsigned();
             $table->string('scoreable_id', 10);
             $table->string('scoreable_type');
-            $table->integer('poin')->nullable();
+            $table->integer('poin')->nullable()->default(null);
             $table->integer('bonus')->nullable()->default(null);
             $table->timestamps();
             

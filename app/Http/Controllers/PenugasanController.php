@@ -49,22 +49,22 @@ class PenugasanController extends Controller
     public function stepTwo()
     {
         $data=session('tahun_ajaran');
-        // dd($data['jenis']);
+        // $data['jenis']="Genap";
         $matkul=MataKuliah::matkulDibuka($data['jenis'])->get();
         $dokumen=DokumenPerkuliahan::all();
         // dd($data);
         return view('super-admin.penugasan.step-two', ['data' => $data, 'matkul' => $matkul, 'dokumen' => $dokumen]);
+        // return view('tes-penugasan', ['data' => $data, 'matkul' => $matkul, 'dokumen' => $dokumen]);
     }
 
     public function storeStepTwo(Request $request)
     {
         $request->validate([
             'kode_matkul' => 'required',
-            'nama_matkul' => 'required',
             'jumlah' => 'required',
             'dokumen' => 'required',
         ]);
-
+        
         $request->session()->put('data', $request->all());
 
         return redirect('/penugasan/buat-penugasan-baru/form-ketiga');
@@ -75,7 +75,11 @@ class PenugasanController extends Controller
         $data=session('data');
         $dosen=User::where('role', '!=', 'admin')->get();
         
-        return view('super-admin.penugasan.step-three', ['data' => $data, 'dosen' => $dosen]);
+        $matkuls=MataKuliah::Select('nama_matkul')
+            ->whereIn('kode_matkul', $data['kode_matkul'])->get();
+        
+        return view('super-admin.penugasan.step-three', ['data' => $data, 'dosen' => $dosen, 'matkuls' => $matkuls]);
+        // return view('test3', ['data' => $data, 'dosen' => $dosen]);
     }
 
     public function storePenugasan(Request $request)
@@ -101,8 +105,7 @@ class PenugasanController extends Controller
             'is_aktif'    => 1,
         ]);
 
-        $data=session('data');
-        // dd($data['kode_matkul']);
+       
         $mata_kuliah=MataKuliah::whereIn('kode_matkul', $data['kode_matkul'])->get();
         foreach($mata_kuliah as $key => $matkul) {
             $matkul_dibuka=MatkulDibuka::create([
@@ -152,15 +155,12 @@ class PenugasanController extends Controller
                 foreach($kelas as $kls) {
                     $dokumen_kelas = $kls->dokumen_kelas()->create([
                         'id_dokumen_ditugaskan' => $dokumen_ditugaskan->id_dokumen_ditugaskan,
-                        'file_dokumen' => null,
-                        'waktu_pengumpulan' => null,
                     ]);
                     foreach($kls->dosen_kelas as $dsn) {
                         $dokumen_kelas->scores()->create([
                             'id_dosen'        => $dsn->id,
                             'kode_kelas'      => $kls->kode_kelas,
                             'id_tahun_ajaran' => $kls->id_tahun_ajaran,
-                            'poin'            => null,
                         ]);
                     }
                 }
@@ -172,8 +172,6 @@ class PenugasanController extends Controller
 
                     $dokumen_matkul = $mkl->dokumen_matkul()->create([
                         'id_dokumen_ditugaskan' => $dokumen_ditugaskan->id_dokumen_ditugaskan,
-                        'file_dokumen' => null,
-                        'waktu_pengumpulan' => null,
                     ]);
         
                     foreach($mkl->kelas as $kls) {
@@ -184,7 +182,6 @@ class PenugasanController extends Controller
                                 'id_dosen'        => $dsn->id,
                                 'kode_kelas'      => $kls->kode_kelas,
                                 'id_tahun_ajaran' => $kls->id_tahun_ajaran,
-                                'poin'           => null,
                             ]);
                         }
                     }

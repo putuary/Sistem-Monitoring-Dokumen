@@ -61,14 +61,14 @@
                     <a href="/kelas-diampu/dokumen/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Lihat Dokumen" target="_blank">
                       <i class="fa fa-fw fa-eye"></i>
                     </a>
-                    <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editNamaFile({{ $key }})" data-bs-toggle="tooltip" title="Rename">
+                    <a type="button" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" onclick="editNamaFile({{ $key }})" data-bs-toggle="tooltip" title="Ubah Nama Dokumen">
                       <i class="fa fa-fw fa-pencil-alt"></i>
                     </a>
                     <a href="/dokumen-perkuliahan/unduh/{{ $id_dokumen }}?dokumen={{ $file }}" class="btn btn-edit btn-sm btn-alt-warning bg-success-light" data-bs-toggle="tooltip" title="Unduh Dokumen">
                       <i class="fa fa-fw fa-download"></i>
                     </a>
                     <input type="hidden" name="nama_dokumen" value="{{ $file }}">
-                    <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus">
+                    <button class="btn btn-sm btn-alt-danger bg-danger-light" type="submit"  data-bs-toggle="tooltip" title="Hapus Dokumen">
                       <i class="fa fa-fw fa-times"></i>
                     </button>
                   </form>

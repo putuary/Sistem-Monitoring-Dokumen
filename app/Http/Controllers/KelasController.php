@@ -90,15 +90,12 @@ class KelasController extends Controller
                 
                 $dokumen_kelas=$kelas->dokumen_kelas()->create([
                     'id_dokumen_ditugaskan' => $dokumen->id_dokumen_ditugaskan,
-                    'file_dokumen' => null,
-                    'waktu_pengumpulan' => null,
                 ]);
                 for($i=0; $i<count($request->id_dosen); $i++) {
                     $dokumen_kelas->scores()->create([
                         'id_dosen'        => $request->id_dosen[$i],
                         'kode_kelas'      => $kelas->kode_kelas,
                         'id_tahun_ajaran' => $kelas->id_tahun_ajaran,
-                        'poin'            => null,
                     ]);
                 }
             } else {
@@ -106,8 +103,6 @@ class KelasController extends Controller
                     $dokumen_matkul=$dokumen->dokumen_matkul()->create([
                         'id_dokumen_ditugaskan' => $dokumen->id_dokumen_ditugaskan,
                         'id_matkul_dibuka'      => $kelas->id_matkul_dibuka,
-                        'file_dokumen'          => null,
-                        'waktu_pengumpulan'     => null,
                     ]);
                     
                     $kelas->kelas_dokumen_matkul()->attach($dokumen_matkul->id_dokumen_matkul);
@@ -117,7 +112,6 @@ class KelasController extends Controller
                             'id_dosen'        => $request->id_dosen[$i],
                             'kode_kelas'      => $kelas->kode_kelas,
                             'id_tahun_ajaran' => $kelas->id_tahun_ajaran,
-                            'poin'            => null,
                         ]);
                     }
 

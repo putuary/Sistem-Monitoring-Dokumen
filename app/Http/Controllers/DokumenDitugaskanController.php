@@ -70,15 +70,12 @@ class DokumenDitugaskanController extends Controller
 
                 $dokumen_kelas=$kls->dokumen_kelas()->create([
                     'id_dokumen_ditugaskan' => $dokumen->id_dokumen_ditugaskan,
-                    'file_dokumen' => null,
-                    'waktu_pengumpulan' => null,
                 ]);
                 foreach($kls->dosen_kelas as $dsn) {
                     $dokumen_kelas->scores()->create([
                         'id_dosen'        => $dsn->id,
                         'kode_kelas'      => $kls->kode_kelas,
                         'id_tahun_ajaran' => $kls->id_tahun_ajaran,
-                        'poin'            => null,
                     ]);
                 }
             }
@@ -90,8 +87,6 @@ class DokumenDitugaskanController extends Controller
                 // $id_dokumen_dikumpul=IdGenerator::generate(['table' => 'dokumen_dikumpul', 'field'=>'id_dokumen_dikumpul', 'length' => 10, 'prefix' => 'DK']);
                 $dokumen_matkul=$mkl->dokumen_matkul()->create([
                     'id_dokumen_ditugaskan' => $dokumen->id_dokumen_ditugaskan,
-                    'file_dokumen' => null,
-                    'waktu_pengumpulan' => null,
                 ]);
             
                 foreach($mkl->kelas as $kls) {
@@ -102,7 +97,6 @@ class DokumenDitugaskanController extends Controller
                             'id_dosen'        => $dsn->id,
                             'kode_kelas'      => $kls->kode_kelas,
                             'id_tahun_ajaran' => $kls->id_tahun_ajaran,
-                            'poin'            => null,
                         ]);
                     }
                 }

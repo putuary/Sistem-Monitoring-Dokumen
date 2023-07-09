@@ -38,7 +38,7 @@
 </li>
 
 
-<li class="nav-main-heading">PERINGKAT PENGUMPULAN</li>
+{{-- <li class="nav-main-heading">PERINGKAT PENGUMPULAN</li>
 
 <li class="nav-main-item">
     <a class="nav-main-link {{ Request::is('leaderboard') ? 'active' : '' }}" href="/leaderboard">
@@ -52,7 +52,7 @@
         <i class="nav-main-link-icon si si-badge"></i>
         <span class="nav-main-link-name">Badge</span>
     </a>
-</li>
+</li> --}}
 
 
 

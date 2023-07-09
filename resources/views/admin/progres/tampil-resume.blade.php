@@ -95,49 +95,71 @@
               </tbody>
             </table>
           </div>
-          {{-- <div class="row mt-3 ms-3">
-            <div class="col-4">
-              <p class="text-success">Total Terkumpul</p>
+          <div class="col-xl-12 mt-2">
+            <!-- Pie Chart -->
+            <div class="block block-rounded">
+              <div class="block-header block-header-default">
+                <h3 class="block-title text-center">Diagram Resume Pengumpulan</h3>
+              </div>
+              <div class="block-content block-content-full text-center">
+                <div class="py-3 px-xxl-7">
+                  <!-- Pie Chart Container -->
+                  <canvas id="js-chartjs-pie"></canvas>
+                </div>
+              </div>
             </div>
-            <div class="col-3">
-              <p class="text-success">{{ $report->total_dikumpul }}</p>
-            </div>
+            <!-- END Pie Chart -->
           </div>
-          <div class="row ms-3">
-            <div class="col-4">
-              <p class="text-danger">Total Belum Dikumpul</p>
-            </div>
-            <div class="col-3">
-              <p class="text-danger">{{ $report->total_belum_dikumpul }}</p>
-            </div>
-          </div>
-          <div class="row ms-3">
-            <div class="col-4">
-              <p class="text-primary">Total Tepat Waktu</p>
-            </div>
-            <div class="col-3">
-              <p class="text-primary">{{ $report->total_tepat_waktu }}</p>
-            </div>
-          </div>
-          <div class="row ms-3">
-            <div class="col-4">
-              <p class="text-warning">Total Terlambat</p>
-            </div>
-            <div class="col-3">
-              <p class="text-warning">{{ $report->total_terlambat }}</p>
-            </div>
-          </div>
-          <div class="row ms-3">
-            <div class="col-4">
-              <p class="text-info">Total Ditugaskan</p>
-            </div>
-            <div class="col-3">
-              <p class="text-info">{{ $report->total_ditugaskan}}</p>
-            </div>
-          </div>
-        </div> --}}
       </div>
       <!-- Table -->
     </div>
     <!-- END Page Content -->
+@endsection
+
+@section('script')
+    <!-- Page JS Plugins -->
+    <script src="{{ URL::asset('assets/js/plugins/chart.js/chart.min.js') }}"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script> --}}
+    
+    <!-- Page JS Code -->
+    <script>
+      var values = [{{ $report->total_tepat_waktu }}, {{ $report->total_terlambat }}, {{ $report->total_belum_dikumpul }}];
+
+      var ctx = document.getElementById('js-chartjs-pie').getContext('2d');
+      var myChart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+              labels: ["Tepat Waktu", "Terlambat", "Belum Dikumpulkan"],
+              datasets: [{
+                  data: values,
+                  backgroundColor: [
+                    "rgba(171, 227, 125, 1)",
+                    "rgba(250, 219, 125, 1)",
+                    "rgba(117, 176, 235, 1)",
+                  ],
+                  hoverBackgroundColor: [
+                      "rgba(171, 227, 125, .75)",
+                      "rgba(250, 219, 125, .75)",
+                      "rgba(117, 176, 235, .75)",
+                  ],
+                  borderWidth: 1
+              }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            tooltips: {
+              callbacks: {
+                label: function(tooltipItem, data) {
+                  var dataset = data.datasets[tooltipItem.datasetIndex];
+                  var labels = data.labels[tooltipItem.index];
+                  var currentValue = dataset.data[tooltipItem.index];
+                  return labels+": "+currentValue+" %";
+                }
+              }
+            }
+          }
+      });
+  </script>
+
 @endsection

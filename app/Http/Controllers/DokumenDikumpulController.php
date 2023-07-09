@@ -11,6 +11,7 @@ use App\Models\TahunAjaran;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class DokumenDikumpulController extends Controller

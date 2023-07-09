@@ -49,16 +49,18 @@
                 <div class="row">
                   <h4 class="border-bottom pb-2">Dosen Pengampu Tiap Kelas</h4>
                   
-                  @foreach ($matkuls as $key => $matkul)
+                  @foreach ($data['nama_matkul'] as $key => $kelas)
                     <div class="mb-3">
                       <div class="row row-cols-lg-auto align-items-center">
-                        <label class="col-lg-3 col-form-label fw-bold" >{{ $matkul->nama_matkul }}</label>
+                        <label class="col-lg-3 col-form-label fw-bold" >{{ $kelas }}</label>
                         <div class="col-md-2 col-lg-8">
                           <div class="table-responsive">
                             <table class="table table-bordered table-striped table-vcenter">
                               <thead>
                                 <tr>
-                                  <th class="text-center" style="width: 20%;">Kelas</th>
+                                  <th class="text-center">
+                                    Kelas
+                                  </th>
                                   <th class="text-center">Dosen Pengampu</th>
                                 </tr>
                               </thead>

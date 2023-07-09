@@ -57,16 +57,16 @@
                     <div class="col-lg-2 col-xl-4">
                       <div class="mb-4">
                         <div class="input-daterange input-group">
-                          <input type="text" class="js-datepicker form-control" id="tahun1" name="tahun1" placeholder="Dari" value="{{ old('tahun1') }}" required>
+                          <input type="text" class="js-datepicker form-control" id="tahun1" name="tahun1" placeholder="Dari" value="{{ createTahunAjaran('dari') }}" required>
                           <span class="input-group-text fw-semibold">
                             /
                           </span>
-                          <input type="text" class="js-datepicker form-control" id="tahun2" name="tahun2" placeholder="Ke" value="{{ old('tahun2') }}" required>
+                          <input type="text" class="js-datepicker form-control" id="tahun2" name="tahun2" placeholder="Ke" value="{{ createTahunAjaran('ke') }}" required>
                           <select class="js-select2 form-select" name="jenis" data-placeholder="Jenis" required>
                             <option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-                            <option value="Ganjil" @selected(old('jenis') == 'Ganjil')>Ganjil</option>
-                            <option value="Genap" @selected(old('jenis') == 'Genap')>Genap</option>
-                            <option value="Pendek" @selected(old('jenis') == 'Pendek')>Pendek</option>
+                            <option value="Ganjil" @selected(createTahunAjaran('jenis') == 'Ganjil')>Ganjil</option>
+                            <option value="Genap" @selected(createTahunAjaran('jenis') == 'Genap')>Genap</option>
+                            <option value="Pendek" @selected(createTahunAjaran('jenis') == 'Pendek')>Pendek</option>
                           </select>
                         </div>
                       </div>
@@ -116,14 +116,16 @@
       format: "yyyy",
       viewMode: "years", 
       minViewMode: "years",
-      startDate: new Date().getFullYear().toString(),
+      startDate: (new Date().getFullYear() -1 ).toString(),
+      endDate: new Date().getFullYear().toString(),
     });
 
     $("#tahun2").datepicker({
       format: "yyyy",
       viewMode: "years", 
       minViewMode: "years",
-      startDate: (new Date().getFullYear() +1 ).toString(),
+      startDate: new Date().getFullYear().toString(),
+      endDate: (new Date().getFullYear() +1 ).toString(),
     });
   
     One.helpersOnLoad([

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->string('id_dokumen_kelas', 10)->primary();
             $table->string('id_dokumen_ditugaskan', 10);
             $table->bigInteger('kode_kelas')->unsigned();
-            $table->string('file_dokumen')->nullable();
-            $table->dateTime('waktu_pengumpulan')->nullable();
+            $table->string('file_dokumen')->nullable()->default(null);
+            $table->dateTime('waktu_pengumpulan')->nullable()->default(null);
 
             $table->unique(['id_dokumen_ditugaskan', 'kode_kelas']);
             $table->foreign('id_dokumen_ditugaskan')->references('id_dokumen_ditugaskan')->on('dokumen_ditugaskan')->onUpdate('cascade')->onDelete('cascade');

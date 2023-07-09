@@ -7,11 +7,8 @@ use App\Models\TahunAjaran;
 use App\Models\User;
 use App\Models\UserBadge;
 use App\Models\DokumenDitugaskan;
-use App\Models\DokumenKelas;
-use App\Models\DokumenMatkul;
 use App\Models\Gamifikasi;
 use App\Models\LeaderBoard;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Http\Request;
 
 class LeaderBoardController extends Controller

@@ -33,6 +33,34 @@ function isPraktikum($data) {
     return 'Tidak';
 }
 
+function createTahunAjaran($params) {
+    if(Carbon::now()->month >= 8) {
+        if($params == 'dari') {
+            return Carbon::now()->year;
+        } else if($params == 'ke') {
+            return Carbon::now()->addYear()->year;
+        } else if($params == 'jenis') {
+            return 'Ganjil';
+        }
+    } else if (Carbon::now()->month >= 5) {
+        if($params == 'dari') {
+            return Carbon::now()->subYear()->year;
+        } else if($params == 'ke') {
+            return Carbon::now()->year;
+        } else if($params == 'jenis') {
+            return 'Pendek';
+        }
+    } else {
+        if($params == 'dari') {
+            return Carbon::now()->subYear()->year;
+        } else if($params == 'ke') {
+            return Carbon::now()->year;
+        } else if($params == 'jenis') {
+            return 'Genap';
+        }
+    }
+}
+
 function dikumpul($data) {
     if($data == 1) {
         return 'Banyak Dokumen';

@@ -78,7 +78,7 @@ class Gamifikasi
         
         $bonus=0;
         if($isDokumenMatkul) {
-            $dokumen_matkul_terkumpul=DokumenMatkul::where('id_dokumen_ditugaskan', $id_dokumen_ditugaskan)->wherenotnull('waktu_pengumpulan')->orderBy('waktu_pengumpulan', 'asc')->get();
+            $dokumen_matkul_terkumpul=DokumenMatkul::where('id_dokumen_ditugaskan', $id_dokumen_ditugaskan)->whereDoesntHave('note')->wherenotnull('waktu_pengumpulan')->orderBy('waktu_pengumpulan', 'asc')->get();
             foreach ($dokumen_matkul_terkumpul as $key => $item) {
                 if($id_dokumen_terkumpul == $item->id_dokumen_matkul) {
                     if($key+1 == 1) {
@@ -133,7 +133,7 @@ class Gamifikasi
                 ]);
             }
         } else {
-            $dokumen_kelas_terkumpul=DokumenKelas::where('id_dokumen_ditugaskan', $id_dokumen_ditugaskan)->wherenotnull('waktu_pengumpulan')->orderBy('waktu_pengumpulan', 'asc')->get();
+            $dokumen_kelas_terkumpul=DokumenKelas::where('id_dokumen_ditugaskan', $id_dokumen_ditugaskan)->whereDoesntHave('note')->wherenotnull('waktu_pengumpulan')->orderBy('waktu_pengumpulan', 'asc')->get();
         
             foreach ($dokumen_kelas_terkumpul as $key => $item) {
                 if($key+1 == 1) {

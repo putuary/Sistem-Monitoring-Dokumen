@@ -13,6 +13,7 @@ use App\Http\Controllers\DokumenPerkuliahanController;
 use App\Http\Controllers\DokumenDitugaskanController;
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\LeaderBoardController;
+use App\Http\Middleware\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,10 +42,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/user-logout', [UserAuthController::class, 'logout']);
     
     Route::post('/set-session', [UserAuthController::class, 'setSession']);
-
-    Route::get('/leaderboard', [LeaderBoardController::class, 'index']);
-    Route::get('/leaderboard/rincian-score/{id_user}', [LeaderBoardController::class, 'showDetailScore']);
-    Route::get('/badge', [LeaderBoardController::class, 'showResultBadge']);
 });
 
 Route::middleware(['auth', 'role:superAdmin'])->group(function () {
@@ -121,6 +118,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Riwayat Pengumpulan
     Route::get('/riwayat-pengumpulan-poin', [ProgresController::class, 'showRiwayat']);
+
+    Route::get('/leaderboard', [LeaderBoardController::class, 'index']);
+    Route::get('/leaderboard/rincian-score/{id_user}', [LeaderBoardController::class, 'showDetailScore']);
+    Route::get('/badge', [LeaderBoardController::class, 'showResultBadge']);
 });
 
 Route::middleware(['auth', 'role:dosen'])->group(function () {
@@ -151,3 +152,5 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
     Route::get('/dokumen-perkuliahan/{id_dokumen}', [DokumenDikumpulController::class, 'showDokumenDikumpul']);
     Route::get('/dokumen-perkuliahan/unduh/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenDikumpul']);
 });
+
+Route::get('/tes', [PenugasanController::class, 'stepTwo']);
