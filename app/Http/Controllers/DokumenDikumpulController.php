@@ -64,38 +64,8 @@ class DokumenDikumpulController extends Controller
     {
         $dokumen=DokumenPerkuliahan::find($id_dokumen);
         
-        return response()->download(public_path('storage/template/'.$dokumen->template));
+        return response()->download(storage_path('app/public/template/'.$dokumen->template));
     }
-
-    // public function readDokumenSingle($id_dokumen)
-    // {
-    //     $dokumen=$this->showProfilDokumen($id_dokumen);
-
-    //     return response()->file($dokumen->path_dokumen);
-    // }
-
-    // public function downloadDokumenSingle($id_dokumen)
-    // {
-    //     $dokumen=$this->showProfilDokumen($id_dokumen);
-        
-    //     return response()->download($dokumen->path_dokumen);
-    // }
-
-    // public function deleteDokumen($id_dokumen)
-    // {
-    //     $dokumen=$this->showProfilDokumen($id_dokumen);
-    //     if($dokumen->dokumen_dikumpul->dokumen_ditugaskan->dikumpul==0) {
-    //         File::delete($dokumen->path_dokumen);
-    //     } else {
-    //         File::deleteDirectory($dokumen->path_dokumen);
-    //     }
-    //     $dokumen->dokumen_dikumpul->update([
-    //         'file_dokumen'      => null,
-    //         'waktu_pengumpulan' => null,
-    //     ]);
-
-    //     return redirect()->back()->with('success', 'Dokumen berhasil dihapus');
-    // }
 
     public function uploadDokumen(Request $request)
     {

@@ -37,6 +37,13 @@
     </a>
 </li>
 
+<li class="nav-main-item">
+    <a class="nav-main-link {{ Request::is('peringkat-score') ? 'active' : '' }}" href="/peringkat-score">
+        <i class="nav-main-link-icon fa fa-star"></i>
+        <span class="nav-main-link-name">Peringkat dan Score</span>
+    </a>
+</li>
+
 
 {{-- <li class="nav-main-heading">PERINGKAT PENGUMPULAN</li>
 

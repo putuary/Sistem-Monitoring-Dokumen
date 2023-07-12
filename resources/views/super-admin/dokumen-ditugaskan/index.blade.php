@@ -304,7 +304,7 @@
             _token: '{{ csrf_token() }}'
           },
           success: function (data) {
-            if(data) {
+            if(data.pengumpulan) {
               One.helpers('jq-notify', {type: 'success', icon: 'fa fa-check me-1', message: data.message});
             } else{
               One.helpers('jq-notify', {type: 'danger', icon: 'fa fa-times me-1', message: data.message});

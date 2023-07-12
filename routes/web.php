@@ -14,6 +14,7 @@ use App\Http\Controllers\DokumenDitugaskanController;
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\LeaderBoardController;
 use App\Http\Middleware\Role;
+use App\Models\LeaderBoard;
 
 /*
 |--------------------------------------------------------------------------
@@ -139,18 +140,16 @@ Route::middleware(['auth', 'role:dosen'])->group(function () {
 
     // Riwayat Pengumpulan
     Route::get('/riwayat-pengumpulan-perolehan-poin', [KelasDiampuController::class, 'showRiwayat']);
-
-    // 
-    Route::get('/indikator-penilaian', [DataManagementController::class, 'showIndikatorPenilaian']);
-    Route::get('/daftar-badge', [BadgeController::class, 'showAllBadge']);
-
-    // Score
-    // Route::get('/perolehan-score', [LeaderboardController::class, 'showUserScore']);
-
+    
     // Dokumen Perkuliahan
     Route::get('/dokumen-perkuliahan', [DokumenPerkuliahanController::class, 'index']);
     Route::get('/dokumen-perkuliahan/{id_dokumen}', [DokumenDikumpulController::class, 'showDokumenDikumpul']);
     Route::get('/dokumen-perkuliahan/unduh/{id_dokumen}', [DokumenDikumpulController::class, 'downloadDokumenDikumpul']);
+    
+    // Penilaian
+    Route::get('/indikator-penilaian', [DataManagementController::class, 'showIndikatorPenilaian']);
+    Route::get('/daftar-badge', [BadgeController::class, 'showAllBadge']);
+    Route::get('/peringkat-score', [LeaderBoardController::class, 'showRankandScore']);
 });
 
 Route::get('/tes', [PenugasanController::class, 'stepTwo']);

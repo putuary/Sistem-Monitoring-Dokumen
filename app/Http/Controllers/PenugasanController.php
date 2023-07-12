@@ -54,7 +54,6 @@ class PenugasanController extends Controller
         $dokumen=DokumenPerkuliahan::all();
         // dd($data);
         return view('super-admin.penugasan.step-two', ['data' => $data, 'matkul' => $matkul, 'dokumen' => $dokumen]);
-        // return view('tes-penugasan', ['data' => $data, 'matkul' => $matkul, 'dokumen' => $dokumen]);
     }
 
     public function storeStepTwo(Request $request)

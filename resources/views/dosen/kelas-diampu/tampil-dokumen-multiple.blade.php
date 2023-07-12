@@ -105,8 +105,8 @@
                             <label for="example-text-input">Nama Lama</label>
                             <input type="hidden" class="form-control" name="old_name" id="old_name">
                             <div class="form-control" id="div_old_name"></div>
-                            <label for="example-text-input">Nama Baru</label>
-                            <input type="text" class="form-control" name="new_name">
+                            <label class="mt-2" for="example-text-input">Nama Baru</label>
+                            <input type="text" class="form-control" name="new_name" required>
                           </div>
                         </div>
                       </div>

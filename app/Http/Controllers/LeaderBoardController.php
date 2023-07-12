@@ -10,6 +10,7 @@ use App\Models\DokumenDitugaskan;
 use App\Models\Gamifikasi;
 use App\Models\LeaderBoard;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LeaderBoardController extends Controller
 {
@@ -34,34 +35,8 @@ class LeaderBoardController extends Controller
        return view('user.leaderboard.tampil-leaderboard', ['tahun_aktif' => $tahun_aktif, 'tahun_ajaran' => $tahun_ajaran, 'leaderboards' => $leaderboards]);
     }
 
-    // public function showUserScore() {
-    //     $tahun_aktif=TahunAjaran::tahunAktif()->first();
-    //     $tahun_ajaran=TahunAjaran::orderBy('tahun_ajaran', 'desc')->get();
-        
-    //     $scores = Score::with([
-    //         'scoreable' => function (MorphTo $morphTo) {
-    //             $morphTo->morphWith([
-    //                 DokumenMatkul::class => ['matkul', 'dokumen_ditugaskan'],
-    //                 DokumenKelas::class => ['dokumen_ditugaskan', 'kelas' => function($query) {
-    //                     $query->with('matkul');
-    //                 }],
-    //             ]);
-    //         }])->scoreTahun(request('tahun_ajaran'))
-    //       ->where('id_dosen', Auth::user()->id)
-    //       ->whereNotNull('poin')
-    //       ->orderBy('updated_at', 'desc')->get();
-
-    //     // dd($scores);
-    //     return view('dosen.leaderboard.tampil-perolehan-score', ['tahun_aktif' => $tahun_aktif, 'tahun_ajaran' => $tahun_ajaran, 'scores' => $scores]);
-    // }
-
     public function showDetailScore($id_dosen) {
-        // $scores = Score::query()->with(['user','kelas' =>['matkul'],
-        //     'scoreable' => ['dokumen_ditugaskan'],
-        //     ])->scoreTahun(request('tahun_ajaran'))
-        //   ->where('id_dosen', $id_dosen)
-        //   ->whereNotNull('poin')
-        //   ->orderBy('updated_at', 'desc')->get();
+        
 
         $user=User::with(['score' => function($query) {
             $query->with(['scoreable' => ['dokumen_ditugaskan'], 'kelas' => ['matkul']])
@@ -70,6 +45,33 @@ class LeaderBoardController extends Controller
         $detail=Gamifikasi::showRank($user);
         // dd($detail[0]);
         return view('user.leaderboard.detail-score', ['detail' => $detail[0]]);
+    }
+
+    public function showRankandScore() {
+        $tahun_aktif=TahunAjaran::tahunAktif()->first();
+        $tahun_ajaran=TahunAjaran::orderBy('tahun_ajaran', 'desc')->get();
+
+        $users=User::with(['score' => function($query) {
+                $query->with(['scoreable' => ['dokumen_ditugaskan'], 'kelas' => ['matkul']])
+                    ->scoreTahun(request('tahun_ajaran'))->orderBy('updated_at', 'desc');
+            }])->withTrashed()->whereHas('dosen_kelas', function($query) {
+                $query->kelasTahun(request('tahun_ajaran'));
+            })->where('role', '!=', 'admin')->get();
+
+        $leaderboards=Gamifikasi::showRank($users);
+        
+        $detail=null;
+        foreach ($leaderboards as $leaderboard) {
+            if($leaderboard->user->id == Auth::user()->id) {
+                $detail=$leaderboard;
+                break;
+            }
+        }
+
+        // dd($detail);
+
+        return view('dosen.peringkat-score', ['tahun_aktif' => $tahun_aktif, 'tahun_ajaran' => $tahun_ajaran, 'detail' => $detail, 'leaderboards' => $leaderboards]);
+
     }
 
     public function resultBadge(Request $request) {

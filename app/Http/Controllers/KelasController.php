@@ -124,6 +124,7 @@ class KelasController extends Controller
                             'kode_kelas'      => $kelas->kode_kelas,
                             'id_tahun_ajaran' => $kelas->id_tahun_ajaran,
                             'poin'            => $dokumen->dokumen_matkul[0]->scores[0]->poin,
+                            'bonus'           => $dokumen->dokumen_matkul[0]->scores[0]->bonus,
                         ]);
                     }
                 }
@@ -176,6 +177,7 @@ class KelasController extends Controller
                             'scoreable_id'    => $score->scoreable_id,
                             'scoreable_type'  => $score->scoreable_type,
                             'poin'            => $score->poin,
+                            'bonus'           => $score->bonus,
                         ]);
                     }
                 }
@@ -214,6 +216,7 @@ class KelasController extends Controller
                             'scoreable_id'    => $score->scoreable_id,
                             'scoreable_type'  => $score->scoreable_type,
                             'poin'            => $score->poin,
+                            'bonus'           => $score->bonus,
                         ]);
                     }
                 }
