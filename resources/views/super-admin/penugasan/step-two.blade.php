@@ -48,16 +48,17 @@
                   <div class="row row-cols-lg-auto align-items-center">
                     <label class="col-lg-3 col-form-label fw-bold" >Pilih Mata Kuliah Dibuka</label>
                     <div class="col-md-2 col-lg-8">
-                      <div class="space-x-2 mb-2">
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="pilihan_matkul" id="semua-pilihan-matkul">
-                          <label class="form-check-label" for="example-radios-inline1">Semua</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="pilihan_matkul" id="pilih-manual-matkul">
-                          <label class="form-check-label" for="example-radios-inline2">Pilih Manual</label>
+                      <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start mb-3">
+                        <div class="mt-3 mt-md-0">
+                          <button class="btn btn-success btn-all" type="button">
+                            <i class="fa fa-fw fa-check me-1"></i> Semua
+                          </button>
+                          <button class="btn btn-danger btn-reset" type="button">
+                            <i class="fa-fw si si-refresh me-1"></i> Reset
+                          </button>
                         </div>
                       </div>
+                    
                       <div class="table-responsive">
                         <table class="table table-bordered table-striped table-vcenter">
                           <thead>
@@ -101,14 +102,14 @@
                   <div class="row row-cols-lg-auto align-items-center">
                     <label class="col-lg-3 col-form-label fw-bold" >Pilih Dokumen</label>
                     <div class="col-md-2 col-lg-8">
-                      <div class="space-x-2 mb-2">
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="pilihan" id="semua-pilihan">
-                          <label class="form-check-label" for="example-radios-inline1">Semua</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="pilihan" id="pilih-manual">
-                          <label class="form-check-label" for="example-radios-inline2">Pilih Manual</label>
+                      <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center py-2 text-center text-md-start mb-3">
+                        <div class="mt-3 mt-md-0">
+                          <button class="btn btn-success btn-all-dokumen" type="button">
+                            <i class="fa fa-fw fa-check me-1"></i> Semua
+                          </button>
+                          <button class="btn btn-danger btn-reset-dokumen" type="button">
+                            <i class="fa-fw si si-refresh me-1"></i> Reset
+                          </button>
                         </div>
                       </div>
                       <div class="mb-3">
@@ -161,19 +162,15 @@
         $(".alert").delay(2000).fadeOut("slow");
        
         // Ketika pilihan radio "Semua" dipilih
-        $("#semua-pilihan-matkul").click(function() {
-          if ($(this).is(":checked")) {
+        $(".btn-all").click(function() {
             $(".form-matkul-dibuka").prop("checked", true);
             $(".jumlah_kelas_container").html(`<input type="number" class="form-control @error('jumlah') is-invalid @enderror" name="jumlah[]" min="1" required>`);
-          }
         });
 
         // Ketika pilihan radio "Pilih Manual" dipilih
-        $("#pilih-manual-matkul").click(function() {
-          if ($(this).is(":checked")) {
+        $(".btn-reset").click(function() {
             $(".form-matkul-dibuka").prop("checked", false);
             $(".jumlah_kelas_container").html("");
-          }
         });
 
         $(".matkul-dibuka").on("change", "input[type='checkbox']", function() {
@@ -194,20 +191,16 @@
 
 
         // Ketika pilihan radio "Semua" dipilih
-        $("#semua-pilihan").click(function() {
-          if ($(this).is(":checked")) {
+        $(".btn-all-dokumen").click(function() {
             $("#select-document option").prop("selected", true);
             $("#placeholder").prop("selected", false);
             $("#select-document").trigger("change"); // Memperbarui Select2
-          }
         });
 
         // Ketika pilihan radio "Pilih Manual" dipilih
-        $("#pilih-manual").click(function() {
-          if ($(this).is(":checked")) {
+        $(".btn-reset-dokumen").click(function() {
             $("#select-document option").prop("selected", false);
             $("#select-document").trigger("change"); // Memperbarui Select2
-          }
         });
       });
      </script>
